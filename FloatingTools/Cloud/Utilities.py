@@ -6,13 +6,16 @@ import os
 import json
 import logging
 
+# FloatingTools import
+import FloatingTools
+
 
 # set up logger
 logging.basicConfig(level=logging.INFO)
 
 
 # globals
-FT_DIRECTORY = os.path.dirname(__file__)
+FT_DIRECTORY = FloatingTools.__path__[0]
 FT_STUDIO_LOGIN = os.path.join(FT_DIRECTORY, 'FloatingStudio.json')
 FT_USER_LOGIN = os.path.join(os.path.expanduser('~'), 'FloatingUser.json')
 FT_LOGGER = logging.getLogger('Floating Tools')

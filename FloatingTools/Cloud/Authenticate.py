@@ -3,9 +3,9 @@ Authenticate connection to HFX.com
 """
 # FT imports
 import Utilities
-from FloatingTools import userLogIn, studioLogIn, updateStudioLogin, updateUserLogin, FT_LOGGER
-from FloatingTools.packages.wordpress_xmlrpc.methods.posts import GetPosts
+from FloatingTools.Cloud import userLogIn, studioLogIn, updateStudioLogin, updateUserLogin, FT_LOGGER
 from FloatingTools.packages.wordpress_xmlrpc import Client, InvalidCredentialsError
+from FloatingTools.packages.wordpress_xmlrpc.methods.posts import GetPosts
 
 
 def login(username, password, updateFunction):
