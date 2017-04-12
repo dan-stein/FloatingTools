@@ -1,6 +1,9 @@
 """
 Navigation functions for walking around the pipeline structure.
 """
+# python imports
+import os
+
 # FT import
 import FloatingTools
 from FloatingTools.packages.wordpress_xmlrpc.methods.taxonomies import GetTerms
@@ -43,7 +46,7 @@ class CloudFileSystem(object):
                 self._systemFiles.append(GetCloudFile(wp_obj))
 
         # start at root level
-        self.cd('0')
+        self.cd('/Pipelines')
 
     def _recurse(self, obj):
         self._currentPath.insert(0, obj.name)
@@ -58,7 +61,7 @@ class CloudFileSystem(object):
         """
         self._currentPath = []
         self._recurse(self._systemObjects[self.cwd])
-        return '/'.join(self._currentPath)
+        return '/' + '/'.join(self._currentPath)
 
     def root(self):
         """
@@ -83,13 +86,24 @@ class CloudFileSystem(object):
         :param directory:
         :return:
         """
-        if directory == '0':
-            self.cwd = directory
+        if '/' in directory:
+            path = directory.split('/')
+            if directory.startswith('/'):
+                self.root()
         else:
-            self.cwd = self._currentDirectory[directory]
+            path = [directory]
 
-        for directory in self._systemMap[self.cwd]:
-            self._currentDirectory[self._systemMapNames[directory]] = directory
+        for directory in path:
+            if directory == '':
+                continue
+
+            if directory == '0':
+                self.cwd = directory
+            else:
+                self.cwd = self._currentDirectory[directory]
+
+            for directory in self._systemMap[self.cwd]:
+                self._currentDirectory[self._systemMapNames[directory]] = directory
 
     def ls(self):
         """
@@ -100,6 +114,29 @@ class CloudFileSystem(object):
         for directory in self._systemMap[self.cwd]:
             l.append(self._systemMapNames[directory])
         return l
+
+    def pipelines(self):
+        """
+        Pipelines available for loading from the cloud.
+        :return: 
+        """
+        startingPoint = self.currentDirectory()
+        self.cd('/Pipelines/')
+        pipes = self.ls()
+        self.cd(startingPoint)
+        return pipes
+
+    def apps(self, pipeline):
+        """
+        Return the applications supported by the pipeline passed.
+        :param pipeline: 
+        :return: 
+        """
+        startingPoint = self.currentDirectory()
+        self.cd('/Pipelines/' + pipeline)
+        apps = self.ls()
+        self.cd(startingPoint)
+        return apps
 
     def getFiles(self):
         """
@@ -121,12 +158,36 @@ class CloudFileSystem(object):
 
         return self._cachedFilePaths[currentDirectory]
 
+    def executeFile(self, file):
+        """
+        Executes the file object passed. For example, if this is a python 
+        module it will import it from the cloud.
+        :param file: 
+        :return: 
+        """
+        base, ext = os.path.splitext(file.filename())
+        print base
+        print ext
 
-sys = CloudFileSystem()
-sys.cd('Pipelines')
-sys.cd('Generic')
-sys.cd('Nuke')
-sys.cd('Python')
-for fo in sys.getFiles():
-    print fo.serverPath()
+    def walk(self, function, directory=None):
+        """
+        Start at the current working directory and walk down the tree.
+        :param function: Function that takes 2 arguments. This only executes on files and not directories!
+                            :arg 1: CloudFileObject
+                            :arg 2: Directory path = str
+        :param directory: --private--
+        :return: 
+        """
+        if directory is not None:
+            self.cd(directory)
 
+        # loop over files
+        for file in self.getFiles():
+            function(file, file.serverDirectory())
+
+        # recurse through directories
+        for subDirectory in self.ls():
+            try:
+                self.walk(function, subDirectory)
+            except KeyError:
+                return

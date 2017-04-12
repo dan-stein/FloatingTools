@@ -3,4 +3,4 @@ from packages import *
 from Cloud import *
 
 # import pipeline tools
-import Pipeline
+from Pipeline import *
