@@ -1,6 +1,8 @@
-# authenticate first
-from packages import *
-from Cloud import *
+# python imports
+import os
 
-# import pipeline tools
-from Pipeline import *
+# Global variables
+PACKAGES = os.path.join(os.path.dirname(__file__), 'packages')
+
+# validate the install
+import install
