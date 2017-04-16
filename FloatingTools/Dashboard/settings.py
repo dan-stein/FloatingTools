@@ -2,7 +2,7 @@
 import FloatingTools
 
 # flask imports
-from flask import request, render_template
+from flask import request, render_template, redirect
 
 # package imports
 from utilities import SERVER
@@ -14,9 +14,22 @@ def renderSettings():
     Render settings page to configure Floating Tools
     :return: 
     """
-    repositories = ['etgteg', 'hrthrth', 'qwrerterg', 'aregregrae']
+    repositories = FloatingTools.repositorySettings()
 
     return render_template('Settings.html', repositories=repositories)
+
+
+@SERVER.route('/addRepo')
+def _addRepository():
+    """
+    --private--
+    :return: 
+    """
+    print request.values
+    # for repository in FloatingTools.repositorySettings():
+    #     print request.form.get(repository['name'])
+
+    return redirect('/settings')
 
 
 def settings():

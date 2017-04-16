@@ -43,4 +43,5 @@ DATA = os.path.join(FLOATING_TOOLS_ROOT, 'data')
 import install
 
 # imports
+from load import *
 import Dashboard

@@ -16,33 +16,35 @@
 
         <h2>Repositories</h2>
 
-        <div class="panel panel-default">
+        <a href="/addRepo" class="button">Add..</a>
 
-            <form action="/addNew" method="post">
-                <input type="submit" value="Add...">
-            </form>
+        <div class="panel panel-default">
 
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Repository</th>
-                        <th>Load</th>
+                        <th><a data-placement="right" data-toggle="tooltip"
+                               title="Name of the GitHub repository you'd like to source from. The format is <USERNAME>/<REPOSITORY_NAME>.">Repository</a>
+                        </th>
+                        <th><a data-placement="right" data-toggle="tooltip"
+                               title="Relative path to the tools in the repository you'd like to load. Click this link for a list of wild cards you can use.">Path</a>
+                        </th>
                     </tr>
                 </thead>
-
-                {% for x in repositories %}
+                {% for repository in repositories %}
                     <tbody>
                     <tr>
-                        <th>{{ x }}</th>
-                        <th><input type="checkbox" value={{ x }}></th>
+                        <th><input type="checkbox" value={{ repository.load }} id={{ repository.name }}> {{
+                            repository.name }}
+                        </th>
+                        <th><input type="text" value={{ repository.path }} id={{ repository.name + repository.path }}>
+                        </th>
                     </tr>
                     </tbody>
                 {% endfor %}
             </table>
         </div>
-        <form action="/shutdown" method="post">
-            <input type="submit" value="Save Settings">
-        </form>
+        <a href="/shutdown" class="button">Save Settings</a>
     </div>
 </div>
 
