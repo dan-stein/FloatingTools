@@ -41,6 +41,9 @@ except ImportError:
     # verify pip install worked
     import pip
 
+    # delete get-pip.py
+    os.unlink(downloadPath)
+
 # Verify the github lib exists
 try:
     import github
