@@ -107,7 +107,10 @@ def loadBranch():
     Load the branch information from the Branch.json file.
     :return: 
     """
-    branchFile = os.path.join(FloatingTools.FLOATING_TOOLS_ROOT, 'Branch.json')
+    if not os.path.exists(FloatingTools.DATA):
+        os.mkdir(FloatingTools.DATA)
+
+    branchFile = os.path.join(FloatingTools.DATA, 'Branch.json')
     # create the file if it doesnt exists.
     if not os.path.exists(branchFile):
         # build the default release data
