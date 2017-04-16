@@ -26,7 +26,8 @@ __all__ = [
     'FLOATING_TOOLS_ROOT',
     'INSTALL_DIRECTORY',
     'PACKAGES',
-    'DATA'
+    'DATA',
+    'Dashboard'
 ]
 
 # python imports
