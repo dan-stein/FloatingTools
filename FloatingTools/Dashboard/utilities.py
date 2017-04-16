@@ -24,6 +24,11 @@ DASHBOARD_TEMPLATES = os.path.join(DASHBOARD_DIRECTORY_ROOT, 'templates')
 SERVER = Flask('Floating Tools Dashboard')
 SERVER.register_blueprint(Blueprint('Modular Application', __name__, template_folder=DASHBOARD_TEMPLATES))
 
+# -- variables
+HOST = '127.0.0.1'
+PORT = 5000
+ADDRESS = 'http://%(HOST)s:%(PORT)s/' % locals()
+
 
 def startServer(url=None):
     """
@@ -33,10 +38,10 @@ def startServer(url=None):
     """
     # open the url that is passed
     if url:
-        webbrowser.open(url)
+        webbrowser.open(ADDRESS + url)
 
     # start the server
-    SERVER.run()
+    SERVER.run(host=HOST, port=PORT)
 
 
 @SERVER.route('/shutdown', methods=['POST'])

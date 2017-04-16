@@ -12,30 +12,38 @@
 <body>
 
 <div class="container">
-    <form action="/shutdown">
-        <div class="well well-sm">
-            <h2>Repositories</h2>
-            <div class="panel panel-default">
-                <table class="table table-hover">
-                    <thead>
+    <div class="well well-sm">
+
+        <h2>Repositories</h2>
+
+        <div class="panel panel-default">
+
+            <form action="/addNew" method="post">
+                <input type="submit" value="Add...">
+            </form>
+
+            <table class="table table-hover">
+                <thead>
                     <tr>
                         <th>Repository</th>
                         <th>Load</th>
                     </tr>
-                    </thead>
-                    {% for x in repositories %}
+                </thead>
+
+                {% for x in repositories %}
                     <tbody>
                     <tr>
                         <th>{{ x }}</th>
                         <th><input type="checkbox" value={{ x }}></th>
                     </tr>
                     </tbody>
-                    {% endfor %}
-                </table>
-            </div>
-            <input type="submit" value="Save Settings">
+                {% endfor %}
+            </table>
         </div>
-    </form>
+        <form action="/shutdown" method="post">
+            <input type="submit" value="Save Settings">
+        </form>
+    </div>
 </div>
 
 </body>

@@ -119,7 +119,7 @@ def loadBranch():
         # build the default release data
         branchData = {'branch': 'master', 'build-date': None, 'build-time': None}
         # dump the data
-        json.dump(branchData, open(branchFile, 'w'))
+        json.dump(branchData, open(branchFile, 'w'), indent=4, sort_keys=True)
     # load the branch data
     branchData = json.load(open(branchFile, 'r'))
 
@@ -147,7 +147,7 @@ def loadBranch():
         branchData['build-time'] = latestBuildData.time().isoformat()
 
         # save out data
-        json.dump(branchData, open(branchFile, 'w'))
+        json.dump(branchData, open(branchFile, 'w'), indent=4, sort_keys=True)
 
     elif datetime.datetime(year=int(branchData['build-date'].split('-')[0]),
                            month=int(branchData['build-date'].split('-')[1]),
@@ -162,7 +162,7 @@ def loadBranch():
         branchData['build-time'] = latestBuildData.time().isoformat()
 
         # save out data
-        json.dump(branchData, open(branchFile, 'w'))
+        json.dump(branchData, open(branchFile, 'w'), indent=4, sort_keys=True)
 
     else:
         pass
