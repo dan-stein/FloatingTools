@@ -25,6 +25,8 @@ SOFTWARE.
 import os
 import logging
 
+logging.basicConfig(level=logging.INFO)
+
 # namespace
 __all__ = [
     'FLOATING_TOOLS_ROOT',

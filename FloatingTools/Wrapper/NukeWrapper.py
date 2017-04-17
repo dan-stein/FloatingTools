@@ -7,7 +7,8 @@ from AbstractApp import AbstractApplication, setWrapper
 
 
 class NukeWrapper(AbstractApplication):
-    FILE_TYPES = ['nk', 'gizmo']
+    FILE_TYPES = ['.nk', '.gizmo']
+    NAME = 'Nuke'
 
     @classmethod
     def addMenuEntry(cls, menuPath, command):

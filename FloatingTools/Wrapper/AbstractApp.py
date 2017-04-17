@@ -24,6 +24,7 @@ class AbstractApplication(object):
     Abstraction class for wrapping an application so FloatingTools can interact with the application it was loaded in.
     """
     FILE_TYPES = []
+    NAME = None
 
     @classmethod
     def addMenuEntry(cls, menuPath, command):
@@ -52,3 +53,11 @@ class AbstractApplication(object):
         :return: 
         """
         return cls.FILE_TYPES
+
+    @classmethod
+    def name(cls):
+        """
+        Get the name of the current application.
+        :return: 
+        """
+        return cls.NAME
