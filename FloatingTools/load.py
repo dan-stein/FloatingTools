@@ -38,6 +38,9 @@ def repositoryData():
                 'load': True
             }
         ]}
+
+        os.mkdir(os.path.dirname(USER))
+
         json.dump(defaultData, open(SOURCES, 'w'), indent=4, sort_keys=True)
 
     return json.load(open(SOURCES, 'r'))['repositories']
@@ -55,6 +58,9 @@ def userData():
                 'password': None
             }
         }
+
+        os.mkdir(os.path.dirname(USER))
+
         json.dump(defaultData, open(USER, 'w'), indent=4, sort_keys=True)
 
     return json.load(open(USER, 'r'))
