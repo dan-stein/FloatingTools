@@ -30,8 +30,8 @@
 
             {% if invalidLogin == False %}
             <div class="alert alert-danger">
-                Username: <input type="text" name="username">
-                Password: <input type="password" name="password">
+                Username: <input type="text" name="username" class="form-control">
+                Password: <input type="password" name="password" class="form-control">
 
                 <button type="button" data-toggle="collapse" data-target="#login_info" name="Invalid Login">Invalid
                     Login
@@ -42,8 +42,8 @@
             </div>
 
             {% else %}
-            Username: <input type="text" name="username">
-            Password: <input type="password" name="password">
+            Username: <input type="text" name="username" class="form-control">
+            Password: <input type="password" name="password" class="form-control">
             {% endif %}
             <hr>
             <input type="submit" name="login" value="Login">

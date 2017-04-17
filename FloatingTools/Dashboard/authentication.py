@@ -4,11 +4,8 @@ import FloatingTools
 # flask imports
 from flask import request, render_template, redirect
 
-# GitHub imports
-from github import Github, BadCredentialsException
-
 # package imports
-from utilities import SERVER, stopServer
+from utilities import SERVER
 
 # globals
 VALID_LOGIN = True

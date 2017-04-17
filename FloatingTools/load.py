@@ -35,8 +35,7 @@ def repositoryData():
     if not os.path.exists(SOURCES):
         defaultData = {'repositories': [
             {
-                'name': 'aldmbmtl/FloatingTools',
-                'path': 'Tools/{application}/',
+                'name': 'aldmbmtl/toolbox',
                 'load': True
             }
         ]}
@@ -112,31 +111,30 @@ def loadPipeline():
             continue
 
         # load the repository
-        loadRepository(repo['name'], repo['path'])
+        loadRepository(repo['name'])
 
 
-def loadRepository(repository, path):
+def loadRepository(repository):
     """
     Load a repository based on a template path.
     :param repository: 
-    :param path: 
     :return: 
     """
     # load repository
     FloatingTools.FT_LOOGER.info('Loading Repository: ' + repository)
     repo = FloatingTools.gitHubConnect().get_repo(repository)
 
-    # apply template wildcard and formatting
-    path = path.replace('{application}', FloatingTools.wrapper().name()).rstrip('/')
-    if not path.startswith('/'):
-        path = '/' + path
-    path = repository.split('/')[1] + path
-    FloatingTools.FT_LOOGER.info('Template Path: ' + path)
+    # # apply template wildcard and formatting
+    # path = path.replace('{application}', FloatingTools.wrapper().name()).rstrip('/')
+    # if not path.startswith('/'):
+    #     path = '/' + path
+    # path = repository.split('/')[1] + path
+    # FloatingTools.FT_LOOGER.info('Template Path: ' + path)
 
-    # loop over all the files in the build.
-    for fo in repo.get_dir_contents(path):
-        base, ext = os.path.splitext(fo.name)
-        if ext not in FloatingTools.wrapper().fileTypes():
-            continue
-        print fo.name
-        print fo.path
+    # # loop over all the files in the build.
+    # for fo in repo.get_dir_contents(path):
+    #     base, ext = os.path.splitext(fo.name)
+    #     if ext not in FloatingTools.wrapper().fileTypes():
+    #         continue
+    #     print fo.name
+    #     print fo.path
