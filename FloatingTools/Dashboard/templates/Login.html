@@ -1,19 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Floating Tools - Login</title>
+    <title>Floating Tools - Settings</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
+
 <body>
 
 <div class="container">
-    <h1>My First Bootstrap Page</h1>
-    <p>This part is inside a .container class.</p>
-    <p>The .container class provides a responsive fixed width container.</p>
+    <div class="well well-sm">
+
+        <h2>Floating Tools</h2>
+
+        <hr>
+
+        {% if loggedIn == True %}
+        <form action="/shutdown">
+            <div class="alert alert-success">
+                <strong>Logged in!</strong> Click the Back to App button and close this tab to continue.
+            </div>
+            <input type="submit" name="back-to-app" value="Back to App">
+        </form>
+        {% else %}
+        <form action="/checkLogin">
+
+            {% if invalidLogin == False %}
+            <div class="alert alert-danger">
+                Username: <input type="text" name="username">
+                Password: <input type="password" name="password">
+
+                <button type="button" data-toggle="collapse" data-target="#login_info" name="Invalid Login">Invalid
+                    Login
+                </button>
+                <div id="login_info" class="collapse">
+                    This should be the login for your GitHub account.
+                </div>
+            </div>
+
+            {% else %}
+            Username: <input type="text" name="username">
+            Password: <input type="password" name="password">
+            {% endif %}
+            <hr>
+            <input type="submit" name="login" value="Login">
+        </form>
+        {% endif %}
+    </div>
 </div>
 
 </body>

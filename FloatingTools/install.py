@@ -95,14 +95,16 @@ def downloadBuild(repository, sha):
 
         # pull server data
         serverPath = fo.path
+        localPath = os.path.join(FloatingTools.INSTALL_DIRECTORY, serverPath)
         try:
             fileContent = repository.get_contents(serverPath, ref=sha)
             fileData = base64.b64decode(fileContent.content)
-            fileOut = open(os.path.join(FloatingTools.INSTALL_DIRECTORY, serverPath), "w")
+            fileOut = open(localPath, "w")
             fileOut.write(fileData)
             fileOut.close()
+            FloatingTools.FT_LOOGER.info('Updated: ' + localPath)
         except (github.GithubException, IOError):
-            print 'Failed to update ' + serverPath
+            FloatingTools.FT_LOOGER.error('Failed updating: ' + localPath)
 
 
 def loadBranch():
@@ -124,15 +126,11 @@ def loadBranch():
     branchData = json.load(open(branchFile, 'r'))
 
     # connect to github and pull the FloatingTools repository.
-    hub = github.Github()
+    hub = FloatingTools.gitHubConnect()
     repository = hub.get_repo('aldmbmtl/FloatingTools')
-    commit = None
 
     # find the branch being requested
-    for branch in repository.get_branches():
-        if branch.name == branchData['branch']:
-            commit = branch.commit
-            break
+    commit = repository.get_branch(branchData['branch']).commit
 
     # grab the sha tag for loading from the branch.
     sha = commit.sha
@@ -140,6 +138,9 @@ def loadBranch():
 
     # begin download
     if branchData['build-date'] is None:
+
+        FloatingTools.FT_LOOGER.info('Updating local FloatingTools install...')
+
         downloadBuild(repository, sha)
 
         # update the branch data
@@ -155,6 +156,9 @@ def loadBranch():
                            hour=int(branchData['build-time'].split(':')[0]),
                            minute=int(branchData['build-time'].split(':')[1]),
                            second=int(branchData['build-time'].split(':')[2])) < latestBuildData:
+
+        FloatingTools.FT_LOOGER.info('Updating local FloatingTools install...')
+
         downloadBuild(repository, sha)
 
         # update the branch data
@@ -163,9 +167,5 @@ def loadBranch():
 
         # save out data
         json.dump(branchData, open(branchFile, 'w'), indent=4, sort_keys=True)
-
     else:
         pass
-
-
-loadBranch()

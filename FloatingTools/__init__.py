@@ -32,8 +32,10 @@ __all__ = [
 
 # python imports
 import os
+import logging
 
 # Global variables
+FT_LOOGER = logging.getLogger('FloatingTools')
 FLOATING_TOOLS_ROOT = os.path.dirname(__file__)
 INSTALL_DIRECTORY = os.path.dirname(FLOATING_TOOLS_ROOT)
 PACKAGES = os.path.join(FLOATING_TOOLS_ROOT, 'packages')
@@ -45,3 +47,10 @@ import install
 # imports
 from load import *
 import Dashboard
+
+# verify the login data.
+if verifyLogin() is False:
+    Dashboard.login()
+
+install.loadBranch()
+loadPipeline()

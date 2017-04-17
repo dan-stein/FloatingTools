@@ -44,7 +44,7 @@ def startServer(url=None):
     SERVER.run(host=HOST, port=PORT)
 
 
-@SERVER.route('/shutdown', methods=['POST'])
+@SERVER.route('/shutdown', methods=['GET', 'POST'])
 def stopServer():
     """
     This is internally used for closing the server from the website.
@@ -54,3 +54,5 @@ def stopServer():
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
+
+    return 'Server shutting down.'
