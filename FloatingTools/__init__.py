@@ -21,18 +21,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+# python imports
+import os
+import logging
+
 # namespace
 __all__ = [
     'FLOATING_TOOLS_ROOT',
     'INSTALL_DIRECTORY',
     'PACKAGES',
     'DATA',
-    'Dashboard'
+    'Dashboard',
+    'Wrapper'
 ]
-
-# python imports
-import os
-import logging
 
 # Global variables
 FT_LOOGER = logging.getLogger('FloatingTools')
@@ -40,6 +41,7 @@ FLOATING_TOOLS_ROOT = os.path.dirname(__file__)
 INSTALL_DIRECTORY = os.path.dirname(FLOATING_TOOLS_ROOT)
 PACKAGES = os.path.join(FLOATING_TOOLS_ROOT, 'packages')
 DATA = os.path.join(FLOATING_TOOLS_ROOT, 'data')
+WRAPPER = None
 
 # validate the install
 import install
@@ -53,4 +55,5 @@ if verifyLogin() is False:
     Dashboard.login()
 
 install.loadBranch()
+from Wrapper import *
 loadPipeline()

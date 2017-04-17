@@ -16,6 +16,8 @@ USER = os.path.join(FloatingTools.DATA, 'User.json')
 SOURCES = os.path.join(FloatingTools.DATA, 'Sources.json')
 HUB = None
 
+if not os.path.exists(os.path.dirname(USER)):
+    os.mkdir(os.path.dirname(USER))
 
 def gitHubConnect():
     """
@@ -38,9 +40,6 @@ def repositoryData():
                 'load': True
             }
         ]}
-
-        os.mkdir(os.path.dirname(USER))
-
         json.dump(defaultData, open(SOURCES, 'w'), indent=4, sort_keys=True)
 
     return json.load(open(SOURCES, 'r'))['repositories']
@@ -58,9 +57,6 @@ def userData():
                 'password': None
             }
         }
-
-        os.mkdir(os.path.dirname(USER))
-
         json.dump(defaultData, open(USER, 'w'), indent=4, sort_keys=True)
 
     return json.load(open(USER, 'r'))
@@ -107,3 +103,4 @@ def loadPipeline():
     Main pipeline loading function.
     :return: 
     """
+    print FloatingTools.wrapper()

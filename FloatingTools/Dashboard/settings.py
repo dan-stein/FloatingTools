@@ -14,7 +14,7 @@ def renderSettings():
     Render settings page to configure Floating Tools
     :return: 
     """
-    repositories = FloatingTools.repositorySettings()
+    repositories = FloatingTools.repositoryData()
 
     return render_template('Settings.html', repositories=repositories)
 
