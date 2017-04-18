@@ -48,8 +48,19 @@ def _save():
     :return: 
     """
 
-    for arg in request.args:
-        print arg
+    sources = FloatingTools.loadSources()
+
+    added = False
+    for item in sources['repositories']:
+        if item['name'] in request.args:
+            item['load'] = True
+        elif item['name'] == request.args.get('myToolbox'):
+            added = True
+        else:
+            item['load'] = False
+
+    if not added:
+        sources['repositories'].append(dict(name=request.args.get('myToolbox'), load=True))
 
     return redirect('/settings')
 
@@ -97,6 +108,33 @@ def _addPath():
     repo.update_file('/toolbox.json', message, json.dumps(publishedPaths, indent=4, sort_keys=True), f.sha)
 
     return redirect('/settings?myToolbox=' + toolBox)
+
+
+@SERVER.route('/addToolbox')
+def _addToolBox():
+    """
+    --private--
+    :return: 
+    """
+    repoData = FloatingTools.loadSources()
+    newToolBox = request.args.get('newToolbox').rstrip('/')
+
+    add = True
+
+    # loop over repo
+    for index, repo in enumerate(repoData['repositories']):
+        if repo['name'] == newToolBox:
+            if 'remove' in request.args:
+                del repoData['repositories'][index]
+            add = False
+            break
+    if add:
+        repoData['repositories'].append(dict(name=newToolBox, load=True))
+
+    # update the local data
+    FloatingTools.updateSources(repoData)
+
+    return redirect('/settings?myToolbox=' + request.args.get('toolbox'))
 
 
 def settings():

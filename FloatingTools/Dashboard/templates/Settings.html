@@ -40,25 +40,19 @@ function removeToolBoxPath() {
     }
 }
 
-function addToolBoxPath() {
-    var e = document.getElementById("myToolbox");
-    var newPath = document.getElementById("NewPath");
-    window.location = "/addToolboxPath?toolbox=" + e.options[e.selectedIndex].value + "&path=" + newPath.value;
-}
-
 function addToolBox() {
     var e = document.getElementById("myToolbox");
-    var newPath = document.getElementById("NewPath");
-    window.location = "/addToolboxPath?toolbox=" + e.options[e.selectedIndex].value + "&path=" + newPath.value;
+    var newToolBox = document.getElementById("NewToolbox").value;
+    window.location = "/addToolbox?toolbox=" +  e.options[e.selectedIndex].value + "&newToolbox=" + newToolBox;
 }
 
 function removeToolBox() {
     var e = document.getElementById("myToolbox");
-    var radios = document.getElementsByName('paths');
+    var radios = document.getElementsByName('toolboxes');
 
     for (var i = 0, length = radios.length; i < length; i++) {
         if (radios[i].checked) {
-            window.location = "/addToolboxPath?toolbox=" + e.options[e.selectedIndex].value + "&path=" + radios[i].value + "&remove=True";
+            window.location = "/addToolbox?toolbox=" + e.options[e.selectedIndex].value + "&newToolbox=" + radios[i].value + "&remove=True";
             break;
         }
     }
@@ -80,7 +74,7 @@ function removeToolBox() {
                 <span class="help-block">/path/to/your/tools</span>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="addToolBoxPath()">Add</button>
+                <button type="button" class="btn btn-primary btn-xs" onclick="addToolBoxPath()">Add</button>
             </div>
         </div>
     </div>
@@ -102,7 +96,7 @@ function removeToolBox() {
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="removeToolBoxPath()">Remove</button>
+                <button type="button" class="btn btn-primary btn-xs" onclick="removeToolBoxPath()">Remove</button>
             </div>
         </div>
     </div>
@@ -120,72 +114,113 @@ function removeToolBox() {
                 <span class="help-block">username/repository</span>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="addToolBox()">Add</button>
+                <button type="button" class="btn btn-primary btn-xs" onclick="addToolBox()">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="RemoveToolbox" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Remove toolbox path</h4>
+            </div>
+            <div class="modal-body">
+                <form id="ToolBoxRemove">
+                    {% for repository in repositories %}
+                    <input type="radio" name="toolboxes" value={{ repository.name }}/><label>{{ repository.name
+                    }}</label>
+                    <br>
+                    {% endfor %}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-xs" onclick="removeToolBox()">Remove</button>
             </div>
         </div>
     </div>
 </div>
 
 <div class="container">
-    <header>
-        <h2>Floating Tools Settings</h2>
-    </header>
+    <div class="well well-sm">
+        <header>
+            <h2>Floating Tools Settings</h2>
+        </header>
+        <form action="/saveSettings">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4>My Toolbox <img src="http://www.hatfieldfx.com/wp-content/uploads/2017/04/toolbox.png"
+                                        width="25"></h4>
+                </div>
+                <div class="panel-body">
+                    <select name="myToolbox" class="form-control" id="myToolbox" onchange="validateToolBox()">
+                        {% for repository in myRepositories %}
+                        {% if repository.name == myToolbox %}
+                        <option value={{ repository.name }} selected="selected"> {{ repository.name }}</option>
+                        {% else %}
+                        <option value={{ repository.name }}> {{ repository.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    <hr>
+                    {% if myToolboxMap == False %}
+                    <input type="button" class="btn btn-info btn-md" value="Set up {{ myToolbox }} as Toolbox"
+                           onclick="setupToolBox()">
+                    {% else %}
+                    <label>Load Paths</label>
+                    <ul>
+                        {% for path in myToolboxMap.paths %}
+                        <li>{{ path }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
 
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <h4>My Toolbox</h4>
-            <select class="form-control" id="myToolbox" onchange="validateToolBox()">
-                {% for repository in myRepositories %}
-                {% if repository.name == myToolbox %}
-                <option value={{ repository.name }} selected="selected"> {{ repository.name }}</option>
-                {% else %}
-                <option value={{ repository.name }}> {{ repository.name }}</option>
-                {% endif %}
-                {% endfor %}
-            </select>
-        </div>
-        <div class="panel-body">
+                </div>
+                <div class="panel-footer">
+                    <div class="btn-group">
+                        <input type="button" class="btn btn-success btn-xs" value="Add" data-toggle="modal"
+                               data-target="#AddPath">
+                        <input type="button" class="btn btn-danger btn-xs" value="Remove" data-toggle="modal"
+                               data-target="#RemovePath">
+                    </div>
+                </div>
+            </div>
 
-            {% if myToolboxMap == False %}
-            <input type="button" value="Set up {{ myToolbox }} as Toolbox" onclick="setupToolBox()">
-            {% else %}
-            {% for path in myToolboxMap.paths %}
-            <input type="text" class="form-control" name="path{{ loop.index }}" value={{ path }}/>
-            {% endfor %}
-            {% endif %}
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4>Network Toolboxes <img
+                            src="https://cdn1.iconfinder.com/data/icons/real-estate-set-4/512/20-512.png" width="20">
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    {% for repository in repositories %}
+                    <label>
+                        {% if repository.load == True %}
+                        <input type="checkbox" name={{ repository.name }} checked/> {{ repository.name }}
+                        {% else %}
+                        <input type="checkbox" name={{ repository.name }}/> {{ repository.name }}
+                        {% endif %}
+                    </label>
+                    <br>
+                    {% endfor %}
+                </div>
+                <div class="panel-footer">
+                    <div class="btn-group">
+                        <input type="button" class="btn btn-success btn-xs" value="Add" data-toggle="modal"
+                               data-target="#AddToolbox">
+                        <input type="button" class="btn btn-danger btn-xs" value="Remove" data-toggle="modal"
+                               data-target="#RemoveToolbox">
+                    </div>
+                </div>
+            </div>
 
-        </div>
-        <div class="panel-footer">
-            <input type="button" value="Add" data-toggle="modal" data-target="#AddPath">
-            <input type="button" value="Remove" data-toggle="modal" data-target="#RemovePath">
-        </div>
+            <footer>
+                <input type="submit" class="btn btn-primary btn-xs" name="saveSettings" value="Save"/>
+            </footer>
+        </form>
     </div>
-
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <h4>Network Toolboxes</h4>
-        </div>
-        <div class="panel-body">
-                {% for repository in repositories %}
-            <label>
-                {% if repository.load == True %}
-                <input type="checkbox" name={{ repository.name }} checked/> {{ repository.name }}
-                {% else %}
-                <input type="checkbox" name={{ repository.name }}/> {{ repository.name }}
-                {% endif %}
-            </label>
-            <br>
-                {% endfor %}
-        </div>
-        <div class="panel-footer">
-            <input type="button" value="Add" data-toggle="modal" data-target="#AddToolbox">
-            <input type="button" value="Remove" data-toggle="modal" data-target="#RemoveToolbox">
-        </div>
-    </div>
-
-    <footer>
-        <input type="button" name="saveSettings" value="Save"/>
-    </footer>
 </div>
 
 </body>

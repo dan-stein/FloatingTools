@@ -44,6 +44,14 @@ def repositoryData():
     return json.load(open(SOURCES, 'r'))['repositories']
 
 
+def loadSources():
+    return json.load(open(SOURCES, 'r'))
+
+
+def updateSources(data):
+    json.dump(data, open(SOURCES, 'w'), indent=4, sort_keys=True)
+
+
 def userData():
     """
     Load the User.json contents.
@@ -121,16 +129,16 @@ def loadRepository(repository):
     :return: 
     """
     # load repository
-    FloatingTools.FT_LOOGER.info('Loading Repository: ' + repository)
-    repo = FloatingTools.gitHubConnect().get_repo(repository)
-
+    # FloatingTools.FT_LOOGER.info('Loading Repository: ' + repository)
+    # repo = FloatingTools.gitHubConnect().get_repo(repository)
+    #
     # # apply template wildcard and formatting
     # path = path.replace('{application}', FloatingTools.wrapper().name()).rstrip('/')
     # if not path.startswith('/'):
     #     path = '/' + path
     # path = repository.split('/')[1] + path
     # FloatingTools.FT_LOOGER.info('Template Path: ' + path)
-
+    #
     # # loop over all the files in the build.
     # for fo in repo.get_dir_contents(path):
     #     base, ext = os.path.splitext(fo.name)
