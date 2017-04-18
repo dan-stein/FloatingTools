@@ -63,25 +63,6 @@ except ImportError:
     import flask
 
 
-def githubDate2Datetime(githubDate):
-    """
-    --private--
-    :param githubDate: 
-    :return: 
-    """
-    splitGHTime = githubDate.split(' ')
-    splitGHSmallTime = splitGHTime[4].split(':')
-    converted = datetime.datetime(
-        day=int(splitGHTime[1]),
-        month=strptime(splitGHTime[2], '%b').tm_mon,
-        year=int(splitGHTime[3]),
-        hour=int(splitGHSmallTime[0]),
-        minute=int(splitGHSmallTime[1]),
-        second=int(splitGHSmallTime[2])
-    )
-    return converted
-
-
 def downloadBuild(repository, sha):
     """
     Download the latest FloatingTools build from the passed sha.
@@ -119,7 +100,11 @@ def loadBranch():
     # create the file if it doesnt exists.
     if not os.path.exists(branchFile):
         # build the default release data
-        branchData = {'branch': 'master', 'build-date': None, 'build-time': None}
+        branchData = {'dev': False,
+                      'devBranch': 'master',
+                      'release': 'latest',
+                      'installed': None
+                      }
         # dump the data
         json.dump(branchData, open(branchFile, 'w'), indent=4, sort_keys=True)
     # load the branch data
@@ -129,12 +114,17 @@ def loadBranch():
     hub = FloatingTools.gitHubConnect()
     repository = hub.get_repo('aldmbmtl/FloatingTools')
 
-    # find the branch being requested
-    commit = repository.get_branch(branchData['branch']).commit
+    if branchData['dev']:
+        # find the branch being requested
+        commit = repository.get_branch(branchData['branch']).commit
+
+    else:
+        # load in the release data from the repository
+        if branchData['release'] != branchData['installed']:
+            pass
 
     # grab the sha tag for loading from the branch.
     sha = commit.sha
-    latestBuildData = githubDate2Datetime(commit.stats.last_modified)
 
     # begin download
     if branchData['build-date'] is None:

@@ -56,6 +56,7 @@ import Dashboard
 if verifyLogin() is False:
     Dashboard.login()
 
-install.loadBranch()
+# install.loadBranch()
 from Wrapper import *
-loadPipeline()
+
+loadTools()

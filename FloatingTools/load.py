@@ -105,9 +105,9 @@ def verifyLogin():
         return False
 
 
-def loadPipeline():
+def loadTools():
     """
-    Main pipeline loading function.
+    Main tool loading function.
     :return: 
     """
     # pull repository data
@@ -129,8 +129,15 @@ def loadRepository(repository):
     :return: 
     """
     # load repository
-    # FloatingTools.FT_LOOGER.info('Loading Repository: ' + repository)
-    # repo = FloatingTools.gitHubConnect().get_repo(repository)
+    FloatingTools.FT_LOOGER.info('Loading Repository: ' + repository)
+    repo = FloatingTools.gitHubConnect().get_repo(repository)
+
+    # for i in sorted(dir(repo)):
+    #     if i.startswith("_"):
+    #         continue
+    #     print i
+    #
+    # print repo.get_contents('/toolbox.json')
     #
     # # apply template wildcard and formatting
     # path = path.replace('{application}', FloatingTools.wrapper().name()).rstrip('/')

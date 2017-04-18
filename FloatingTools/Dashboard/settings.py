@@ -22,6 +22,11 @@ def renderSettings():
 
     myToolbox = myRepositories[0].name
 
+    for repo in myRepositories:
+        if (FloatingTools.gitHubConnect().get_user().login + '/' + repo.name) in \
+                [source['name'] for source in FloatingTools.loadSources()['repositories']]:
+            myToolbox = repo.name
+
     for arg in request.args:
         if arg == 'myToolbox':
             myToolbox = request.args[arg]
@@ -49,20 +54,28 @@ def _save():
     """
 
     sources = FloatingTools.loadSources()
+    localRepoName = FloatingTools.gitHubConnect().get_user().login + '/' + request.args.get('myToolbox')
+    localRepo = None
 
     added = False
     for item in sources['repositories']:
         if item['name'] in request.args:
             item['load'] = True
-        elif item['name'] == request.args.get('myToolbox'):
+        elif item['name'] == localRepoName:
+            localRepo = item
             added = True
         else:
             item['load'] = False
 
     if not added:
-        sources['repositories'].append(dict(name=request.args.get('myToolbox'), load=True))
+        localRepo = dict(name=localRepoName, load=True)
+        sources['repositories'].append(localRepo)
 
-    return redirect('/settings')
+    localRepo['load'] = (localRepoName + '/') in request.args
+
+    FloatingTools.updateSources(sources)
+
+    return redirect('/settings?myToolbox=' + request.args.get('myToolbox'))
 
 
 @SERVER.route('/setupToolbox')
@@ -78,7 +91,7 @@ def _setUpToolbox():
                      json.dumps({'paths': ['/tools/{Applications}']}, indent=4, sort_keys=True)
                      )
 
-    return redirect('/settings')
+    return redirect('/settings?myToolbox=' + request.args.get('toolbox'))
 
 
 @SERVER.route('/addToolboxPath')
