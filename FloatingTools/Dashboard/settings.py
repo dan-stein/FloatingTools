@@ -8,7 +8,7 @@ from flask import request, render_template, redirect
 from utilities import SERVER
 
 # python imports
-import json
+import json, os
 
 
 @SERVER.route('/settings', methods=['GET', 'POST'])
@@ -20,16 +20,26 @@ def renderSettings():
     repositories = FloatingTools.repositoryData()
     myRepositories = FloatingTools.gitHubConnect().get_user().get_repos()
 
-    myToolbox = myRepositories[0].name
+    myToolbox = request.args.get('myToolbox')
+    if not myToolbox:
+        myToolbox = myRepositories[0].name
 
     for repo in myRepositories:
         if (FloatingTools.gitHubConnect().get_user().login + '/' + repo.name) in \
                 [source['name'] for source in FloatingTools.loadSources()['repositories']]:
             myToolbox = repo.name
 
-    for arg in request.args:
-        if arg == 'myToolbox':
-            myToolbox = request.args[arg]
+    ftRepo = FloatingTools.gitHubConnect().get_repo('aldmbmtl/FloatingTools')
+
+    branches = []
+    for branch in ftRepo.get_branches():
+        branches.append(branch.name)
+
+    releases = []
+    for release in ftRepo.get_tags():
+        releases.append(release.name)
+    releases = sorted(releases)
+    releases.insert(0, 'Latest')
 
     map = False
     try:
@@ -38,11 +48,19 @@ def renderSettings():
     except:
         pass
 
+    branchFile = os.path.join(FloatingTools.DATA, 'Branch.json')
+    branchData = json.load(open(branchFile, 'r'))
+
     return render_template('Settings.html',
                            myRepositories=myRepositories,
                            myToolbox=myToolbox,
                            myToolboxMap=map,
-                           repositories=repositories
+                           repositories=repositories,
+                           dev=branchData['dev'],
+                           currentBranch=branchData['devBranch'],
+                           currentRelease=branchData['release'],
+                           branches=branches,
+                           releases=releases
                            )
 
 
@@ -74,6 +92,20 @@ def _save():
     localRepo['load'] = (localRepoName + '/') in request.args
 
     FloatingTools.updateSources(sources)
+
+    branchFile = os.path.join(FloatingTools.DATA, 'Branch.json')
+    branchData = json.load(open(branchFile, 'r'))
+
+    branchData['dev'] = False
+
+    for var in ['dev', 'devBranch', 'release']:
+        value = request.args.get(var)
+        if value:
+            if value == 'on':
+                value = True
+            branchData[var] = value
+
+    json.dump(branchData, open(branchFile, 'w'), indent=4, sort_keys=True)
 
     return redirect('/settings?myToolbox=' + request.args.get('myToolbox'))
 

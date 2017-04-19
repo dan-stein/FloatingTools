@@ -219,6 +219,56 @@ function removeToolBox() {
                 </div>
             </div>
 
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4>
+                        Floating Tools Install
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <label>Release:</label>
+                    <select name="release" class="form-control" id="release">
+                        {% for release in releases %}
+                        {% if release == currentRelease %}
+                        <option value={{ release }} selected>{{ release }}</option>
+                        {% else %}
+                        <option value={{ release }}>{{ release }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    <hr>
+                    <div class="alert alert-danger">
+                        <label>
+                            {% if dev == True %}
+                            <input type="checkbox" name="dev" checked> Development Mode
+                            {% else %}
+                            <input type="checkbox" name="dev"> Development Mode
+                            {% endif %}
+                        </label>
+                        <span class="help-block">By activating this section, are telling Floating Tools to pull from the
+                            live FloatingTools repository branches. There is no guarantee that this is stable code
+                            because these branches are used for testing. If this is not what you want, uncheck the box
+                            above and select the release you would like to load from. If this is intended, relaunch
+                            Floating Tools to load into the development environment.
+                        </span>
+                        <br>
+                        <label>Branch:</label>
+                        <select name="devBranch" class="form-control" id="devBranch">
+                            {% for branch in branches%}
+                            {% if branch == currentBranch %}
+                            <option value={{ branch }} selected>{{ branch }}</option>
+                            {% else %}
+                            <option value={{ branch }}>{{ branch }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <strong>Danger!</strong> This will overwrite your existing FloatingTools install. Be sure
+                        you really want to do this.
+                    </div>
+                </div>
+            </div>
+
             <footer>
                 <input type="submit" class="btn btn-primary btn-xs" name="saveSettings" value="Save"/>
             </footer>

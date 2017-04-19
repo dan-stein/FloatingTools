@@ -88,9 +88,9 @@ def downloadBuild(repository, sha):
             FloatingTools.FT_LOOGER.error('Failed updating: ' + localPath)
 
 
-def loadBranch():
+def loadVersion():
     """
-    Load the branch information from the Branch.json file.
+    Load the build information from the Branch.json file for the FloatingTools version.
     :return: 
     """
     if not os.path.exists(FloatingTools.DATA):
@@ -114,48 +114,44 @@ def loadBranch():
     hub = FloatingTools.gitHubConnect()
     repository = hub.get_repo('aldmbmtl/FloatingTools')
 
+    version = None
+    message = ""
+
     if branchData['dev']:
         # find the branch being requested
-        commit = repository.get_branch(branchData['branch']).commit
+        commit = repository.get_branch(branchData['devBranch']).commit
+        version = commit.sha
+
+        message = "Loading in DEV branch: " + branchData['devBranch']
 
     else:
         # load in the release data from the repository
         if branchData['release'] != branchData['installed']:
-            pass
 
-    # grab the sha tag for loading from the branch.
-    sha = commit.sha
+            # load all releases
+            releases = {}
+            for release in repository.get_tags():
+                releases[release.name] = release.commit.sha
+
+            if branchData['release'] == 'latest':
+                # find the latest version
+                version = releases[max(releases)]
+                message = "Downloading FloatingTools " + max(releases)
+            else:
+                version = releases[branchData['release']]
+                message = "Downloading FloatingTools " + branchData['release']
 
     # begin download
-    if branchData['build-date'] is None:
+    if version:
+        FloatingTools.FT_LOOGER.info(message)
 
-        FloatingTools.FT_LOOGER.info('Updating local FloatingTools install...')
+        # downloadBuild(repository, version)
 
-        downloadBuild(repository, sha)
+        FloatingTools.FT_LOOGER.info("Download complete.")
 
-        # update the branch data
-        branchData['build-date'] = latestBuildData.date().isoformat()
-        branchData['build-time'] = latestBuildData.time().isoformat()
+        if not branchData['dev']:
+            # update the branch data
+            branchData['installed'] = branchData['release']
 
-        # save out data
-        json.dump(branchData, open(branchFile, 'w'), indent=4, sort_keys=True)
-
-    elif datetime.datetime(year=int(branchData['build-date'].split('-')[0]),
-                           month=int(branchData['build-date'].split('-')[1]),
-                           day=int(branchData['build-date'].split('-')[2]),
-                           hour=int(branchData['build-time'].split(':')[0]),
-                           minute=int(branchData['build-time'].split(':')[1]),
-                           second=int(branchData['build-time'].split(':')[2])) < latestBuildData:
-
-        FloatingTools.FT_LOOGER.info('Updating local FloatingTools install...')
-
-        downloadBuild(repository, sha)
-
-        # update the branch data
-        branchData['build-date'] = latestBuildData.date().isoformat()
-        branchData['build-time'] = latestBuildData.time().isoformat()
-
-        # save out data
-        json.dump(branchData, open(branchFile, 'w'), indent=4, sort_keys=True)
-    else:
-        pass
+            # save out data
+            json.dump(branchData, open(branchFile, 'w'), indent=4, sort_keys=True)
