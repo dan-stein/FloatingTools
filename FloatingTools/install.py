@@ -103,12 +103,19 @@ def loadVersion():
         branchData = {'dev': False,
                       'devBranch': 'master',
                       'release': 'latest',
-                      'installed': None
+                      'installed': None,
+                      'collaborator': False
                       }
         # dump the data
         json.dump(branchData, open(branchFile, 'w'), indent=4, sort_keys=True)
     # load the branch data
     branchData = json.load(open(branchFile, 'r'))
+
+    if branchData['collaborator']:
+        FloatingTools.FT_LOOGER.info("Launched in Collaborator mode. You are responsible for VCS control and syncing "
+                                     "with HatfieldFX, LLC repository for FloatingTools. Repository public address "
+                                     "aldmbmtl/FloatingTools. Thank you for helping us make FT better!")
+        return
 
     # connect to github and pull the FloatingTools repository.
     hub = FloatingTools.gitHubConnect()

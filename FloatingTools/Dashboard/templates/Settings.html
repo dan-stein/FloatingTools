@@ -265,6 +265,21 @@ function removeToolBox() {
                         <br>
                         <strong>Danger!</strong> This will overwrite your existing FloatingTools install. Be sure
                         you really want to do this.
+
+                        <hr>
+
+                        <label>
+                            <!--{% if dev == True %}-->
+                            <input type="checkbox" name="dev" checked> Collaborator
+                            <!--{% else %}-->
+                            <!--<input type="checkbox" name="dev"> Collaborator-->
+                            <!--{% endif %}-->
+                        </label>
+
+                        <span class="help-block">If you are developing the FloatingTools build for HatfieldFX LLC as
+                            a collaborator, check the Collaborator box and that will shut off all release syncing. You are
+                            responsible for setting up FloatingTools in a git environment inside your IDE of choice.
+                        </span>
                     </div>
                 </div>
             </div>
