@@ -39,6 +39,7 @@ def renderSettings():
     for release in ftRepo.get_tags():
         releases.append(release.name)
     releases = sorted(releases)
+    releases.reverse()
     releases.insert(0, 'latest')
 
     map = False

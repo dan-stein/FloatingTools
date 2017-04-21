@@ -222,7 +222,7 @@ def loadVersion():
     if version:
         FloatingTools.FT_LOOGER.info(message)
 
-        # downloadBuild(repository, version)
+        downloadBuild(repository, version)
 
         FloatingTools.FT_LOOGER.info("Download complete.")
 
