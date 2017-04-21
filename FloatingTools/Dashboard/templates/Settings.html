@@ -237,49 +237,62 @@ function removeToolBox() {
                         {% endfor %}
                     </select>
                     <hr>
-                    <div class="alert alert-danger">
-                        <label>
-                            {% if dev == True %}
-                            <input type="checkbox" name="dev" checked> Development Mode
-                            {% else %}
-                            <input type="checkbox" name="dev"> Development Mode
-                            {% endif %}
-                        </label>
-                        <span class="help-block">By activating this section, are telling Floating Tools to pull from the
-                            live FloatingTools repository branches. There is no guarantee that this is stable code
-                            because these branches are used for testing. If this is not what you want, uncheck the box
-                            above and select the release you would like to load from. If this is intended, relaunch
-                            Floating Tools to load into the development environment.
-                        </span>
-                        <br>
-                        <label>Branch:</label>
-                        <select name="devBranch" class="form-control" id="devBranch">
-                            {% for branch in branches%}
-                            {% if branch == currentBranch %}
-                            <option value={{ branch }} selected>{{ branch }}</option>
-                            {% else %}
-                            <option value={{ branch }}>{{ branch }}</option>
-                            {% endif %}
-                            {% endfor %}
-                        </select>
-                        <br>
-                        <strong>Danger!</strong> This will overwrite your existing FloatingTools install. Be sure
-                        you really want to do this.
+                    <a href="#advanced" data-toggle="collapse">Advanced Install Settings</a>
+                    <div id="advanced" class="collapse">
+                        <div class="alert alert-danger">
+                            <label>
+                                {% if dev == True %}
+                                <input type="checkbox" name="dev" checked> Development Mode
+                                {% else %}
+                                <input type="checkbox" name="dev"> Development Mode
+                                {% endif %}
+                            </label>
+                            <span class="help-block">By activating this section, are telling Floating Tools to pull from the
+                                live FloatingTools repository branches. There is no guarantee that this is stable code
+                                because these branches are used for testing. If this is not what you want, uncheck the box
+                                above and select the release you would like to load from. If this is intended, relaunch
+                                Floating Tools to load into the development environment.
+                            </span>
+                            <br>
+                            <label>Branch:</label>
+                            <select name="devBranch" class="form-control" id="devBranch">
+                                {% for branch in branches%}
+                                {% if branch == currentBranch %}
+                                <option value={{ branch }} selected>{{ branch }}</option>
+                                {% else %}
+                                <option value={{ branch }}>{{ branch }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                            <br>
+                            <strong>Danger!</strong> This will overwrite your existing FloatingTools install. Be sure
+                            you really want to do this.
 
-                        <hr>
+                            <hr>
 
-                        <label>
-                            <!--{% if dev == True %}-->
-                            <input type="checkbox" name="dev" checked> Collaborator
-                            <!--{% else %}-->
-                            <!--<input type="checkbox" name="dev"> Collaborator-->
-                            <!--{% endif %}-->
-                        </label>
+                            <label>
+                                {% if dev == True %}
+                                <input type="checkbox" name="collaborator" checked> Collaborator
+                                {% else %}
+                                <input type="checkbox" name="collaborator"> Collaborator
+                                {% endif %}
+                            </label>
 
-                        <span class="help-block">If you are developing the FloatingTools build for HatfieldFX LLC as
-                            a collaborator, check the Collaborator box and that will shut off all release syncing. You are
-                            responsible for setting up FloatingTools in a git environment inside your IDE of choice.
-                        </span>
+                            <span class="help-block">If you are developing the FloatingTools build for HatfieldFX LLC as
+                                a collaborator, check the Collaborator box and that will shut off all release syncing. You are
+                                responsible for setting up FloatingTools in a git environment inside your IDE of choice.
+                                We use PyCharm and highly recommend it!
+                                <hr>
+                                <a href="https://www.jetbrains.com/pycharm/">
+                                    <img src="https://d3nmt5vlzunoa1.cloudfront.net/pycharm/files/2015/12/PyCharm_400x400_Twitter_logo_white.png"
+                                         width="50" height="50">
+                                </a>
+                                <a href="https://github.com/aldmbmtl/FloatingTools">
+                                    <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
+                                         height="50">
+                                </a>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

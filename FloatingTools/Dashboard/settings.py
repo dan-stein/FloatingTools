@@ -39,7 +39,7 @@ def renderSettings():
     for release in ftRepo.get_tags():
         releases.append(release.name)
     releases = sorted(releases)
-    releases.insert(0, 'Latest')
+    releases.insert(0, 'latest')
 
     map = False
     try:
@@ -60,7 +60,8 @@ def renderSettings():
                            currentBranch=branchData['devBranch'],
                            currentRelease=branchData['release'],
                            branches=branches,
-                           releases=releases
+                           releases=releases,
+                           collaborator=branchData['collaborator'],
                            )
 
 
@@ -73,23 +74,21 @@ def _save():
 
     sources = FloatingTools.loadSources()
     localRepoName = FloatingTools.gitHubConnect().get_user().login + '/' + request.args.get('myToolbox')
-    localRepo = None
 
-    added = False
+    savedRepos = [item['name'] for item in sources['repositories']]
     for item in sources['repositories']:
         if item['name'] in request.args:
             item['load'] = True
-        elif item['name'] == localRepoName:
-            localRepo = item
-            added = True
         else:
             item['load'] = False
+        if item['name'] == localRepoName:
+            localRepo = item
 
-    if not added:
+    if localRepoName not in savedRepos:
         localRepo = dict(name=localRepoName, load=True)
         sources['repositories'].append(localRepo)
-
-    localRepo['load'] = (localRepoName + '/') in request.args
+    else:
+        localRepo['load'] = (localRepoName + '/') in request.args
 
     FloatingTools.updateSources(sources)
 
@@ -97,8 +96,9 @@ def _save():
     branchData = json.load(open(branchFile, 'r'))
 
     branchData['dev'] = False
+    branchData['collaborator'] = False
 
-    for var in ['dev', 'devBranch', 'release']:
+    for var in ['dev', 'devBranch', 'release', 'collaborator']:
         value = request.args.get(var)
         if value:
             if value == 'on':

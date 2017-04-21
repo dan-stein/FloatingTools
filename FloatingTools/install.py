@@ -4,12 +4,11 @@ Validate the dependencies are installed.
 # python imports
 import os
 import sys
+import imp
 import json
 import urllib
 import base64
-import datetime
 import subprocess
-from time import strptime
 
 # FloatingTools imports
 import FloatingTools
@@ -61,6 +60,77 @@ except ImportError:
 
     # verify install
     import flask
+
+
+def cloudImport(repoAddress, serverPath, userNamespace=True):
+    """
+    Loads a python module from a github server without downloading it.
+    :param repoAddress: 
+    :param serverPath: 
+    :param userNamespace: 
+    :return: 
+    """
+    repository = FloatingTools.gitHubConnect().get_repo(repoAddress)
+
+    # repository name
+    repoOwnerName, repoName = repoAddress.split('/')
+
+    # level variable
+    level = None
+    if userNamespace:
+        # make python package for this repository
+        if repoOwnerName not in sys.modules:
+            repoModule = imp.new_module(repoOwnerName)
+            sys.modules[repoOwnerName] = repoModule
+        else:
+            repoModule = sys.modules[repoOwnerName]
+
+    # path to module
+    modulePath = repoName + '/' + serverPath
+
+    # begin looping over the path
+    for item in modulePath.split('/'):
+        if item == '':
+            continue
+
+        item = item.replace('.py', '')
+        if level is None:
+            if item not in sys.modules:
+                level = imp.new_module(item)
+                sys.modules[item] = level
+            else:
+                level = sys.modules[item]
+            continue
+        try:
+            level = level.__dict__[item]
+        except KeyError:
+            subModule = imp.new_module(item)
+            level.__dict__[item] = subModule
+            level = subModule
+
+    exec repository.get_contents(serverPath).decoded_content in level.__dict__
+
+    return level
+
+
+def cloudImportDirectory(repoAddress, serverPath, userNamespace=True):
+    """
+    Import a directory from a server directory.
+    :param repoAddress: 
+    :param serverPath: 
+    :param userNamespace: 
+    :return: 
+    """
+    repository = FloatingTools.gitHubConnect().get_repo(repoAddress)
+
+    result = []
+
+    for f in repository.get_dir_contents(serverPath):
+        if '.py' not in f.name:
+            continue
+        result.append(cloudImport(repoAddress, f.path, userNamespace))
+
+    return result
 
 
 def downloadBuild(repository, sha):
