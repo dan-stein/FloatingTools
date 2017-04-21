@@ -155,7 +155,7 @@ def downloadBuild(repository, sha, path=None):
 
     for fo in repository.get_dir_contents(path):
         if fo.type == 'dir':
-            downloadBuild(repository, sha, path)
+            downloadBuild(repository, sha, path + fo.name + '/')
             return
 
         # pull server data
