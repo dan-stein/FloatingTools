@@ -178,7 +178,6 @@ function removeToolBox() {
                         {% endfor %}
                     </ul>
                     {% endif %}
-
                 </div>
                 <div class="panel-footer">
                     <div class="btn-group">
@@ -236,6 +235,38 @@ function removeToolBox() {
                         {% endif %}
                         {% endfor %}
                     </select>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <label>
+                                Supported Applications
+                                <span class="help-block">The current application will be highlighted in blue.</span>
+                                <ul class="list-group">
+                                    {% for wrapper in wrappers %}
+                                    {% if wrapper.NAME != None %}
+                                    {% if wrapper.NAME == activeWrapper.NAME %}
+                                    <li class="list-group-item list-group-item-info">{{ wrapper.NAME }}
+                                        <ul>
+                                            {% for ft in wrapper.FILE_TYPES %}
+                                            <li>{{ ft }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                    {% else %}
+                                    <li class="list-group-item">{{ wrapper.NAME }}
+                                        <ul>
+                                            {% for ft in wrapper.FILE_TYPES %}
+                                            <li>{{ ft }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </label>
+                        </div>
+                    </div>
                     <hr>
                     <a href="#advanced" data-toggle="collapse">Advanced Install Settings</a>
                     <div id="advanced" class="collapse">
@@ -298,7 +329,12 @@ function removeToolBox() {
             </div>
 
             <footer>
-                <input type="submit" class="btn btn-primary btn-xs" name="saveSettings" value="Save"/>
+                <input type="submit" class="btn btn-primary btn-s" name="saveSettings" value="Save"/>
+                {% if activeWrapper == None %}
+                <a href="/shutdown" class="btn btn-primary btn-s">Close Settings</a>
+                {% else %}
+                <a href="/shutdown" class="btn btn-primary btn-s">Back to {{ activeWrapper.NAME }}</a>
+                {% endif %}
             </footer>
         </form>
     </div>

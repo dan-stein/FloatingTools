@@ -2,13 +2,13 @@
 from AbstractApp import AbstractApplication, setWrapper
 
 
-class NukeWrapper(AbstractApplication):
-    FILE_TYPES = ['.nk', '.gizmo']
-    NAME = 'Nuke'
+class MayaWrapper(AbstractApplication):
+    FILE_TYPES = ['.ma', '.mb']
+    NAME = 'Maya'
 
     @staticmethod
     def appTest():
-        import nuke
+        import maya
 
     @classmethod
     def addMenuEntry(cls, menuPath, command):
@@ -19,4 +19,4 @@ class NukeWrapper(AbstractApplication):
         pass
 
 
-setWrapper(NukeWrapper)
+setWrapper(MayaWrapper)

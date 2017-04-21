@@ -25,6 +25,32 @@ class AbstractApplication(object):
     """
     FILE_TYPES = []
     NAME = None
+    WRAPPER_PATH = None
+
+    @staticmethod
+    def appTest():
+        """
+        MUST BE SUB-CLASSED
+        
+        This should ideally return True if this is the wrapper for the app you're in. If you don't do this, 
+        FloatingTools wraps the function and if it fails, assums this is not the wrapper for the application it is in.
+        
+        An example would be:
+            def appTest():
+                try:
+                    import nuke
+                    return True
+                except ImportError:
+                    return False
+                    
+            - OR -
+            
+            def appTest():
+                import nuke
+                
+        :return: 
+        """
+        raise NotImplementedError
 
     @classmethod
     def addMenuEntry(cls, menuPath, command):

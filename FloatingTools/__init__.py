@@ -23,6 +23,7 @@ SOFTWARE.
 """
 # python imports
 import os
+import sys
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -32,6 +33,7 @@ __all__ = [
     'FLOATING_TOOLS_ROOT',
     'INSTALL_DIRECTORY',
     'PACKAGES',
+    'PYTHON_EXECUTABLE',
     'DATA',
     'Dashboard',
     'Wrapper'
@@ -44,6 +46,14 @@ INSTALL_DIRECTORY = os.path.dirname(FLOATING_TOOLS_ROOT)
 PACKAGES = os.path.join(FLOATING_TOOLS_ROOT, 'packages')
 DATA = os.path.join(FLOATING_TOOLS_ROOT, 'data')
 WRAPPER = None
+
+bin = os.path.join(sys.exec_prefix, 'bin')
+for fo in os.listdir(bin):
+    if os.path.splitext(fo)[0].lower() == 'python':
+        # Due to some application retaining the actual python executable location, like The Foundry's Nuke, we pull it
+        # from the sys.exec_prefix.
+
+        PYTHON_EXECUTABLE = os.path.join(bin, fo)
 
 # validate the install
 import install

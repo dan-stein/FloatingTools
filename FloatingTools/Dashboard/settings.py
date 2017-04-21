@@ -63,6 +63,8 @@ def renderSettings():
                            branches=branches,
                            releases=releases,
                            collaborator=branchData['collaborator'],
+                           wrappers=FloatingTools.Wrapper.APP_WRAPPERS,
+                           activeWrapper=FloatingTools.Wrapper.APP_WRAPPER
                            )
 
 

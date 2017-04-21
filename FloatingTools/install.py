@@ -30,18 +30,27 @@ sys.path.append(FloatingTools.PACKAGES)
 try:
     import pip
 except ImportError:
-    # install pip
-    downloadPath = os.path.join(FloatingTools.PACKAGES, 'get-pip.py')
-    urllib.urlretrieve("https://bootstrap.pypa.io/get-pip.py", downloadPath)
+    ft_packages = os.listdir(FloatingTools.PACKAGES)
+    for pack in ['github', 'flask']:
+        if pack not in ft_packages:
+            # install pip
+            downloadPath = os.path.join(FloatingTools.PACKAGES, 'get-pip.py')
+            urllib.urlretrieve("https://bootstrap.pypa.io/get-pip.py", downloadPath)
 
-    # execute the python pip install call
-    subprocess.call([sys.executable, downloadPath])
+            # execute the python pip install call
+            subprocess.call([FloatingTools.PYTHON_EXECUTABLE, downloadPath])
 
-    # verify pip install worked
-    import pip
+            # delete get-pip.py
+            os.unlink(downloadPath)
 
-    # delete get-pip.py
-    os.unlink(downloadPath)
+            try:
+                import pip
+            except ImportError:
+                raise Exception('Pip is required for install. Launch FloatingTools on its own by opening the python '
+                                'interpreter and running:\n\nimport sys\nsys.path.append("%s")\nimport FloatingTools\n'
+                                '\nThis will allow the packages required to be installed into the FloatingTools package'
+                                '. Once complete, relaunch this application.' %
+                                os.path.abspath(FloatingTools.__file__ + '/../../'))
 
 # Verify the github lib exists
 try:
@@ -133,16 +142,20 @@ def cloudImportDirectory(repoAddress, serverPath, userNamespace=True):
     return result
 
 
-def downloadBuild(repository, sha):
+def downloadBuild(repository, sha, path=None):
     """
     Download the latest FloatingTools build from the passed sha.
+    :param path: 
     :param repository: 
     :param sha: 
     :return: 
     """
-    for fo in repository.get_dir_contents('/FloatingTools/'):
+    if path is None:
+        path = '/FloatingTools/'
+
+    for fo in repository.get_dir_contents(path):
         if fo.type == 'dir':
-            continue
+            downloadBuild(repository, sha, path)
 
         # pull server data
         serverPath = fo.path
