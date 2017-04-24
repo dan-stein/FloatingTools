@@ -43,7 +43,6 @@ Usually the latest is fine. If you are on Linux, download the .tar. The .zip wil
 import sys
 sys.path.append("path/to/floatingtools")
 
-# this will install everything you need!
 import FloatingTools
 ```
 You're done!
@@ -69,15 +68,10 @@ something like that, here are some basic examples for opening those pages.
 ```python
 import FloatingTools
 
-# For launching the settings/uploading/login server
-
-# log in page
 FloatingTools.Dashboard.login()
 
-# upload page
 FloatingTools.Dashboard.upload()
 
-# settings page
 FloatingTools.Dashboard.settings()
 ```
 
