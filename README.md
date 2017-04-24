@@ -54,12 +54,13 @@ After installation is complete, open any of the following applications that are 
 FloatingTools installed on the sys.path.
  + Nuke
  + Maya
- + Houdini
 
 If the application has a valid ApplicationWrapper, there should be a menu in the applications UI for FloatingTools. 
 Click FloatingTools/Dashboard/Settings from the menu and your web browser should open up with the FloatingTools settings
 page. Here you will see information about the toolboxes that are being loaded from github and also install information 
 and settings.
+
+## Technical Information
 
 ### Basic API calls
 FloatingTools comes with a very simple api. The intention is once again to make this system very user friendly. So most
@@ -80,5 +81,54 @@ FloatingTools.Dashboard.upload()
 # settings page
 FloatingTools.Dashboard.settings()
 ```
+
+#### Application Wrappers
+FloatingTools runs on an abstraction system. If you want to extend FloatingTools to a new application, like Houdini, 
+simply subclass the AbstractApplication class and add the path to your abstraction to FloatingTools. 
+ 
+```python
+import FloatingTools
+
+class HoudiniWrapper(FloatingTools.AbstractApplication):
+    FILE_TYPES = ['.hip']
+    NAME = 'Houdini'
+    APP_ICON = 'http://whatever/icon.jpg' # url to the application icon.
+    
+    @staticmethod
+    def addMenuSeparator(menuPath):
+        """
+        Code for houdini menu sep.
+        """
+        
+    @staticmethod
+    def appTest():
+        """
+        This function is run to test if we are in houdini
+        
+        try to do something that if it fails you can return 
+        False meaning you aren't in houdini. Return True if we are in houdini 
+        """
+        if in houdini:
+            return True
+        else:
+            return False
+        
+    @staticmethod
+    def addMenuEntry(menuPath, command=None, icon=None, enabled=True):
+        """
+        Run the houdini equivalent for adding a menu item to the ui.
+        """
+        
+    @staticmethod
+    def loadFile(gitHubFileObject, fileType):
+        """
+        This is what houdini will do when a tool from github is passed to it. So if the file is a python script in the
+        toolbox (repository), you would write the houdini handler here. 
+        """
+
+# here you would there set wrapper. This is required so FloatingTools know which wrapper it needs to use.
+FloatingTools.setWrapper(HoudiniWrapper)
+```
+
 
 
