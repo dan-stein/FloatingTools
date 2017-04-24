@@ -38,6 +38,47 @@ Usually the latest is fine. If you are on Linux, download the .tar. The .zip wil
  fine. This package is set up for individual use and studio use. For studio installs, you can store this in a server
  location and it will work the same.
    
-3. Simply import FloatingTools and it will make you log in to your github account. You're done!
+3. Simply import FloatingTools and it will make you log in to your github account.
+```python
+import sys
+sys.path.append("path/to/floatingtools")
+
+# this will install everything you need!
+import FloatingTools
+```
+You're done!
+
+Getting Started
+-
+After installation is complete, open any of the following applications that are supported by FloatingTools and has 
+FloatingTools installed on the sys.path.
+ + Nuke
+ + Maya
+ + Houdini
+
+If the application has a valid ApplicationWrapper, there should be a menu in the applications UI for FloatingTools. 
+Click FloatingTools/Dashboard/Settings from the menu and your web browser should open up with the FloatingTools settings
+page. Here you will see information about the toolboxes that are being loaded from github and also install information 
+and settings.
+
+### Basic API calls
+FloatingTools comes with a very simple api. The intention is once again to make this system very user friendly. So most
+everything you'd need to do can be done from the Dashboard pages. But if you'd like to make calls from the shell or 
+something like that, here are some basic examples for opening those pages. 
+
+```python
+import FloatingTools
+
+# For launching the settings/uploading/login server
+
+# log in page
+FloatingTools.Dashboard.login()
+
+# upload page
+FloatingTools.Dashboard.upload()
+
+# settings page
+FloatingTools.Dashboard.settings()
+```
 
 
