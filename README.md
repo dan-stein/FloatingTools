@@ -66,7 +66,6 @@ and settings.
 FloatingTools comes with a very simple api. The intention is once again to make this system very user friendly. So most
 everything you'd need to do can be done from the Dashboard pages. But if you'd like to make calls from the shell or 
 something like that, here are some basic examples for opening those pages. 
-
 ```python
 import FloatingTools
 
