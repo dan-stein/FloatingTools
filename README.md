@@ -1,16 +1,16 @@
-## Floating Tools
+# Floating Tools
 
 Maintained by [HatfieldFX LLC](http://www.hatfieldfx.com/)
 
-### Installation
+## Installation
 
 Installing FloatingTools is intended to be very simple as to allow for less technical people to it set up.
 
-#### System requirements:
+### System requirements:
  - python 2.7 or 2.6
  - [GitHub account](https://github.com/) with at least 1 repository. This is your digital toolbox now!
 
-#### Required packages that will be installed:
+### Required packages that will be installed:
 We do this all for you so no reason to worry! This is just information about what we are installing for you.
 If you already have these installed in your site-packages, we wont install ours. If you don't know if you have them or 
 not, no worries, we will figure it out for you!
@@ -29,7 +29,7 @@ we do is so that we don't go spraying these libraries all over your python site-
 (just delete the folder), it will remove everything including the other packages mentioned above. With the exception of pip. 
 Pip requires being installed in the python site-packages.
 
-#### Install instructions:
+### Install instructions:
 1. Download the release you would like to use from [here](https://github.com/aldmbmtl/FloatingTools/releases). 
 Usually the latest is fine. If you are on Linux, download the .tar. The .zip will be fine for all other operating systems. 
 
