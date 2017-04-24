@@ -5,3 +5,4 @@ Dashboard handles the web interface
 from utilities import startServer
 from settings import settings
 from authentication import login
+from upload import upload

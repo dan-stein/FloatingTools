@@ -4,15 +4,13 @@ Utility functions for managing the server.
 # python imports
 import webbrowser
 
-# FloatingTools imports
-import FloatingTools
-
 # flask imports
 from flask import request, Flask
 from flask.blueprints import Blueprint
 
 # python imports
 import os
+from threading import Thread
 
 # globals
 
@@ -41,7 +39,8 @@ def startServer(url=None):
         webbrowser.open(ADDRESS + url)
 
     # start the server
-    SERVER.run(host=HOST, port=PORT)
+    t = Thread(target=SERVER.run, args=(HOST, PORT))
+    t.start()
 
 
 @SERVER.route('/shutdown', methods=['GET', 'POST'])
@@ -55,4 +54,4 @@ def stopServer():
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
 
-    return 'Server shutting down.'
+    return "Server shut down... Close this window."

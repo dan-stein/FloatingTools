@@ -1,37 +1,17 @@
 ## Floating Tools
 
-You can use the [editor on GitHub](https://github.com/aldmbmtl/FloatingTools/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Maintained by [HatfieldFX LLC](http://www.hatfieldfx.com/)
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Installation
 
-### Markdown
+Installing FloatingTools is intended to be very simple as to allow for less technical people to set up.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+1. Download the release you would like to use from [here](https://github.com/aldmbmtl/FloatingTools/releases). 
+Usually the latest is fine. If you are on Linux, download the .tar. The .zip will be fine for all other operating systems. 
 
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/aldmbmtl/FloatingTools/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+2. After downloading and unpacking the .zip or .tar, open the directory and copy the FloatingTools folder 
+(this is the python package) and put it on your python sys.path. If you are in Nuke for example, your .nuke directory is
+ fine. This package is set up for individual use and studio use. For studio installs, you can store this in a server
+ location and it will work the same.
+   
+3. Simply import FloatingTools and it will make you log in to your github account. You're done!

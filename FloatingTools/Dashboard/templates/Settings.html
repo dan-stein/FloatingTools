@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>Floating Tools - Settings</title>
     <meta charset="utf-8">
@@ -238,33 +238,39 @@ function removeToolBox() {
                     <hr>
                     <div class="row">
                         <div class="col-sm-4">
-                            <label>
-                                Supported Applications
-                                <span class="help-block">The current application will be highlighted in blue.</span>
-                                <ul class="list-group">
-                                    {% for wrapper in wrappers %}
+                            <label>Supported Applications</label>
+                            <span class="help-block">The current application will be highlighted in blue.</span>
+                            <ul class="list-group">
+                                {% for wrapper in wrappers %}
                                     {% if wrapper.NAME != None %}
-                                    {% if wrapper.NAME == activeWrapper.NAME %}
-                                    <li class="list-group-item list-group-item-info">{{ wrapper.NAME }}
-                                        <ul>
-                                            {% for ft in wrapper.FILE_TYPES %}
-                                            <li>{{ ft }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </li>
+                                {% if wrapper.NAME == activeWrapper.NAME %}
+                                <li class="list-group-item list-group-item-info">
                                     {% else %}
-                                    <li class="list-group-item">{{ wrapper.NAME }}
-                                        <ul>
-                                            {% for ft in wrapper.FILE_TYPES %}
-                                            <li>{{ ft }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </li>
+                                <li class="list-group-item">
                                     {% endif %}
+                                    <label>
+                                        {% if wrapper.APP_ICON == None %}
+                                        {{ wrapper.NAME }}
+                                        {% else %}
+                                        <img src="{{ wrapper.APP_ICON  }}" width="25"> {{ wrapper.NAME }}
+                                        {% endif %}
+                                    </label>
+                                    <ul>
+                                        {% for ft in wrapper.FILE_TYPES %}
+                                        <li>{{ ft }}</li>
+                                        {% endfor %}
+                                    </ul>
                                     {% endif %}
                                     {% endfor %}
-                                </ul>
-                            </label>
+                            </ul>
+                        </div>
+                        <div class="col-sm-8">
+                            <label>Environment</label>
+                            <span class="help-block">Application environment information.</span>
+                            <label>Python Executable:</label> <input type="text" class="form-control" value={{
+                                                                     python_executable }}>
+                            <label>FloatingTools Location:</label> <input type="text" class="form-control" value={{
+                                                                          ft_location }}>
                         </div>
                     </div>
                     <hr>
@@ -278,13 +284,12 @@ function removeToolBox() {
                                 <input type="checkbox" name="dev"> Development Mode
                                 {% endif %}
                             </label>
-                            <span class="help-block">By activating this section, are telling Floating Tools to pull from the
+                            <span class="help-block">By activating this section, you are telling FloatingTools to pull from the
                                 live FloatingTools repository branches. There is no guarantee that this is stable code
                                 because these branches are used for testing. If this is not what you want, uncheck the box
                                 above and select the release you would like to load from. If this is intended, relaunch
-                                Floating Tools to load into the development environment.
+                                FloatingTools to load into the development environment.
                             </span>
-                            <br>
                             <label>Branch:</label>
                             <select name="devBranch" class="form-control" id="devBranch">
                                 {% for branch in branches%}
@@ -295,10 +300,6 @@ function removeToolBox() {
                                 {% endif %}
                                 {% endfor %}
                             </select>
-                            <br>
-                            <strong>Danger!</strong> This will overwrite your existing FloatingTools install. Be sure
-                            you really want to do this.
-
                             <hr>
 
                             <label>
@@ -319,6 +320,14 @@ function removeToolBox() {
                                          width="50" height="50">
                                 </a>
                                 <a href="https://github.com/aldmbmtl/FloatingTools">
+                                    <img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"
+                                         height="50">
+                                </a>
+                                <a href="https://aldmbmtl.github.io/FloatingTools/">
+                                    <img src="http://markdown-here.com/img/logo-2015/austin.png"
+                                         height="50">
+                                </a>
+                                <a href="http://www.hatfieldfx.com/floating-tools">
                                     <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
                                          height="50">
                                 </a>

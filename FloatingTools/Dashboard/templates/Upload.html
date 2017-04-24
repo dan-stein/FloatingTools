@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Floating Tools - Upload Tool</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="well well-sm">
+        <header>
+            <h2>
+                Toolbox Uploader
+            </h2>
+            <hr>
+        </header>
+        <form>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4>
+                        {{ app_wrapper.NAME }} uploader
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <label>Toolbox</label>
+                    <select id="toolBox" class="form-control">
+                        {% for box in toolboxes %}
+                        {% if box == toolbox %}
+                        <option value={{ box }} selected="selected">{{ box }}</option>
+                        {% else %}
+                        <option value={{ box }}>{{ box }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+
+                    <br>
+
+                    <label>Path
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <select id="path" class="form-control">
+                                    {% for key, value in toolboxes.iteritems() %}
+                                    {% if key == toolbox %}
+                                    {% for path in value %}
+                                    <option value={{ path }}>{{ path }}</option>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <span class="input-group-addon">/</span>
+                                    <input type="text" id="toolBoxPath" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+
+                    <hr>
+                    <span class="help-block">Pick a file <span><strong>OR</strong></span> paste the file content to upload.</span>
+                    <label>Pick File:</label>
+                    <input type="file" name="file" accept={{ app_file_types }} class="form-control">
+                    <br>
+                    <label>File Content:</label>
+                    <textarea class="form-control" rows="5" name="fileContent"></textarea>
+                </div>
+                <div class="panel-footer">
+                    <input type="submit" class="btn btn-primary btn-s" name="uploadTool" value="Upload"/>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

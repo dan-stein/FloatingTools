@@ -5,17 +5,18 @@ from AbstractApp import AbstractApplication, setWrapper
 class MayaWrapper(AbstractApplication):
     FILE_TYPES = ['.ma', '.mb']
     NAME = 'Maya'
+    APP_ICON = 'http://area.autodesk.com/area_v2/assets/img/product/autodesk-maya.png'
 
     @staticmethod
     def appTest():
         import maya
 
-    @classmethod
-    def addMenuEntry(cls, menuPath, command):
+    @staticmethod
+    def addMenuEntry(menuPath, command):
         pass
 
-    @classmethod
-    def loadFile(cls, gitHubFileObject, fileType):
+    @staticmethod
+    def loadFile(gitHubFileObject, fileType):
         pass
 
 

@@ -26,6 +26,7 @@ class AbstractApplication(object):
     FILE_TYPES = []
     NAME = None
     WRAPPER_PATH = None
+    APP_ICON = None
 
     @staticmethod
     def appTest():
@@ -52,18 +53,29 @@ class AbstractApplication(object):
         """
         raise NotImplementedError
 
-    @classmethod
-    def addMenuEntry(cls, menuPath, command):
+    @staticmethod
+    def addMenuSeparator(menuPath):
+        """
+        OPTIONAL SUB-CLASS
+        :param menuPath: Path to add the separator to.
+        :return: 
+        """
+        pass
+
+    @staticmethod
+    def addMenuEntry(menuPath, command=None, icon=None, enabled=None):
         """
         MUST BE SUB-CLASSED
-        :param menuPath: a string laying out how the menu to the command should be layed out. Example: 'top/sub/command'
+        :param enabled: 
+        :param menuPath: a string laying out how the menu to the command should be laid out. Example: 'top/sub/command'
         :param command: a callable to be executed
+        :param icon: optional
         :return: 
         """
         raise NotImplementedError
 
-    @classmethod
-    def loadFile(cls, gitHubFileObject, fileType):
+    @staticmethod
+    def loadFile(gitHubFileObject, fileType):
         """
         MUST BE SUB-CLASSED
         :param gitHubFileObject: 

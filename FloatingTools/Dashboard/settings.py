@@ -64,7 +64,9 @@ def renderSettings():
                            releases=releases,
                            collaborator=branchData['collaborator'],
                            wrappers=FloatingTools.Wrapper.APP_WRAPPERS,
-                           activeWrapper=FloatingTools.Wrapper.APP_WRAPPER
+                           activeWrapper=FloatingTools.Wrapper.APP_WRAPPER,
+                           python_executable=FloatingTools.PYTHON_EXECUTABLE,
+                           ft_location=os.path.abspath(FloatingTools.__file__ + '/../../')
                            )
 
 
