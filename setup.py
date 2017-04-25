@@ -10,5 +10,4 @@ setup(
     license='MIT',
     author='Alex Hatfield',
     author_email='alex.e.hatfield@gmail.com',
-    description=''
 )
