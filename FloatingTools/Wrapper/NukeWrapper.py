@@ -9,14 +9,17 @@ nuke = None
 MENUS = ['Nuke', 'Node Graph', 'Nodes']
 
 class NukeWrapper(AbstractApplication):
-    FILE_TYPES = ['.nk', '.py']
+    FILE_TYPES = ['.nk', '.py', '.gizmo']
     NAME = 'Nuke'
     APP_ICON = 'http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg'
 
     @staticmethod
     def addMenuSeparator(menuPath):
         for menu in MENUS:
-            nuke.menu(menu).findItem(menuPath).addSeparator()
+            try:
+                nuke.menu(menu).findItem(menuPath).addSeparator()
+            except AttributeError:
+                nuke.menu(menu).addMenu(menuPath).addSeparator()
 
     @staticmethod
     def appTest():
@@ -40,14 +43,14 @@ class NukeWrapper(AbstractApplication):
         :param fileType: 
         :return: 
         """
-
         # nk handler
-        if fileType == '.nk':
+        if fileType in ['.nk', '.gizmo']:
             temp = tempfile.NamedTemporaryFile()
             path = temp.name
-            temp.write(gitHubFileObject.decoded_content)
+            temp.write(gitHubFileObject.decoded_content.replace('Gizmo', 'Group'))
             temp.seek(0)
             nuke.nodePaste(path)
             temp.close()
+
 
 setWrapper(NukeWrapper)
