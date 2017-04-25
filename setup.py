@@ -5,7 +5,7 @@ setup(
     version='v0.1',
     packages=find_packages(),
     package_data={
-        '': ['*.html']
+        '': ['templates/*.html']
     },
     install_requires=['Flask', 'PyGithub'],
     url='https://github.com/aldmbmtl/FloatingTools',
