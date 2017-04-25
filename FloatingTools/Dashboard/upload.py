@@ -45,6 +45,17 @@ def renderUpload():
     )
 
 
+@SERVER.route('/uploadContent')
+def _renderUpload():
+    """
+    --private--
+    :return:
+    """
+    print request.args
+
+    return redirect('/upload')
+
+
 def upload():
     """
     Launch upload page to upload tools to your floating toolbox.

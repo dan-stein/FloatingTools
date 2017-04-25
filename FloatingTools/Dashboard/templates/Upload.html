@@ -19,7 +19,7 @@
             </h2>
             <hr>
         </header>
-        <form>
+        <form action="/uploadContent">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h4>
@@ -31,9 +31,9 @@
                     <select id="toolBox" class="form-control">
                         {% for box in toolboxes %}
                         {% if box == toolbox %}
-                        <option value={{ box }} selected="selected">{{ box }}</option>
+                        <option name="toolbox" value={{ box }} selected="selected">{{ box }}</option>
                         {% else %}
-                        <option value={{ box }}>{{ box }}</option>
+                        <option name="toolbox" value={{ box }}>{{ box }}</option>
                         {% endif %}
                         {% endfor %}
                     </select>
@@ -56,7 +56,7 @@
                             <div class="col-sm-9">
                                 <div class="input-group">
                                     <span class="input-group-addon">/</span>
-                                    <input type="text" id="toolBoxPath" class="form-control">
+                                    <input type="text" id="filePath" class="form-control">
                                 </div>
                             </div>
                         </div>

@@ -24,6 +24,7 @@ SOFTWARE.
 # python imports
 import os
 import sys
+import socket
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -50,22 +51,27 @@ WRAPPER = None
 bin = os.path.join(sys.exec_prefix, 'bin')
 for fo in os.listdir(bin):
     if os.path.splitext(fo)[0].lower() == 'python':
-        # Due to some application retaining the actual python executable location, like The Foundry's Nuke, we pull it
+        # Due to some applications retaining the actual python executable location, like The Foundry's Nuke, we pull it
         # from the sys.exec_prefix.
 
         PYTHON_EXECUTABLE = os.path.join(bin, fo)
+        break
 
-# validate the install
-import install
+try:
+    # validate the install
+    import install
 
-# imports
-from load import *
-import Dashboard
+    # imports
+    from load import *
+    import Dashboard
 
-# verify the login data.
-if verifyLogin() is False:
-    Dashboard.login()
+    # verify the login data.
+    if verifyLogin() is False:
+        Dashboard.login()
 
-install.loadVersion()
-from Wrapper import *
-loadTools()
+    install.loadVersion()
+    from Wrapper import *
+
+    loadTools()
+except socket.gaierror:
+    FT_LOOGER.error('No connection to Github could be established. Check your internet connection.')

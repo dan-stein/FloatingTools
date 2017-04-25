@@ -3,9 +3,12 @@ Handles all loading operations
 """
 # python imports
 import os
+import sys
+import imp
 import json
-from functools import partial
+import traceback
 import webbrowser
+from functools import partial
 
 # FloatingTools imports
 import FloatingTools
@@ -107,6 +110,34 @@ def verifyLogin():
         return False
 
 
+def cloudImport(repo, path):
+    """
+    Import a module from Github.
+    :param repo: 
+    :param path: 
+    :return: 
+    """
+    try:
+        moduleName = os.path.splitext(os.path.basename(path))[0]
+        mod = imp.new_module(moduleName)
+
+        code = compile(
+            str(FloatingTools.gitHubConnect().get_repo(repo).get_file_contents(path).decoded_content),
+            '<string>',
+            'exec'
+        )
+
+        # execute the code object
+        exec code in mod.__dict__
+
+        sys.modules[moduleName] = mod
+
+        return mod
+    except:
+        print "Failed to import %s %s" % (repo, path)
+        traceback.print_exc()
+
+
 def repoWalk(repo, path, root):
     """
     --private--
@@ -116,25 +147,35 @@ def repoWalk(repo, path, root):
     """
     try:
         repoContents = repo.get_dir_contents(path)
+
+        for fo in repoContents:
+
+            # loop over directories
+            if fo.type == 'dir':
+                repoWalk(repo, fo.path, root)
+
+            elif fo.name == 'ft_init.py':
+                # built in init file for floating tools
+                cloudImport(repo.full_name, fo.path)
+
+            elif FloatingTools.APP_WRAPPER:
+                # filter out files that do not pertain to this application
+                basename, ext = os.path.splitext(fo.name)
+                if ext not in FloatingTools.APP_WRAPPER.fileTypes():
+                    continue
+
+                # register tool with the application
+                FloatingTools.APP_WRAPPER.addMenuEntry(
+                    (FloatingTools.__name__ + '/%s' % os.path.splitext(repo.name)[0]) + fo.path.replace(root,
+                                                                                                        '').replace(ext,
+                                                                                                                    ''),
+                    partial(FloatingTools.APP_WRAPPER.loadFile, fo, ext))
+
+            else:
+                pass
+
     except GithubException:
         FloatingTools.FT_LOOGER.info(path + ' is not a valid path in this toolbox.')
-        return
-
-    for fo in repoContents:
-        # loop over directories
-        if fo.type == 'dir':
-            repoWalk(repo, path + '/' + fo.name, root)
-            return
-
-        # filter out files that do not pertain to this application
-        basename, ext = os.path.splitext(fo.name)
-        if ext not in FloatingTools.APP_WRAPPER.fileTypes():
-            continue
-
-        # register tool with the application
-        FloatingTools.APP_WRAPPER.addMenuEntry(
-            (FloatingTools.__name__ + '/%s' % os.path.splitext(repo.name)[0]) + fo.path.replace(root, ''),
-            partial(FloatingTools.APP_WRAPPER.loadFile, fo, ext))
 
 
 def loadTools():
@@ -142,11 +183,11 @@ def loadTools():
     Main tool loading function.
     :return: 
     """
+
     # set up dashboard in the application wrapper if there is one loaded.
     if FloatingTools.APP_WRAPPER:
-        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Dashboard/My Toolbox/Upload',
+        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Dashboard/Upload',
                                                FloatingTools.Dashboard.upload)
-        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Dashboard/My Toolbox/Organize')
         FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__ + '/Dashboard')
         FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
                                                FloatingTools.Dashboard.settings)
@@ -163,10 +204,11 @@ def loadTools():
 
         # connect to the repository
         FloatingTools.FT_LOOGER.info('Loading Repository: ' + repo['name'])
-        repo = FloatingTools.gitHubConnect().get_repo(repo['name'])
+        repoName = repo['name']
+        repo = FloatingTools.gitHubConnect().get_repo(repoName)
 
         # load toolbox data
-        toolboxData = json.loads(repo.get_contents('/toolbox.json').decoded_content)
+        toolboxData = json.loads(repo.get_file_contents('/toolbox.json').decoded_content)
 
         # loop over the toolbox path
         for path in toolboxData['paths']:
@@ -178,6 +220,15 @@ def loadTools():
                 path = path.replace('{%s}' % card, wildCards[card])
 
             repoWalk(repo, path, path.strip('/'))
+
+            if FloatingTools.APP_WRAPPER:
+                toolboxPath = FloatingTools.__name__ + '/' + os.path.splitext(repo.name)[0]
+                FloatingTools.APP_WRAPPER.addMenuSeparator(toolboxPath)
+                repoURL = "https://github.com/" + repoName
+                FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/Open on Github...',
+                                                       lambda: webbrowser.open(repoURL))
+                FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/About...',
+                                                       lambda: webbrowser.open(repoURL + '/blob/master/README.md'))
 
     if FloatingTools.APP_WRAPPER:
         FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__)

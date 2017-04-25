@@ -2,13 +2,14 @@
 import tempfile
 
 # FloatingTools imports
+import FloatingTools
 from AbstractApp import AbstractApplication, setWrapper
 
 nuke = None
 MENUS = ['Nuke', 'Node Graph', 'Nodes']
 
 class NukeWrapper(AbstractApplication):
-    FILE_TYPES = ['.nk']
+    FILE_TYPES = ['.nk', '.py']
     NAME = 'Nuke'
     APP_ICON = 'http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg'
 
