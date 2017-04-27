@@ -4,7 +4,6 @@ Validate the dependencies are installed.
 # python imports
 import os
 import sys
-import imp
 import json
 import urllib
 import base64
@@ -38,7 +37,7 @@ except ImportError:
             urllib.urlretrieve("https://bootstrap.pypa.io/get-pip.py", downloadPath)
 
             # execute the python pip install call
-            subprocess.call([FloatingTools.PYTHON_EXECUTABLE, downloadPath])
+            subprocess.call([sys.executable, downloadPath])
 
             # delete get-pip.py
             os.unlink(downloadPath)
