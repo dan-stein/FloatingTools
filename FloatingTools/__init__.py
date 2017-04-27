@@ -47,15 +47,8 @@ INSTALL_DIRECTORY = os.path.dirname(FLOATING_TOOLS_ROOT)
 PACKAGES = os.path.join(FLOATING_TOOLS_ROOT, 'packages')
 DATA = os.path.join(FLOATING_TOOLS_ROOT, 'data')
 WRAPPER = None
+PYTHON_EXECUTABLE = os.path.join(bin, sys.executable)
 
-# bin = os.path.join(sys.exec_prefix, 'bin')
-# for fo in os.listdir(bin):
-#     if os.path.splitext(fo)[0].lower() == 'python':
-#         # Due to some applications retaining the actual python executable location, like The Foundry's Nuke, we pull it
-#         # from the sys.exec_prefix.
-#
-#         PYTHON_EXECUTABLE = os.path.join(bin, fo)
-#         break
 
 try:
     # validate the install

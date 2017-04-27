@@ -23,11 +23,10 @@ def renderSettings():
     myToolbox = request.args.get('myToolbox')
     if not myToolbox:
         myToolbox = myRepositories[0].name
-
-    for repo in myRepositories:
-        if (FloatingTools.gitHubConnect().get_user().login + '/' + repo.name) in \
-                [source['name'] for source in FloatingTools.loadSources()['repositories']]:
-            myToolbox = repo.name
+        for repo in myRepositories:
+            if (FloatingTools.gitHubConnect().get_user().login + '/' + repo.name) in \
+                    [source['name'] for source in FloatingTools.loadSources()['repositories']]:
+                myToolbox = repo.name
 
     ftRepo = FloatingTools.gitHubConnect().get_repo('aldmbmtl/FloatingTools')
 
