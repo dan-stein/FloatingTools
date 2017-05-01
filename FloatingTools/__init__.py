@@ -25,6 +25,7 @@ SOFTWARE.
 import os
 import sys
 import socket
+import threading
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -51,6 +52,9 @@ PYTHON_EXECUTABLE = os.path.join(bin, sys.executable)
 
 
 try:
+    # handle wrapper
+    from Wrapper import *
+
     # validate the install
     import install
 
@@ -63,8 +67,7 @@ try:
         Dashboard.login()
 
     install.loadVersion()
-    from Wrapper import *
+    threading.Thread(target=loadTools).start()
 
-    loadTools()
 except socket.gaierror:
     FT_LOOGER.error('No connection to Github could be established. Check your internet connection.')

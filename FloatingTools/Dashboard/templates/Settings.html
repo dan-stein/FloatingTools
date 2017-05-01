@@ -198,13 +198,20 @@ function removeToolBox() {
                 </div>
                 <div class="panel-body">
                     {% for repository in repositories %}
-                    <label>
-                        {% if repository.load == True %}
-                        <input type="checkbox" name={{ repository.name }} checked/> {{ repository.name }}
-                        {% else %}
-                        <input type="checkbox" name={{ repository.name }}/> {{ repository.name }}
-                        {% endif %}
-                    </label>
+                    <div class="form-group">
+                        <div class="col-sm-2">
+                            <select name={{ repository.name }} class="form-control" id={{ repository.name }}>
+                                {% if repository.load == True %}
+                                <option value="load" selected>Load</option>
+                                <option value="no-load">Do not Load</option>
+                                {% else %}
+                                <option value="load">Load</option>
+                                <option value="no-load" selected>Do not Load</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <label class="col-sm-10 control-label"> {{ repository.name }} </label>
+                    </div>
                     <br>
                     {% endfor %}
                 </div>

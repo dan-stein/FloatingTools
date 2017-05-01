@@ -32,12 +32,32 @@ except ImportError:
     ft_packages = os.listdir(FloatingTools.PACKAGES)
     for pack in ['github', 'flask']:
         if pack not in ft_packages:
+            # determine executable from the application wrapper
+            executable = sys.executable
+            args = []
+            if FloatingTools.WRAPPER:
+                if FloatingTools.WRAPPER.EXECUTABLE:
+                    executable = FloatingTools.WRAPPER.EXECUTABLE
+                if FloatingTools.WRAPPER.ARGS:
+                    args = FloatingTools.WRAPPER.ARGS
+
+            FloatingTools.FT_LOOGER.info("Python executable (+args) for pip install: " + executable)
+
             # install pip
             downloadPath = os.path.join(FloatingTools.PACKAGES, 'get-pip.py')
             urllib.urlretrieve("https://bootstrap.pypa.io/get-pip.py", downloadPath)
 
+            pipDL = open(downloadPath, 'r')
+            code = pipDL.read()
+            code = code.replace('sys.exit(pip.main(["install", "--upgrade"] + args))',
+                                'sys.exit(pip.main(["install", "pip", "-t", "%s"]))' % FloatingTools.PACKAGES)
+            pipDL.close()
+            open(downloadPath, 'w').write(code)
+
+            command = [os.path.abspath(executable)] + args + [downloadPath]
+
             # execute the python pip install call
-            subprocess.call([sys.executable, downloadPath])
+            subprocess.call(command)
 
             # delete get-pip.py
             os.unlink(downloadPath)
@@ -50,6 +70,18 @@ except ImportError:
                                 '\nThis will allow the packages required to be installed into the FloatingTools package'
                                 '. Once complete, relaunch this application.' %
                                 os.path.abspath(FloatingTools.__file__ + '/../../'))
+            break
+
+# upgrade pip if needed
+pip.main(['install', '--upgrade', 'pip'])
+
+try:
+    import setuptools
+except:
+    pip.main(['install', '-U', 'pip', 'setuptools', '-t', FloatingTools.PACKAGES])
+
+    # verify install
+    import github
 
 # Verify the github lib exists
 try:

@@ -6,6 +6,7 @@ import os
 import sys
 import imp
 import json
+import threading
 import traceback
 import webbrowser
 from functools import partial
@@ -20,10 +21,10 @@ from github import Github, BadCredentialsException, GithubException
 USER = os.path.join(FloatingTools.DATA, 'User.json')
 SOURCES = os.path.join(FloatingTools.DATA, 'Sources.json')
 HUB = None
-TOOLS_ADDED = False
 
 if not os.path.exists(os.path.dirname(USER)):
     os.mkdir(os.path.dirname(USER))
+
 
 def gitHubConnect():
     """
@@ -146,7 +147,6 @@ def repoWalk(repo, path, root):
     :param path: 
     :return: 
     """
-    global TOOLS_ADDED
     try:
         repoContents = repo.get_dir_contents(path)
 
@@ -159,7 +159,6 @@ def repoWalk(repo, path, root):
             elif fo.name == 'ft_init.py':
                 # built in init file for floating tools
                 cloudImport(repo.full_name, fo.path)
-                TOOLS_ADDED = True
 
             elif FloatingTools.APP_WRAPPER:
                 # filter out files that do not pertain to this application
@@ -176,13 +175,11 @@ def repoWalk(repo, path, root):
                     ).replace(root, '').replace('//', '/'),
                     partial(FloatingTools.APP_WRAPPER.loadFile, fo, ext))
 
-                TOOLS_ADDED = True
-
             else:
                 pass
 
     except GithubException:
-        FloatingTools.FT_LOOGER.info(path + ' is not a valid path in this toolbox.')
+        FloatingTools.FT_LOOGER.error(path + ' is not a valid path in this toolbox.')
 
 
 def loadTools():
@@ -190,9 +187,6 @@ def loadTools():
     Main tool loading function.
     :return: 
     """
-
-    global TOOLS_ADDED
-
     # set up dashboard in the application wrapper if there is one loaded.
     if FloatingTools.APP_WRAPPER:
         FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Dashboard/Upload',
@@ -206,9 +200,11 @@ def loadTools():
     # pull repository data
     repoData = FloatingTools.repositoryData()
 
+    # repo threads
+    threads = []
+
     # begin repo loop.
     for repo in repoData:
-        TOOLS_ADDED = False
 
         if not repo['load']:
             continue
@@ -224,6 +220,20 @@ def loadTools():
         except GithubException:
             toolboxData = dict(paths=['/'])
 
+        if FloatingTools.APP_WRAPPER:
+            toolboxPath = FloatingTools.__name__ + '/' + repo.full_name.replace('/', '.')
+            repoURL = "https://github.com/" + repo.full_name
+            FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/Open on Github',
+                                                   partial(webbrowser.open, repoURL)
+                                                   )
+            FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/License',
+                                                   partial(webbrowser.open, repoURL + '/blob/master/LICENSE')
+                                                   )
+            FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/About',
+                                                   partial(webbrowser.open, repoURL + '/blob/master/README.md')
+                                                   )
+            FloatingTools.APP_WRAPPER.addMenuSeparator(toolboxPath)
+
         # loop over the toolbox path
         for path in toolboxData['paths']:
 
@@ -234,24 +244,10 @@ def loadTools():
             for card in wildCards:
                 path = path.replace('{%s}' % card, wildCards[card])
 
-            repoWalk(repo, path, path.strip('/'))
-
-        if FloatingTools.APP_WRAPPER and TOOLS_ADDED:
-            toolboxPath = FloatingTools.__name__ + '/' + repo.full_name.replace('/', '.')
-
-            FloatingTools.APP_WRAPPER.addMenuSeparator(toolboxPath)
-
-            repoURL = "https://github.com/" + repo.full_name
-
-            FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/Open on Github',
-                                                   partial(webbrowser.open, repoURL)
-                                                   )
-            FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/License',
-                                                   partial(webbrowser.open, repoURL + '/blob/master/LICENSE')
-                                                   )
-            FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/About',
-                                                   partial(webbrowser.open, repoURL + '/blob/master/README.md')
-                                                   )
+            # spawn thread
+            t = threading.Thread(name=repoName, target=repoWalk, args=(repo, path, path.strip('/')))
+            threads.append(t)
+            t.start()
 
     if FloatingTools.APP_WRAPPER:
         FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__)

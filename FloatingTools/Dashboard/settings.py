@@ -75,24 +75,10 @@ def _save():
     --private--
     :return: 
     """
-
     sources = FloatingTools.loadSources()
-    localRepoName = FloatingTools.gitHubConnect().get_user().login + '/' + request.args.get('myToolbox')
 
-    savedRepos = [item['name'] for item in sources['repositories']]
     for item in sources['repositories']:
-        if item['name'] in request.args:
-            item['load'] = True
-        else:
-            item['load'] = False
-        if item['name'] == localRepoName:
-            localRepo = item
-
-    if localRepoName not in savedRepos:
-        localRepo = dict(name=localRepoName, load=True)
-        sources['repositories'].append(localRepo)
-    else:
-        localRepo['load'] = (localRepoName + '/') in request.args
+        item['load'] = 'load' == request.args.get(item['name'])
 
     FloatingTools.updateSources(sources)
 

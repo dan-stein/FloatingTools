@@ -27,6 +27,8 @@ class AbstractApplication(object):
     NAME = None
     WRAPPER_PATH = None
     APP_ICON = None
+    EXECUTABLE = None
+    ARGS = None
 
     @staticmethod
     def appTest():

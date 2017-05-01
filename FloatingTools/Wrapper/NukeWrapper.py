@@ -2,7 +2,6 @@
 import tempfile
 
 # FloatingTools imports
-import FloatingTools
 from AbstractApp import AbstractApplication, setWrapper
 
 nuke = None
@@ -12,14 +11,16 @@ class NukeWrapper(AbstractApplication):
     FILE_TYPES = ['.nk', '.py', '.gizmo']
     NAME = 'Nuke'
     APP_ICON = 'http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg'
+    ARGS = ['-t']
 
     @staticmethod
     def addMenuSeparator(menuPath):
         for menu in MENUS:
             try:
-                nuke.menu(menu).findItem(menuPath).addSeparator()
+                nuke.executeInMainThread(nuke.menu(menu).findItem(menuPath).addSeparator)
             except AttributeError:
-                nuke.menu(menu).addMenu(menuPath).addSeparator()
+                nuke.executeInMainThreadWithResult(nuke.menu(menu).addMenu, args=(menuPath,))
+                nuke.executeInMainThread(nuke.menu(menu).findItem(menuPath).addSeparator)
 
     @staticmethod
     def appTest():
@@ -32,8 +33,11 @@ class NukeWrapper(AbstractApplication):
             def command():
                 pass
         for menu in MENUS:
-            nuke.menu(menu).addCommand(menuPath, command, icon=icon)
-            nuke.menu(menu).findItem(menuPath).setEnabled(enabled)
+            nuke.executeInMainThread(nuke.menu(menu).addCommand, args=(menuPath, command), kwargs={'icon': icon})
+            try:
+                nuke.executeInMainThread(nuke.menu(menu).findItem(menuPath).setEnabled, args=(enabled,))
+            except AttributeError:
+                pass
 
     @staticmethod
     def loadFile(gitHubFileObject, fileType):
