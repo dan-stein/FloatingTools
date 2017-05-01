@@ -262,9 +262,18 @@ function removeToolBox() {
                                         <img src="{{ wrapper.APP_ICON  }}" width="25"> {{ wrapper.NAME }}
                                         {% endif %}
                                     </label>
-                                    <ul>
+                                <hr>
+                                Multi-Threaded Load up: {{ wrapper.MULTI_THREAD }}
+                                <br>
+                                Commandline Python Argument(s):
+                                {% for arg in wrapper.ARGS %}
+                                {{ arg }},
+                                {% endfor %}
+                                <hr>
+                                File Types
+                                <ul class="list-group">
                                         {% for ft in wrapper.FILE_TYPES %}
-                                        <li>{{ ft }}</li>
+                                    <li class="list-group-item">{{ ft }}</li>
                                         {% endfor %}
                                     </ul>
                                     {% endif %}
