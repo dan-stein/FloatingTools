@@ -12,6 +12,7 @@ class NukeWrapper(AbstractApplication):
     NAME = 'Nuke'
     APP_ICON = 'http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg'
     ARGS = ['-t']
+    MULTI_THREAD = True
 
     @staticmethod
     def addMenuSeparator(menuPath):

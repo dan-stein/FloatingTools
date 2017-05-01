@@ -29,6 +29,7 @@ class AbstractApplication(object):
     APP_ICON = None
     EXECUTABLE = None
     ARGS = None
+    MULTI_THREAD = False
 
     @staticmethod
     def appTest():

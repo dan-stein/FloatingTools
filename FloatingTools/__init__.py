@@ -54,6 +54,8 @@ PYTHON_EXECUTABLE = os.path.join(bin, sys.executable)
 try:
     # handle wrapper
     from Wrapper import *
+    from settings import *
+    from connect import *
 
     # validate the install
     import install
@@ -66,8 +68,14 @@ try:
     if verifyLogin() is False:
         Dashboard.login()
 
+    # validate installed version of FloatingTools.
     install.loadVersion()
-    threading.Thread(target=loadTools).start()
+
+    # handle multi-threaded wrapper settings.
+    if WRAPPER and WRAPPER.MULTI_THREAD or WRAPPER is None:
+        threading.Thread(target=loadTools).start()
+    else:
+        loadTools()
 
 except socket.gaierror:
     FT_LOOGER.error('No connection to Github could be established. Check your internet connection.')
