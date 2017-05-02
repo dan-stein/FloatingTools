@@ -32,6 +32,22 @@ class AbstractApplication(object):
     MULTI_THREAD = False
 
     @staticmethod
+    def cloudImport(repository, filePath):
+        """
+        Some applications have a specific call to execute code in the main thread. This is only needed if you are 
+        wrapping an application for multi-threaded load up.
+          
+          For example, when adding menu items to Nuke; if the call is made from an outside thread, the menu item will 
+          do nothing when clicked. To fix this, you must use Nukes nuke.executeInMainThread(). In some applications, 
+          this is not an issue. By default, this is a direct wrap to FloatingTools.cloudImport.
+        
+        :param repository: 
+        :param filePath: 
+        :return: 
+        """
+        FloatingTools.cloudImport(repository, filePath)
+
+    @staticmethod
     def appTest():
         """
         MUST BE SUB-CLASSED

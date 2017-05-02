@@ -2,6 +2,7 @@
 import tempfile
 
 # FloatingTools imports
+import FloatingTools
 from AbstractApp import AbstractApplication, setWrapper
 
 nuke = None
@@ -13,6 +14,10 @@ class NukeWrapper(AbstractApplication):
     APP_ICON = 'http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg'
     ARGS = ['-t']
     MULTI_THREAD = True
+
+    @staticmethod
+    def cloudImport(repository, filePath):
+        nuke.executeInMainThreadWithResult(FloatingTools.cloudImport, (repository, filePath))
 
     @staticmethod
     def addMenuSeparator(menuPath):

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/x-icon"
+          href="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"/>
+    <title>{% block title %}{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<style>
+body {
+    background-color: rgb(39, 39, 39);
+    color: rgb(157, 157, 157);
+}
+
+.dropdown-menu {
+    background-color: rgb(39, 39, 39);
+    color: rgb(157, 157, 157);
+}
+
+</style>
+
+<body>
+<div class="container" style="padding-bottom: 200px;">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Floating Tools</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="#">Toolbox</a></li>
+                <li><a href="#">Tool Belt</a></li>
+                <li><a href="#">Applications</a></li>
+                <li><a href="#">Settings</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Support
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="http://www.hatfieldfx.com/">
+                                <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
+                                     height="30"> HatfieldFX
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://www.hatfieldfx.com/floating-tools">
+                                <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
+                                     height="30"> FloatingTools
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <center><span class="help-block">Resources</span></center>
+                        </li>
+                        <li>
+                            <a href="https://www.jetbrains.com/pycharm/">
+                                <img src="https://d3nmt5vlzunoa1.cloudfront.net/pycharm/files/2015/12/PyCharm_400x400_Twitter_logo_white.png"
+                                     height="30"> PyCharm
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/aldmbmtl/FloatingTools">
+                                <img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"
+                                     height="30"> Repository
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/aldmbmtl/FloatingTools/blob/master/README.md">
+                                <img src="http://markdown-here.com/img/logo-2015/austin.png" height="30"> Repository
+                                Markdown
+                            </a>
+                        </li>
+                    </ul>
+            </ul>
+        </div>
+    </nav>
+    {% block body %}
+    {% endblock %}
+    <footer class="footer" style="position:fixed; bottom:0; height: 180px; margin-top: -180px;">
+        <p>Maintained by:
+            <br>
+            <span class="glyphicon glyphicon-globe"></span>
+            <a href="http://www.hatfieldfx.com/">Hatfield FX, LLC</a>
+        </p>
+        <p>Contact information:
+            <br>
+            <span class="glyphicon glyphicon-envelope"></span>
+            <a href="mailto:alex.e.hatfield@gmail.com">alex.e.hatfield@gmail.com</a>
+        </p>
+    </footer>
+</div>
+</body>
+</html>

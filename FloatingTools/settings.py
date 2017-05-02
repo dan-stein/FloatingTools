@@ -2,11 +2,12 @@
 Settings API
 """
 __all__ = [
-    'repositoryData',
-    'loadSources',
+    'sourceData',
+    'userData',
+    'buildData',
     'updateLogin',
     'updateSources',
-    'userData'
+    'updateBuild',
 ]
 
 # FloatingTools imports
@@ -19,13 +20,32 @@ import json
 # globals
 USER = os.path.join(FloatingTools.DATA, 'User.json')
 SOURCES = os.path.join(FloatingTools.DATA, 'Sources.json')
+BUILD = os.path.join(FloatingTools.DATA, 'Build.json')
 
 # make the internal data folder if it doesnt exist.
 if not os.path.exists(os.path.dirname(USER)):
     os.mkdir(os.path.dirname(USER))
 
 
-def repositoryData():
+def buildData():
+    """
+    Load the build data file. 
+    :return: 
+    """
+    if not os.path.exists(BUILD):
+        defaultData = {
+            "collaborator": False,
+            "dev": False,
+            "devBranch": "master",
+            "installed": None,
+            "release": "latest"
+        }
+        json.dump(defaultData, open(BUILD, 'w'), indent=4, sort_keys=True)
+
+    return json.load(open(BUILD, 'r'))
+
+
+def sourceData():
     """
     Load the repository settings file
     :return: 
@@ -39,15 +59,7 @@ def repositoryData():
         ]}
         json.dump(defaultData, open(SOURCES, 'w'), indent=4, sort_keys=True)
 
-    return json.load(open(SOURCES, 'r'))['repositories']
-
-
-def loadSources():
     return json.load(open(SOURCES, 'r'))
-
-
-def updateSources(data):
-    json.dump(data, open(SOURCES, 'w'), indent=4, sort_keys=True)
 
 
 def userData():
@@ -65,6 +77,14 @@ def userData():
         json.dump(defaultData, open(USER, 'w'), indent=4, sort_keys=True)
 
     return json.load(open(USER, 'r'))
+
+
+def updateSources(data):
+    json.dump(data, open(SOURCES, 'w'), indent=4, sort_keys=True)
+
+
+def updateBuild(data):
+    json.dump(data, open(BUILD, 'w'), indent=4, sort_keys=True)
 
 
 def updateLogin(username, password):

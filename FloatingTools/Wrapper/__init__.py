@@ -1,11 +1,12 @@
 """
 AUTO LOADER FOR DETERMINING APPLICATION
 """
+# floating tools imports
+import FloatingTools
 
 # python imports
 import os
 import sys
-import traceback
 
 # package imports
 from AbstractApp import AbstractApplication, setWrapper, wrapper
@@ -43,3 +44,6 @@ for wrapperMod in os.listdir(os.path.dirname(__file__)):
                     pass
     except:
         pass
+
+FloatingTools.Dashboard.setDashboardVariable('wrappers', APP_WRAPPERS)
+FloatingTools.Dashboard.setDashboardVariable('active_wrapper', APP_WRAPPER)

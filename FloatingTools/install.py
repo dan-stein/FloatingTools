@@ -4,7 +4,6 @@ Validate the dependencies are installed.
 # python imports
 import os
 import sys
-import json
 import urllib
 import base64
 import subprocess
@@ -140,20 +139,7 @@ def loadVersion():
     if not os.path.exists(FloatingTools.DATA):
         os.mkdir(FloatingTools.DATA)
 
-    branchFile = os.path.join(FloatingTools.DATA, 'Branch.json')
-    # create the file if it doesnt exists.
-    if not os.path.exists(branchFile):
-        # build the default release data
-        branchData = {'dev': False,
-                      'devBranch': 'master',
-                      'release': 'latest',
-                      'installed': None,
-                      'collaborator': False
-                      }
-        # dump the data
-        json.dump(branchData, open(branchFile, 'w'), indent=4, sort_keys=True)
-    # load the branch data
-    branchData = json.load(open(branchFile, 'r'))
+    branchData = FloatingTools.buildData()
 
     if branchData['collaborator']:
         FloatingTools.FT_LOOGER.info("Launched in Collaborator mode. You are responsible for VCS control and syncing "
@@ -196,7 +182,7 @@ def loadVersion():
     if version:
         FloatingTools.FT_LOOGER.info(message)
 
-        downloadBuild(repository, version)
+        # downloadBuild(repository, version)
 
         FloatingTools.FT_LOOGER.info("Download complete.")
 
@@ -205,6 +191,6 @@ def loadVersion():
             branchData['installed'] = branchData['release']
 
             # save out data
-            json.dump(branchData, open(branchFile, 'w'), indent=4, sort_keys=True)
+            FloatingTools.updateBuild(branchData)
     else:
         FloatingTools.FT_LOOGER.info("Install is up-to-date.")

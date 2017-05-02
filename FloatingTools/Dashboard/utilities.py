@@ -1,26 +1,28 @@
 """
 Utility functions for managing the server.
 """
+# FloatingTools imports
+import FloatingTools
+
 # python imports
 import webbrowser
 
 # flask imports
 from flask import request, Flask
-from flask.blueprints import Blueprint
 
 # python imports
 import os
 from threading import Thread
 
-# globals
-
 # -- directories
 DASHBOARD_DIRECTORY_ROOT = os.path.dirname(__file__)
+DASHBOARD_STATIC = os.path.join(DASHBOARD_DIRECTORY_ROOT, 'static')
 DASHBOARD_TEMPLATES = os.path.join(DASHBOARD_DIRECTORY_ROOT, 'templates')
 
 # -- server set up
-SERVER = Flask('Floating Tools Dashboard')
-SERVER.register_blueprint(Blueprint('Modular Application', __name__, template_folder=DASHBOARD_TEMPLATES))
+SERVER = Flask('Floating Tools Dashboard',
+               template_folder=DASHBOARD_TEMPLATES,
+               static_path=DASHBOARD_STATIC)
 
 # -- variables
 HOST = '127.0.0.1'
@@ -55,3 +57,13 @@ def stopServer():
     func()
 
     return "Server shut down... Close this window."
+
+
+def setDashboardVariable(key, value):
+    """
+    Pass a variable to the dashboard web front end.
+    :param key: 
+    :param value: 
+    :return: 
+    """
+    FloatingTools.Dashboard.SITE_ENV[key] = value

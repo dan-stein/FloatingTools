@@ -55,7 +55,8 @@ def repoWalk(repo, path, root):
     """
     --private--
     :param repo: 
-    :param path: 
+    :param path:
+    :param root: 
     :return: 
     """
     try:
@@ -69,7 +70,10 @@ def repoWalk(repo, path, root):
 
             elif fo.name == 'ft_init.py':
                 # built in init file for floating tools
-                cloudImport(repo.full_name, fo.path)
+                if FloatingTools.WRAPPER:
+                    FloatingTools.WRAPPER.cloudImport(repo.full_name, fo.path)
+                else:
+                    cloudImport(repo.full_name, fo.path)
 
             elif FloatingTools.APP_WRAPPER:
                 # filter out files that do not pertain to this application
@@ -109,7 +113,7 @@ def loadTools():
         FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Network Toolboxes', enabled=False)
 
     # pull repository data
-    repoData = FloatingTools.repositoryData()
+    repoData = FloatingTools.sourceData()['repositories']
 
     # repo threads
     threads = []

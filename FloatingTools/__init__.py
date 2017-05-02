@@ -52,17 +52,21 @@ PYTHON_EXECUTABLE = os.path.join(bin, sys.executable)
 
 
 try:
+    # dashboard import
+    import Dashboard
+
     # handle wrapper
     from Wrapper import *
+
+    # imports
     from settings import *
-    from connect import *
 
     # validate the install
     import install
 
-    # imports
+    # post install imports
+    from connect import *
     from load import *
-    import Dashboard
 
     # verify the login data.
     if verifyLogin() is False:
@@ -75,6 +79,7 @@ try:
     if WRAPPER and WRAPPER.MULTI_THREAD or WRAPPER is None:
         threading.Thread(target=loadTools).start()
     else:
+        print "Application does not support multi-threaded load up."
         loadTools()
 
 except socket.gaierror:
