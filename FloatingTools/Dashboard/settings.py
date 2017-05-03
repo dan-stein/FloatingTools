@@ -38,13 +38,17 @@ def saveSettings():
 
     buildData = FloatingTools.buildData()
     buildData['release'] = request.args.get('release')
-    buildData['collaborator'] = request.args.get('collaborator')
+    buildData['collaborator'] = False
+    if request.args.get('collaborator') == "true":
+        buildData['collaborator'] = True
     branch = request.args.get('dev-branch')
 
     buildData['dev'] = True
     if branch == 'disable':
         buildData['dev'] = False
     buildData['devBranch'] = branch
+
+    FloatingTools.updateBuild(buildData)
 
     return redirect('/settings')
 

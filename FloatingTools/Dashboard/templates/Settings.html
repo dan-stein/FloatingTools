@@ -27,7 +27,7 @@
                 <select name="release" class="form-control">
                     <option value="latest">Latest</option>
                     {% for release in releases %}
-                    {% if release == build["installed"] %}
+                    {% if release == build["release"] %}
                     <option value="{{ release }}" selected>{{ release }}</option>
                     {% else %}
                     <option value="{{ release }}">{{ release }}</option>
@@ -57,7 +57,11 @@
                 <select name="dev-branch" class="form-control">
                     <option value="disable">Disable</option>
                     {% for branch in branches %}
+                    {% if branch == build["devBranch"] %}
+                    <option value="{{ branch }}" selected>{{ branch }}</option>
+                    {% else %}
                     <option value="{{ branch }}">{{ branch }}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
             </label>
@@ -71,8 +75,13 @@
             <label>
                 Collaborator:
                 <select name="collaborator" class="form-control">
-                    <option value="false">Disable</option>
+                    {% if build["collaborator"] != True %}
+                    <option value="false" selected>Disable</option>
                     <option value="true">Enable</option>
+                    {% else %}
+                    <option value="false">Disable</option>
+                    <option value="true" selected>Enable</option>
+                    {% endif %}
                 </select>
             </label>
             <br>
