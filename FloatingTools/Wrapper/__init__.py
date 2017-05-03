@@ -37,9 +37,10 @@ for wrapperMod in os.listdir(os.path.dirname(__file__)):
             obj = mod.__getattribute__(i)
             if 'appTest' in dir(obj):
                 try:
-                    APP_WRAPPERS.append(obj)
-                    wrap = obj().appTest()
-                    APP_WRAPPER = obj
+                    if obj.name() is not None:
+                        APP_WRAPPERS.append(obj)
+                        wrap = obj().appTest()
+                        APP_WRAPPER = obj
                 except:
                     pass
     except:

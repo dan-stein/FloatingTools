@@ -104,9 +104,6 @@ def loadTools():
     """
     # set up dashboard in the application wrapper if there is one loaded.
     if FloatingTools.APP_WRAPPER:
-        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Dashboard/Upload',
-                                               FloatingTools.Dashboard.upload)
-        FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__ + '/Dashboard')
         FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
                                                FloatingTools.Dashboard.settings)
         FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__)

@@ -52,17 +52,22 @@ PYTHON_EXECUTABLE = os.path.join(bin, sys.executable)
 
 
 try:
+    # validate the install
+    import install
+    from install import releases, branches
+
     # dashboard import
     import Dashboard
+
+    # add globals to dashboard
+    Dashboard.setDashboardVariable('install_location', INSTALL_DIRECTORY)
+    Dashboard.setDashboardVariable('python_location', PYTHON_EXECUTABLE)
 
     # handle wrapper
     from Wrapper import *
 
     # imports
     from settings import *
-
-    # validate the install
-    import install
 
     # post install imports
     from connect import *

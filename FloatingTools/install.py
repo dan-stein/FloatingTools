@@ -18,6 +18,11 @@ if not os.path.exists(FloatingTools.PACKAGES):
 # register the FloatingTools/packages directory with sys.path.
 sys.path.append(FloatingTools.PACKAGES)
 
+# GLOBALS
+RELEASES = {}
+BRANCHES = {}
+CURRENT_RELEASE = None
+
 # begin checking dependency list
 # pip
 # flask (this brings a bit with it as well)
@@ -194,3 +199,53 @@ def loadVersion():
             FloatingTools.updateBuild(branchData)
     else:
         FloatingTools.FT_LOOGER.info("Install is up-to-date.")
+
+
+def _update_gloabls():
+    global RELEASES
+    global BRANCHES
+    global CURRENT_RELEASE
+
+    # update globals
+    if not RELEASES or not BRANCHES:
+        ftRepo = FloatingTools.gitHubConnect().get_repo('aldmbmtl/FloatingTools')
+
+        # get branches
+        for branch in ftRepo.get_branches():
+            BRANCHES[branch.name] = branch
+
+        # get releases
+        for release in ftRepo.get_tags():
+            RELEASES[release.name] = release
+            if release.name == FloatingTools.buildData()['installed']:
+                CURRENT_RELEASE = release.name
+
+        # default to latest release if there was none matched.
+        if CURRENT_RELEASE is None:
+            sortedReleases = sorted(RELEASES)
+            sortedReleases.reverse()
+            CURRENT_RELEASE = sortedReleases[0]
+
+    FloatingTools.Dashboard.setDashboardVariable('branches', BRANCHES)
+    FloatingTools.Dashboard.setDashboardVariable('releases', sorted(RELEASES))
+    FloatingTools.Dashboard.setDashboardVariable('current_release', CURRENT_RELEASE)
+
+
+def releases():
+    """
+    Get all published released.
+    :return: 
+    """
+    _update_gloabls()
+
+    return RELEASES
+
+
+def branches():
+    """
+    Get all branches.
+    :return: 
+    """
+    _update_gloabls()
+
+    return BRANCHES

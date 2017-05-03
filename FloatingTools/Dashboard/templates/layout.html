@@ -17,83 +17,149 @@ body {
     background-color: rgb(39, 39, 39);
     color: rgb(157, 157, 157);
 }
-
+.list-group-item {
+    background-color: rgb(30, 30, 30);
+    color: rgb(157, 157, 157);
+    border: 2px solid rgb(39, 39, 75);
+}
+.form-control {
+    background-color: rgb(30, 30, 30);
+    color: rgb(157, 157, 157);
+    border: 2px solid rgb(39, 39, 39);
+}
 .dropdown-menu {
     background-color: rgb(39, 39, 39);
     color: rgb(157, 157, 157);
 }
-
+.navbar {
+    background-color: rgb(30, 30, 30);
+    border: 0px;
+}
+.panel {
+    background-color: rgb(30, 30, 30);
+    color: rgb(157, 157, 157);
+    border: 2px solid rgb(45, 45, 45);
+}
+.well {
+    background-color: rgb(30, 30, 30);
+    color: rgb(157, 157, 157);
+    border: 0px;
+}
+.panel .panel-heading{
+    background-color: rgb(39, 39, 45);
+    color: rgb(157, 157, 157);
+    border: 0px;
+}
+.panel .panel-footer{
+    background-color: rgb(33, 33, 33);
+    color: rgb(157, 157, 157);
+    border: 0px;
+}
 </style>
 
 <body>
-<div class="container" style="padding-bottom: 200px;">
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">Floating Tools</a>
-            </div>
-            <ul class="nav navbar-nav">
-                <li><a href="#">Toolbox</a></li>
-                <li><a href="#">Tool Belt</a></li>
-                <li><a href="#">Applications</a></li>
-                <li><a href="#">Settings</a></li>
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Support
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="http://www.hatfieldfx.com/">
-                                <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
-                                     height="30"> HatfieldFX
-                            </a>
-                        </li>
-                        <li>
-                            <a href="http://www.hatfieldfx.com/floating-tools">
-                                <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
-                                     height="30"> FloatingTools
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <center><span class="help-block">Resources</span></center>
-                        </li>
-                        <li>
-                            <a href="https://www.jetbrains.com/pycharm/">
-                                <img src="https://d3nmt5vlzunoa1.cloudfront.net/pycharm/files/2015/12/PyCharm_400x400_Twitter_logo_white.png"
-                                     height="30"> PyCharm
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://github.com/aldmbmtl/FloatingTools">
-                                <img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"
-                                     height="30"> Repository
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://github.com/aldmbmtl/FloatingTools/blob/master/README.md">
-                                <img src="http://markdown-here.com/img/logo-2015/austin.png" height="30"> Repository
-                                Markdown
-                            </a>
-                        </li>
-                    </ul>
-            </ul>
+<div class="row">
+    <div class="well">
+        <div class="col-sm-2">
         </div>
-    </nav>
-    {% block body %}
-    {% endblock %}
-    <footer class="footer" style="position:fixed; bottom:0; height: 180px; margin-top: -180px;">
-        <p>Maintained by:
+        <div class="col-sm-8">
+            <nav class="navbar navbar-inverse">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">Floating Tools</a>
+                    </div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="/toolbox">Toolbox</a></li>
+                        <li><a href="/tool_belt">Tool Belt</a></li>
+                        <li><a href="/applications">Applications</a></li>
+                        <li><a href="/settings">Settings</a></li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Support
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="http://www.hatfieldfx.com/" style="color: rgb(157, 157, 157);">
+                                        <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
+                                             height="30"> HatfieldFX
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://www.hatfieldfx.com/floating-tools"
+                                       style="color: rgb(157, 157, 157);">
+                                        <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
+                                             height="30"> FloatingTools
+                                    </a>
+                                </li>
+                                <li>
+                                    <center><span class="help-block">Resources</span></center>
+                                </li>
+                                <li>
+                                    <a href="https://www.jetbrains.com/pycharm/" style="color: rgb(157, 157, 157);">
+                                        <img src="https://d3nmt5vlzunoa1.cloudfront.net/pycharm/files/2015/12/PyCharm_400x400_Twitter_logo_white.png"
+                                             height="30"> PyCharm
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://github.com/aldmbmtl/FloatingTools"
+                                       style="color: rgb(157, 157, 157);">
+                                        <img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"
+                                             height="30"> Repository
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://github.com/aldmbmtl/FloatingTools/blob/master/README.md"
+                                       style="color: rgb(157, 157, 157);">
+                                        <img src="http://markdown-here.com/img/logo-2015/austin.png" height="30">
+                                        Repository
+                                        Markdown
+                                    </a>
+                                </li>
+                            </ul>
+                    </ul>
+                </div>
+            </nav>
+            {% block body %}
+            {% endblock %}
+        </div>
+        <div class="col-sm-2">
             <br>
-            <span class="glyphicon glyphicon-globe"></span>
-            <a href="http://www.hatfieldfx.com/">Hatfield FX, LLC</a>
-        </p>
-        <p>Contact information:
             <br>
-            <span class="glyphicon glyphicon-envelope"></span>
-            <a href="mailto:alex.e.hatfield@gmail.com">alex.e.hatfield@gmail.com</a>
-        </p>
-    </footer>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5>Application Launchers</h5>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        {% for app in wrappers %}
+                        <li class="list-group-item"><a href="#">{{ app.name() }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
+<footer class="footer" style="width: 100%; position:fixed; bottom:0; height: 180px; margin-top: -180px;">
+    <div class="well">
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <p>Maintained by:
+                    <br>
+                    <span class="glyphicon glyphicon-globe"></span>
+                    <a href="http://www.hatfieldfx.com/">Hatfield FX, LLC</a>
+                </p>
+                <p>Contact information:
+                    <br>
+                    <span class="glyphicon glyphicon-envelope"></span>
+                    <a href="mailto:alex.e.hatfield@gmail.com">alex.e.hatfield@gmail.com</a>
+                </p>
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+    </div>
+</footer>
+
 </html>

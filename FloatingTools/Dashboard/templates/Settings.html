@@ -1,4 +1,86 @@
 {% extends "layout.html" %}
 {% block title %}Settings{% endblock %}
 {% block body %}
+<h4><label>Current Install</label>: {{ current_release }}</h4>
+<a href="https://github.com/aldmbmtl/FloatingTools/releases/tag/{{ current_release }}">
+    Release Information
+</a>
+<br>
+<br>
+<label>
+    Install Location:
+</label>
+<br>
+<a href="file:///{{ install_location }}">{{ install_location }}</a>
+<br>
+<label>
+    Executable Location:
+</label>
+<br>
+<a href="file://{{ python_location }}">{{ python_location }}</a>
+<hr>
+<form action="/_save">
+    <div class="row">
+        <div class="col-sm-11">
+            <label>
+                Change Release: (requires relaunch)
+                <select name="release" class="form-control">
+                    <option value="latest">Latest</option>
+                    {% for release in releases %}
+                    {% if release == build["installed"] %}
+                    <option value="{{ release }}" selected>{{ release }}</option>
+                    {% else %}
+                    <option value="{{ release }}">{{ release }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </label>
+            <span class="help-block">
+                "Freeze" your install to a specific version or set it to "Latest" to auto-download latest release.
+            </span>
+        </div>
+        <div class="col-sm-1">
+            <input type="submit" class="form-control" value="Save">
+        </div>
+    </div>
+    <br>
+    <br>
+    <div class="panel panel-default">
+
+        <div class="panel-heading">
+            <h5>Development Tools</h5>
+        </div>
+
+        <div class="panel-body">
+            <label>
+                Branch:
+                <select name="dev-branch" class="form-control">
+                    <option value="disable">Disable</option>
+                    {% for branch in branches %}
+                    <option value="{{ branch }}">{{ branch }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <br>
+            <span class="help-block">
+                Selecting a branch from the FloatingTools repository will pull the build from the development branch you
+                select. <strong>This will disable the Release System and overwrite the local FloatingTools build.</strong>
+                You can disable this and it will revert to the release system.
+            </span>
+            <hr>
+            <label>
+                Collaborator:
+                <select name="collaborator" class="form-control">
+                    <option value="disable">Disable</option>
+                    <option value="enable">Enable</option>
+                </select>
+            </label>
+            <br>
+            <span class="help-block">
+                This allows you to modify your local FloatingTools install.<strong>This overrides the Branch and Release
+                Systems.</strong>
+            </span>
+        </div>
+    </div>
+</form>
 {% endblock %}

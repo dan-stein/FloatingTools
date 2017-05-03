@@ -67,3 +67,11 @@ def setDashboardVariable(key, value):
     :return: 
     """
     FloatingTools.Dashboard.SITE_ENV[key] = value
+
+
+def dashboardEnv():
+    """
+    Get the dashboard env variables.
+    :return: 
+    """
+    return FloatingTools.Dashboard.SITE_ENV
