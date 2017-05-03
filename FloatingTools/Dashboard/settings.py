@@ -36,7 +36,15 @@ def saveSettings():
     :return: 
     """
 
-    print request.form
+    buildData = FloatingTools.buildData()
+    buildData['release'] = request.args.get('release')
+    buildData['collaborator'] = request.args.get('collaborator')
+    branch = request.args.get('dev-branch')
+
+    buildData['dev'] = True
+    if branch == 'disable':
+        buildData['dev'] = False
+    buildData['devBranch'] = branch
 
     return redirect('/settings')
 
