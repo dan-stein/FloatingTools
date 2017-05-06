@@ -48,7 +48,7 @@ INSTALL_DIRECTORY = os.path.dirname(FLOATING_TOOLS_ROOT)
 PACKAGES = os.path.join(FLOATING_TOOLS_ROOT, 'packages')
 DATA = os.path.join(FLOATING_TOOLS_ROOT, 'data')
 WRAPPER = None
-PYTHON_EXECUTABLE = os.path.join(bin, sys.executable)
+PYTHON_EXECUTABLE = sys.executable
 
 
 try:
