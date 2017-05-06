@@ -27,6 +27,32 @@
     </div>
 </div>
 
+<div id="removeToolbox" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/tool_shed/_removeToolbox">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Remove Toolbox(s)</h4>
+                </div>
+                <div class="modal-body">
+                    Select the toolboxes you want to remove from your Tool Shed. Keep in mind, you can just disable the
+                    ones you don't want also. Disabling will not cause a slow down during load up. Removing the toolbox
+                    will require you to add them again later. We only recommend this for house-cleaning for your shed.
+                    <hr>
+                    {% for repo in sources["repositories"] %}
+                    <input type="checkbox" name={{ repo["name"] }}> {{ repo["name"] }}
+                    <br>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="Remove">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <form action="/tool_shed/_save">
     <div class="row">
         <div class="col-sm-8">
@@ -35,39 +61,73 @@
                     <h5><span class="glyphicon glyphicon-briefcase"></span> Your Tool Shed</h5>
                 </div>
                 <div class="panel-body">
-                    {% for repo in sources["repositories"] %}
-                    <div class="row">
-                        <div class="col-sm-1">
-                            <select name={{ repo["name"] }} class="form-control">
-                            {% if repo["load"] == True %}
-                            <option value="true" selected>Enable</option>
-                            <option value="false">Disable</option>
-                            {% else %}
-                            <option value="true">Enable</option>
-                            <option value="false" selected>Disable</option>
-                            {% endif %}
-                            </select>
-                        </div>
-                        <div class="col-sm-7">
-                            <label>
-                                <span class="glyphicon glyphicon-briefcase"></span> {{ repo["name"] }}
-                            </label>
-                            <br>
-                            <span class="glyphicon glyphicon-time"></span> Load Times
-                            <ul class="list-group">
-                                {% for app in sources["loadTimes"][repo["name"]] %}
-                                <li class="list-group-item">
-                                    {{ app }}: {{ sources["loadTimes"][repo["name"]][app] }} seconds
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% endfor %}
+                    <ul class="list-group">
+                        {% for repo in sources["repositories"] %}
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <select name={{ repo["name"] }} class="form-control">
+                                    {% if repo["load"] == True %}
+                                    <option value="true" selected>Enable</option>
+                                    <option value="false">Disable</option>
+                                    {% else %}
+                                    <option value="true">Enable</option>
+                                    <option value="false" selected>Disable</option>
+                                    {% endif %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label>
+                                        <span class="glyphicon glyphicon-briefcase"></span> {{ repo["name"] }}
+                                    </label>
+
+                                    <ul>
+                                        <li>
+                                            <span class="glyphicon glyphicon-cloud"></span>
+                                            <a href="https://github.com/{{ repo[" name"] }}/">View on Github</a>
+                                        </li>
+                                        <li>
+                                            <span class="glyphicon glyphicon-file"></span>
+                                            <a href="https://github.com/{{ repo[" name"]
+                                            }}/blob/master/README.md">Details</a>
+                                        </li>
+                                        <li>
+                                            <span class="glyphicon glyphicon-lock"></span>
+                                            <a href="https://github.com/{{ repo[" name"]
+                                            }}/blob/master/LICENSE">License</a>
+                                        </li>
+                                    </ul>
+
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="glyphicon glyphicon-time"></span> Load Times
+                                    <ul>
+                                        {% for app in sources["loadTimes"][repo["name"]] %}
+                                        <li>
+                                            <strong>{{ app }}:</strong> {{ sources["loadTimes"][repo["name"]][app] }}
+                                            seconds
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
                 </div>
                 <div class="panel-footer">
-                    <a data-toggle="modal" data-target="#newToolbox"><span class="glyphicon glyphicon-plus"></span></a>
-                    <a data-toggle="modal" data-target="#removeToolbox"><span class="glyphicon glyphicon-minus"></span></a>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <a data-toggle="modal" data-target="#newToolbox"><span
+                                    class="glyphicon glyphicon-plus"></span> Add </a>
+                            <a data-toggle="modal" data-target="#removeToolbox"><span
+                                    class="glyphicon glyphicon-minus"></span> Remove </a>
+                        </div>
+                        <div class="col-sm-7"></div>
+                        <div class="col-sm-2">
+                            <input type="submit" class="form-control" value="Save">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -83,12 +143,15 @@
                             <label>{{ toolbox }}</label>
                             <ul>
                                 <li>
+                                    <span class="glyphicon glyphicon-cloud"></span>
                                     <a href="https://github.com/{{ toolbox }}/">View on Github</a>
                                 </li>
                                 <li>
+                                    <span class="glyphicon glyphicon-file"></span>
                                     <a href="https://github.com/{{ toolbox }}/blob/master/README.md">Details</a>
                                 </li>
                                 <li>
+                                    <span class="glyphicon glyphicon-lock"></span>
                                     <a href="https://github.com/{{ toolbox }}/blob/master/LICENSE">License</a>
                                 </li>
                             </ul>
@@ -97,14 +160,6 @@
                     </ul>
                 </div>
             </div>
-        </div>
-    </div>
-    <hr>
-    <div class="row">
-        <div class="col-sm-11">
-        </div>
-        <div class="col-sm-1">
-            <input type="submit" class="form-control" value="Save">
         </div>
     </div>
 </form>

@@ -16,14 +16,11 @@ from threading import Thread
 import subprocess
 
 # -- directories
-DASHBOARD_DIRECTORY_ROOT = os.path.dirname(__file__)
-DASHBOARD_STATIC = os.path.join(DASHBOARD_DIRECTORY_ROOT, 'static')
-DASHBOARD_TEMPLATES = os.path.join(DASHBOARD_DIRECTORY_ROOT, 'templates')
+DASHBOARD_DIRECTORY_ROOT = os.path.dirname(__file__).replace('\\', '/')
+DASHBOARD_TEMPLATES = DASHBOARD_DIRECTORY_ROOT + '/templates'
 
 # -- server set up
-SERVER = Flask('Floating Tools Dashboard',
-               template_folder=DASHBOARD_TEMPLATES,
-               static_path=DASHBOARD_STATIC)
+SERVER = Flask('Floating Tools Dashboard', template_folder=DASHBOARD_TEMPLATES)
 
 # -- variables
 HOST = '127.0.0.1'
@@ -40,10 +37,6 @@ def startServer(url=None):
     # open the url that is passed
     if url:
         webbrowser.open(ADDRESS + url)
-
-    # add the toolbox variable if its not present.
-    if 'toolbox' not in FloatingTools.Dashboard.dashboardEnv():
-        FloatingTools.Dashboard.setDashboardVariable('toolbox', None)
 
     # start the server
     t = Thread(target=SERVER.run, args=(HOST, PORT))

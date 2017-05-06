@@ -81,6 +81,23 @@ def _addToolbox():
     if path not in repositories:
         sourceData['repositories'].append(dict(name=path, load=False))
         FloatingTools.updateSources(sourceData)
+
+    return redirect('/tool_shed')
+
+
+@SERVER.route('/tool_shed/_removeToolbox')
+def _removeToolbox():
+    sources = FloatingTools.sourceData()
+
+    # get data
+    for toolbox in request.args:
+        for repo in sources['repositories']:
+            if repo['name'] == toolbox:
+                sources['repositories'].pop(sources['repositories'].index(repo))
+                break
+
+    FloatingTools.updateSources(sources)
+
     return redirect('/tool_shed')
 
 
