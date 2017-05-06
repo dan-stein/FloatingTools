@@ -38,6 +38,8 @@ for wrapperMod in os.listdir(os.path.dirname(__file__)):
             if 'appTest' in dir(obj):
                 try:
                     if obj.name() is not None:
+                        if obj.EXECUTABLE:
+                            obj.EXECUTABLE_ORDER = sorted(obj.EXECUTABLE)
                         APP_WRAPPERS.append(obj)
                         wrap = obj().appTest()
                         APP_WRAPPER = obj

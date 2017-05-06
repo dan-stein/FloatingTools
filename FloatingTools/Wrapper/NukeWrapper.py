@@ -1,4 +1,5 @@
 # python imports
+import os
 import tempfile
 
 # FloatingTools imports
@@ -9,11 +10,33 @@ nuke = None
 MENUS = ['Nuke', 'Node Graph', 'Nodes']
 
 class NukeWrapper(AbstractApplication):
+    # Wrapper settings
     FILE_TYPES = ['.nk', '.py', '.gizmo']
     NAME = 'Nuke'
     APP_ICON = 'http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg'
     ARGS = ['-t']
     MULTI_THREAD = True
+
+    _launchers = {}
+
+    applicationDirectory = None
+    ext = None
+
+    if os.name == 'posix':
+        applicationDirectory = '/Applications'
+        ext = '.app'
+
+    for app in os.listdir(applicationDirectory):
+        if app.startswith('Nuke'):
+            for launcher in os.listdir(os.path.join(applicationDirectory, app)):
+                if launcher.endswith(ext) \
+                        and 'nuke' in launcher.lower() \
+                        and 'commercial' not in launcher.lower() \
+                        and 'ple' not in launcher.lower():
+                    _launchers[os.path.splitext(launcher)[0]] = os.path.join(
+                        os.path.join(applicationDirectory, app, launcher))
+
+    EXECUTABLE = _launchers
 
     @staticmethod
     def cloudImport(repository, filePath):

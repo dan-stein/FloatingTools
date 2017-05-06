@@ -11,6 +11,7 @@ import os
 import sys
 import imp
 import json
+import time
 import threading
 import traceback
 import webbrowser
@@ -21,6 +22,19 @@ import FloatingTools
 
 # GitHub imports
 from github import GithubException
+
+# Globals
+WILDCARDS = dict(
+    Applications=dict(
+        value=FloatingTools.APP_WRAPPER.name() if FloatingTools.APP_WRAPPER is not None else 'Generic',
+        doc='Represents the current application.'),
+    OS=dict(
+        value=os.name,
+        doc='The operating systems python name.')
+)
+
+# add to dashboard
+FloatingTools.Dashboard.setDashboardVariable('wildcards', WILDCARDS)
 
 
 def cloudImport(repo, path):
@@ -97,6 +111,22 @@ def repoWalk(repo, path, root):
         FloatingTools.FT_LOOGER.error(path + ' is not a valid path in this toolbox.')
 
 
+def timeWalk(repository, repoObj, path):
+    startTime = time.time()
+    repoWalk(repoObj, path, path.strip('/'))
+    endTime = time.time()
+
+    sourceData = FloatingTools.sourceData()
+
+    if 'loadTimes' not in sourceData:
+        sourceData['loadTimes'] = {}
+
+    if repository not in sourceData['loadTimes']:
+        sourceData['loadTimes'][repository] = {}
+    sourceData['loadTimes'][repository][
+        FloatingTools.APP_WRAPPER.name() if FloatingTools.APP_WRAPPER else 'Generic'] = endTime - startTime
+    FloatingTools.updateSources(sourceData)
+
 def loadTools():
     """
     Main tool loading function.
@@ -111,9 +141,6 @@ def loadTools():
 
     # pull repository data
     repoData = FloatingTools.sourceData()['repositories']
-
-    # repo threads
-    threads = []
 
     # begin repo loop.
     for repo in repoData:
@@ -149,17 +176,15 @@ def loadTools():
         # loop over the toolbox path
         for path in toolboxData['paths']:
 
-            wildCards = dict(
-                Applications=FloatingTools.APP_WRAPPER.name() if FloatingTools.APP_WRAPPER is not None else 'Generic'
-            )
-
-            for card in wildCards:
-                path = path.replace('{%s}' % card, wildCards[card])
+            for card in WILDCARDS:
+                path = path.replace('{%s}' % card, WILDCARDS[card]['value'])
 
             # spawn thread
-            t = threading.Thread(name=repoName, target=repoWalk, args=(repo, path, path.strip('/')))
-            threads.append(t)
-            t.start()
+            if FloatingTools.APP_WRAPPER and not FloatingTools.APP_WRAPPER.MULTI_THREAD:
+                timeWalk(repoName, repo, path)
+            else:
+                t = threading.Thread(name=repoName, target=timeWalk, args=(repoName, repo, path))
+                t.start()
 
     if FloatingTools.APP_WRAPPER:
         FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__)

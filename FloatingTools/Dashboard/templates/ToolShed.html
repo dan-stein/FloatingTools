@@ -2,52 +2,110 @@
 {% block title %}Tool Shed{% endblock %}
 {% block body %}
 
-<nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-        <ul class="nav navbar-nav">
-            <li><a href="#"><span class="glyphicon glyphicon-plus"></span></a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-minus"></span></a></li>
-        </ul>
-    </div>
-</nav>
-
-<div class="row">
-    <div class="col-sm-8">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h5>Toolboxes</h5>
-            </div>
-            <div class="panel-body">
-                {% for repo in sources["repositories"] %}
-                <div class="row">
-                    <div class="col-sm-2">
-                        <select name={{ repo["name"] }} class="form-control">
-                        <option value="true">Load</option>
-                        <option value="false">Do not Load</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-6">
-                        {{ repo["name"] }}
-                    </div>
+<div id="newToolbox" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/tool_shed/_addToolbox">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Toolbox</h4>
                 </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h5>Hardware Store</h5>
-            </div>
-            <div class="panel-body">
-                <ul>
-                    {% for toolbox in tool_shed %}
-                    <li><a href="https://github.com/{{ toolbox }}/">{{ toolbox }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
+                <div class="modal-body">
+                    Add a new tool box to your tool shed. This can be any username/repository name on Github. We also
+                    provide a collection of repositories we have found in our "Hardware Store". Feel free to take note
+                    of
+                    one you want and add it here!
+                    <hr>
+                    <input type="text" name="username" placeholder="Username"> <strong>/</strong>
+                    <input type="text" name="toolbox" placeholder="Repository(Toolbox)">
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="Add">
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
+<form action="/tool_shed/_save">
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5><span class="glyphicon glyphicon-briefcase"></span> Your Tool Shed</h5>
+                </div>
+                <div class="panel-body">
+                    {% for repo in sources["repositories"] %}
+                    <div class="row">
+                        <div class="col-sm-1">
+                            <select name={{ repo["name"] }} class="form-control">
+                            {% if repo["load"] == True %}
+                            <option value="true" selected>Enable</option>
+                            <option value="false">Disable</option>
+                            {% else %}
+                            <option value="true">Enable</option>
+                            <option value="false" selected>Disable</option>
+                            {% endif %}
+                            </select>
+                        </div>
+                        <div class="col-sm-7">
+                            <label>
+                                <span class="glyphicon glyphicon-briefcase"></span> {{ repo["name"] }}
+                            </label>
+                            <br>
+                            <span class="glyphicon glyphicon-time"></span> Load Times
+                            <ul class="list-group">
+                                {% for app in sources["loadTimes"][repo["name"]] %}
+                                <li class="list-group-item">
+                                    {{ app }}: {{ sources["loadTimes"][repo["name"]][app] }} seconds
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="panel-footer">
+                    <a data-toggle="modal" data-target="#newToolbox"><span class="glyphicon glyphicon-plus"></span></a>
+                    <a data-toggle="modal" data-target="#removeToolbox"><span class="glyphicon glyphicon-minus"></span></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5><span class="glyphicon glyphicon-cloud"></span> Hardware Store</h5>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        {% for toolbox in tool_shed %}
+                        <li class="list-group-item">
+                            <label>{{ toolbox }}</label>
+                            <ul>
+                                <li>
+                                    <a href="https://github.com/{{ toolbox }}/">View on Github</a>
+                                </li>
+                                <li>
+                                    <a href="https://github.com/{{ toolbox }}/blob/master/README.md">Details</a>
+                                </li>
+                                <li>
+                                    <a href="https://github.com/{{ toolbox }}/blob/master/LICENSE">License</a>
+                                </li>
+                            </ul>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-sm-11">
+        </div>
+        <div class="col-sm-1">
+            <input type="submit" class="form-control" value="Save">
+        </div>
+    </div>
+</form>
 {% endblock %}

@@ -29,7 +29,7 @@ def renderSettings():
     return render_template('Settings.html', **FloatingTools.Dashboard.dashboardEnv())
 
 
-@SERVER.route('/_save')
+@SERVER.route('/settings/_save')
 def saveSettings():
     """
     Handles setting saving.

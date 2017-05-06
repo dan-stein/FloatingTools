@@ -39,11 +39,8 @@ except ImportError:
             # determine executable from the application wrapper
             executable = sys.executable
             args = []
-            if FloatingTools.WRAPPER:
-                if FloatingTools.WRAPPER.EXECUTABLE:
-                    executable = FloatingTools.WRAPPER.EXECUTABLE
-                if FloatingTools.WRAPPER.ARGS:
-                    args = FloatingTools.WRAPPER.ARGS
+            if FloatingTools.WRAPPER and FloatingTools.WRAPPER.ARGS:
+                args = FloatingTools.WRAPPER.ARGS
 
             FloatingTools.FT_LOOGER.info("Python executable (+args) for pip install: " + executable)
 

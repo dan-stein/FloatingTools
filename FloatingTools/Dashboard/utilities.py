@@ -8,11 +8,12 @@ import FloatingTools
 import webbrowser
 
 # flask imports
-from flask import request, Flask
+from flask import request, Flask, redirect
 
 # python imports
 import os
 from threading import Thread
+import subprocess
 
 # -- directories
 DASHBOARD_DIRECTORY_ROOT = os.path.dirname(__file__)
@@ -40,6 +41,10 @@ def startServer(url=None):
     if url:
         webbrowser.open(ADDRESS + url)
 
+    # add the toolbox variable if its not present.
+    if 'toolbox' not in FloatingTools.Dashboard.dashboardEnv():
+        FloatingTools.Dashboard.setDashboardVariable('toolbox', None)
+
     # start the server
     t = Thread(target=SERVER.run, args=(HOST, PORT))
     t.start()
@@ -58,6 +63,11 @@ def stopServer():
 
     return "Server shut down... Close this window."
 
+
+@SERVER.route('/_launch', methods=['GET', 'POST'])
+def _launchApp():
+    subprocess.Popen(['open', '"%s"'.replace(SERVER.static_folder, '') % request.args.get('app_path')])
+    return redirect(request.args.get('url'))
 
 def setDashboardVariable(key, value):
     """

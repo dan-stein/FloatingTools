@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+{% block title %}Toolbox{% endblock %}
+{% block body %}
+
+<script>
+function handleToolboxChange(select) {
+    var value = select.options[select.selectedIndex].value;
+    document.location.href = "/toolbox?toolbox=" + value;
+}
+
+</script>
+
+<style>
+.form-control {
+    width:auto;
+    display:inline-block;
+}
+
+</style>
+
+<form>
+    <div class="panel panel-default">
+
+        <div class="panel-heading">
+            <label>
+                <span class="glyphicon glyphicon-briefcase"></span> Toolbox:
+                <select class="form-control" name="toolbox" onchange="handleToolboxChange(this)">
+                    {% for repo in user_repos %}
+                    {% if toolbox == repo %}
+                    <option value="{{ repo }}" selected>{{ repo }}</option>
+                    {% else %}
+                    <option value="{{ repo }}">{{ repo }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+
+        <div class="panel-body">
+            {% if toolbox_data != None %}
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading">
+                            <label>Paths</label>
+                        </div>
+
+                        <div class="panel-body">
+                                <span class="help-block">
+                                    It is strongly recommended that you set up your load up paths. Paths are like maps you
+                                    can set up to speed up load up times and organize your tool box. For example, if there
+                                    are no paths set up, FloatingTools will look through ALL of the files in the toolbox. If
+                                    you have a path for each application, it will only load files for that application and
+                                    not files that are outside that application.
+                                </span>
+                            <ul class="list-group">
+                                {% for path in toolbox_data["paths"] %}
+                                <li class="list-group-item">
+                                    {{ path }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        <div class="panel-footer">
+                            <a href="#"><span class="glyphicon glyphicon-plus"></span></a>
+                            <a href="#"><span class="glyphicon glyphicon-minus"></span></a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Wild card</th>
+                            <th>Value</th>
+                            <th>Documentation</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for wildcard in wildcards %}
+                        <tr>
+                            <td>{{ wildcard }}</td>
+                            <td>{{ wildcards[wildcard]["value"] }}</td>
+                            <td>{{ wildcards[wildcard]["doc"] }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <input type="submit" class="form-control" value="Setup as Toolbox">
+            {% endif %}
+        </div>
+    </div>
+</form>
+{% endblock %}
