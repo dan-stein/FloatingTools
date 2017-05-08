@@ -16,7 +16,7 @@ if not os.path.exists(FloatingTools.PACKAGES):
     os.mkdir(FloatingTools.PACKAGES)
 
 # register the FloatingTools/packages directory with sys.path.
-sys.path.append(FloatingTools.PACKAGES)
+sys.path.insert(0, FloatingTools.PACKAGES)
 
 # GLOBALS
 RELEASES = {}
@@ -30,10 +30,12 @@ CURRENT_RELEASE = None
 
 # check if pip is installed. This is installed at the Python installs site-packages. Everything else is installed in the
 # FloatingTools/packages directory.
+
+ft_packages = os.listdir(FloatingTools.PACKAGES)
+
 try:
     import pip
 except ImportError:
-    ft_packages = os.listdir(FloatingTools.PACKAGES)
     for pack in ['github', 'flask']:
         if pack not in ft_packages:
             # determine executable from the application wrapper
@@ -75,14 +77,8 @@ except ImportError:
 
 # upgrade pip if needed
 pip.main(['install', '--upgrade', 'pip'])
-
-try:
-    import setuptools
-except:
+if 'setuptools' not in ft_packages:
     pip.main(['install', '-U', 'pip', 'setuptools', '-t', FloatingTools.PACKAGES])
-
-    # verify install
-    import github
 
 # Verify the github lib exists
 try:

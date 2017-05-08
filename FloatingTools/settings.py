@@ -36,7 +36,7 @@ def buildData():
         defaultData = {
             "collaborator": False,
             "dev": False,
-            "devBranch": "master",
+            "devBranch": "disable",
             "installed": None,
             "release": "latest"
         }
