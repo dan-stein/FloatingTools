@@ -7,7 +7,6 @@ function handleToolboxChange(select) {
     var value = select.options[select.selectedIndex].value;
     document.location.href = "/toolbox?toolbox=" + value;
 }
-
 </script>
 
 <style>
@@ -18,13 +17,63 @@ function handleToolboxChange(select) {
 
 </style>
 
-<form>
-    <div class="panel panel-default">
 
+<div id="addPath" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/toolbox/_addPath">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Toolbox Path</h4>
+                </div>
+                <div class="modal-body">
+                    Add a new load path to your toolbox.
+                    <hr>
+                    <input type="text" name="path" placeholder="your/path/here">
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="Add">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="removePath" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/toolbox/_removePath">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Remove Toolbox Path</h4>
+                </div>
+                <div class="modal-body">
+                    Remove an existing load up path
+                    <hr>
+                    <ul>
+                        {% for path in toolbox_data["paths"] %}
+                        <li>
+                            <input type="checkbox" name="{{ path }}"> {{ path }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="Remove">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<form action="/toolbox/_setup">
+    <div class="panel panel-default">
         <div class="panel-heading">
             <label>
                 <span class="glyphicon glyphicon-briefcase"></span> Toolbox:
-                <select class="form-control" name="toolbox" onchange="handleToolboxChange(this)">
+                <select class="form-control" name="toolbox" id="toolbox" onchange="handleToolboxChange(this)">
                     {% for repo in user_repos %}
                     {% if toolbox == repo %}
                     <option value="{{ repo }}" selected>{{ repo }}</option>
@@ -38,13 +87,85 @@ function handleToolboxChange(select) {
 
         <div class="panel-body">
             {% if toolbox_data != None %}
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-time"></span> Benchmark
+                </div>
+
+                <div class="panel-body">
+                    {% if benchmark_directory_count != 0 %}
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <span class="glyphicon glyphicon-compressed"></span> Toolbox Size (<a href="/toolbox_paths">mapped</a>)
+                            <ul>
+                                <li>
+                                    <span class="glyphicon glyphicon-file"></span> Files: {{ benchmark_file_count }}
+                                </li>
+                                <li>
+                                    <span class="glyphicon glyphicon-folder-open"></span> Directories: {{
+                                    benchmark_directory_count }}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-4">
+                            <span class="glyphicon glyphicon-th-list"></span> Toolbox Paths
+                            <ul>
+                                {% for path in benchmark_data["paths"] %}
+                                {% if path == "/" %}
+                                <li>
+                                    <font color="red">{{ path }}</font>: {{ benchmark_data["paths"][path] }} seconds
+                                    <br>
+                                    <strong>
+                                        <font color="red">
+                                            Having a path set to the root like this will cost you a lot in
+                                            speed. This is a sign that you may have not set any Toolbox Paths.
+                                            We strongly recommend you set Toolbox Paths to avoid slow load times.
+                                        </font>
+                                    </strong>
+                                </li>
+                                {% else %}
+                                <li>
+                                    {{ path }}: {{ benchmark_data["paths"][path] }} seconds
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-sm-4">
+                            <span class="glyphicon glyphicon-list-alt"></span> Application paths
+                            <ul>
+                                {% for app in benchmark_data["applications"] %}
+                                <li>
+                                    {{ app }}
+                                    <ul>
+                                        {% for appPath in benchmark_data["applications"][app] %}
+                                        <li>
+                                            {{ appPath }}: {{ benchmark_data["applications"][app][appPath] }} seconds
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="panel-footer">
+                    <a href="/toolbox/_benchmark"><span class="glyphicon glyphicon-dashboard"></span> Run
+                        Diagnostics</a>
+                </div>
+            </div>
+
             <div class="row">
 
                 <div class="col-sm-6">
                     <div class="panel panel-default">
 
                         <div class="panel-heading">
-                            <label>Paths</label>
+                            <label><span class="glyphicon glyphicon-th-list"></span> Toolbox Paths</label>
                         </div>
 
                         <div class="panel-body">
@@ -65,8 +186,12 @@ function handleToolboxChange(select) {
                         </div>
 
                         <div class="panel-footer">
-                            <a href="#"><span class="glyphicon glyphicon-plus"></span></a>
-                            <a href="#"><span class="glyphicon glyphicon-minus"></span></a>
+                            <a data-toggle="modal" data-target="#addPath">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </a>
+                            <a data-toggle="modal" data-target="#removePath">
+                                <span class="glyphicon glyphicon-minus"></span>
+                            </a>
                         </div>
 
                     </div>

@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block title %}Toolbox{% endblock %}
+{% block body %}
+<h2>Toolbox Paths</h2>
+<p>
+    Toolbox Paths help to maintain fast load up times from FloatingTools. The idea is that a Toolbox will have some form
+    of organization to it. For example, you may have a Toolbox laid out like the following:<br><br>
+
+    /tools<br>
+    ----/Nuke<br>
+    --------/{10 tools}<br>
+    ----/Maya<br>
+    --------/{50 tools}<br>
+    /toolbox.json<br><br>
+
+    This Toolbox has 3 directories with a total of 61 files. At this point, the load up could be upwards of 4.5 seconds
+    just to load the files from the server (this time does not take in to account the codes execution time). This is
+    what we call a "root load". This is the default behavior, but not preferred. Root loading allows for you to add ANY
+    repository on GitHub, even if not set up as a FloatingTools Toolbox, and load it. But if you look carefully, there
+    is no reason for us to load the 50 Maya files if we are in Nuke and we will NEVER need to load the toolbox.json
+    file. So instead, we can make a Toolbox Path pointing to the Nuke directory as follows:<br><br>
+
+    /tools/Nuke<br><br>
+
+    This will be added as a path in your toolbox.json file and when FloatingTools loads, it will skip all directories
+    and files and go directly to that directory and load only the 10 Nuke tools we want. This will cut out load time
+    down to 0.3 seconds. Much faster and efficient.
+</p>
+<hr>
+
+<h4>Toolbox Path Wildcards</h4>
+<p>
+    Continuing from the above example. Now that we have a path set, we are loading from faster for Nuke. But what about
+    the Maya tools? The initial reflex will be to add another path for Maya and then you will have 2 load up paths in
+    your toolbox.json file.<br><br>
+
+    /tools/Nuke
+    /tools/Maya<br><br>
+
+    This is fine, but this is essentially hard coding to these applications. For example, what if you add Houdini to
+    your Toolbox? You then need to add a third path and now you have a bunch of hardcoded paths. Now there is a drawback
+    to this method that provides a slowdown. Now, when you launch Nuke, FloatingTools will try to load Mayas tools and
+    Houdinis tools. Plus, if the path doesnt exist in the toolbox yet, FloatingTools will hang for 1 second waiting for
+    a response from the server.<br><br>
+
+    So at this point we are loading 60+ tools from applications that we aren't even in, now we are back to our 4+ second
+    load times. So we use Wildcards! Wildcards are words wrapped in braces like this: {}. There is a Wildcard chart
+    displayed for you on the <a href="/toolbox">Toolbox page</a>. Using Wildcards, we can remove all of our paths and
+    make one path as follows:
+    <br><br>
+
+    /tools/{Applications}
+    <br><br>
+
+    The {Applications} Wildcard gets replaced with whatever the current application wrapper is.<br>
+</p>
+{% endblock %}
