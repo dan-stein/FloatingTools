@@ -30,7 +30,6 @@ CURRENT_RELEASE = None
 
 # check if pip is installed. This is installed at the Python installs site-packages. Everything else is installed in the
 # FloatingTools/packages directory.
-
 ft_packages = os.listdir(FloatingTools.PACKAGES)
 
 try:
@@ -80,6 +79,17 @@ pip.main(['install', '--upgrade', 'pip'])
 if 'setuptools' not in ft_packages:
     pip.main(['install', '-U', 'pip', 'setuptools', '-t', FloatingTools.PACKAGES])
 
+# due to the nature of the pip install process, we want to set the PYTHONPATH environment variable pointed to the
+# FT/packages directory so that setuptools is in sync with the version of pip installed.
+PYTHONPATH = os.environ["PYTHONPATH"] if "PYTHONPATH" in os.environ else None
+if os.name == 'posix':
+    setEnvCommand = 'export PYTHONPATH="%s"'
+elif os.name == 'nt':
+    setEnvCommand = 'setx PYTHONPATH "%s"'
+else:
+    setEnvCommand = 'export PYTHONPATH="%s"'
+os.system(setEnvCommand % FloatingTools.PACKAGES)
+
 # Verify the github lib exists
 try:
     import github
@@ -98,6 +108,9 @@ except ImportError:
     # verify install
     import flask
 
+# flush env
+if PYTHONPATH:
+    os.system(setEnvCommand % PYTHONPATH)
 
 def downloadBuild(repository, sha, path=None):
     """
