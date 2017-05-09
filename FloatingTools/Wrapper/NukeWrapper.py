@@ -1,6 +1,7 @@
 # python imports
 import os
 import tempfile
+from sys import platform
 
 # FloatingTools imports
 import FloatingTools
@@ -22,19 +23,27 @@ class NukeWrapper(AbstractApplication):
     applicationDirectory = None
     ext = None
 
-    if os.name == 'posix':
+    if platform == "linux" or platform == "linux2":
+        pass
+
+    elif platform == "darwin":
         applicationDirectory = '/Applications'
         ext = '.app'
 
-    for app in os.listdir(applicationDirectory):
-        if app.startswith('Nuke'):
-            for launcher in os.listdir(os.path.join(applicationDirectory, app)):
-                if launcher.endswith(ext) \
-                        and 'nuke' in launcher.lower() \
-                        and 'commercial' not in launcher.lower() \
-                        and 'ple' not in launcher.lower():
-                    _launchers[os.path.splitext(launcher)[0]] = os.path.join(
-                        os.path.join(applicationDirectory, app, launcher))
+    elif platform == "win32":
+        applicationDirectory = 'C:/Program Files/'
+        ext = '.exe'
+
+    if applicationDirectory and os.path.exists(applicationDirectory):
+        for app in os.listdir(applicationDirectory):
+            if app.startswith('Nuke'):
+                for launcher in os.listdir(os.path.join(applicationDirectory, app)):
+                    if launcher.endswith(ext) \
+                            and 'nuke' in launcher.lower() \
+                            and 'commercial' not in launcher.lower() \
+                            and 'ple' not in launcher.lower():
+                        _launchers[os.path.splitext(launcher)[0]] = os.path.join(
+                            os.path.join(applicationDirectory, app, launcher))
 
     EXECUTABLE = _launchers
 
