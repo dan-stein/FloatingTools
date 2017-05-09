@@ -43,7 +43,7 @@ __all__ = [
 
 # Global variables
 FT_LOOGER = logging.getLogger('FloatingTools')
-FLOATING_TOOLS_ROOT = os.path.dirname(__file__)
+FLOATING_TOOLS_ROOT = os.path.dirname(os.path.realpath(__file__))
 INSTALL_DIRECTORY = os.path.dirname(FLOATING_TOOLS_ROOT)
 PACKAGES = os.path.join(FLOATING_TOOLS_ROOT, 'packages')
 DATA = os.path.join(FLOATING_TOOLS_ROOT, 'data')

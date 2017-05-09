@@ -82,13 +82,7 @@ if 'setuptools' not in ft_packages:
 # due to the nature of the pip install process, we want to set the PYTHONPATH environment variable pointed to the
 # FT/packages directory so that setuptools is in sync with the version of pip installed.
 PYTHONPATH = os.environ["PYTHONPATH"] if "PYTHONPATH" in os.environ else None
-if os.name == 'posix':
-    setEnvCommand = 'export PYTHONPATH="%s"'
-elif os.name == 'nt':
-    setEnvCommand = 'setx PYTHONPATH "%s"'
-else:
-    setEnvCommand = 'export PYTHONPATH="%s"'
-os.system(setEnvCommand % FloatingTools.PACKAGES)
+os.environ['PYTHONPATH'] = FloatingTools.PACKAGES
 
 # Verify the github lib exists
 try:
@@ -110,7 +104,7 @@ except ImportError:
 
 # flush env
 if PYTHONPATH:
-    os.system(setEnvCommand % PYTHONPATH)
+    os.environ['PYTHONPATH'] = PYTHONPATH
 
 def downloadBuild(repository, sha, path=None):
     """
