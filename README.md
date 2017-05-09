@@ -37,7 +37,10 @@ Usually the latest is fine. If you are on Linux, download the .tar. The .zip wil
 the installers folder and double click the installer file for your OS. If you are running Linux or OSX, you may need to
 execute it through the command line. Just drag and drop the file into the terminal and hit enter.
 
-3. After the install is complete, you can move it to where ever you want to use it! In order to use it, just import it! 
+3. After the install is complete, you can move the FloatingTools folder wherever you want to use it! 
+<span style="color:red"> YOU MUST COPY THE FLOATINGTOOLS DIRECTORY OUT OF THE ZIP FOLDER!</span>. This means if you 
+download and unpack the zip, you want to get FloatingTools-0.5.2/-->*FloatingTools*<--. Not the zip! In order to use it, 
+just copy it where you want it and import it! 
 ```python
 import FloatingTools
 ```
