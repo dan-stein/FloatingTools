@@ -68,8 +68,8 @@ something like that, here are some basic examples for opening those pages.
 import FloatingTools
 
 # For launching the settings/toolbox/login server
-# toolbox in page
-FloatingTools.Dashboard.toolbox()
+# applications page
+FloatingTools.Dashboard.applications()
 
 # toolbox page
 FloatingTools.Dashboard.toolbox()
