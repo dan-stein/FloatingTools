@@ -33,17 +33,12 @@ Pip requires being installed in the python site-packages.
 1. Download the release you would like to use from [here](https://github.com/aldmbmtl/FloatingTools/releases). 
 Usually the latest is fine. If you are on Linux, download the .tar. The .zip will be fine for all other operating systems. 
 
-2. After downloading and unpacking the .zip or .tar, open the directory and copy the FloatingTools folder 
-(this is the python package) and put it on your python sys.path. If you are in Nuke for example, your .nuke directory is
- fine. This package is set up for individual use and studio use. For studio installs, you can store this in a server
- location and it will work the same.
-   
-3. Simply import FloatingTools and it will make you log in to your github account.
-```python
-import sys
-sys.path.append("path/to/floatingtools")
+2. After downloading and unpacking the .zip or .tar, there should be a "FloatingTools" folder and an "installers". Open 
+the installers folder and double click the installer file for your OS. If you are running Linux or OSX, you may need to
+execute it through the command line. Just drag and drop the file into the terminal and hit enter.
 
-# this will install everything you need!
+3. After the install is complete, you can move it to where ever you want to use it! In order to use it, just import it! 
+```python
 import FloatingTools
 ```
 You're done!
@@ -69,13 +64,15 @@ something like that, here are some basic examples for opening those pages.
 ```python
 import FloatingTools
 
-# For launching the settings/uploading/login server
+# For launching the settings/toolbox/login server
+# toolbox in page
+FloatingTools.Dashboard.toolbox()
 
-# log in page
-FloatingTools.Dashboard.login()
+# toolbox page
+FloatingTools.Dashboard.toolbox()
 
-# upload page
-FloatingTools.Dashboard.upload()
+# toolShed page
+FloatingTools.Dashboard.toolShed()
 
 # settings page
 FloatingTools.Dashboard.settings()
