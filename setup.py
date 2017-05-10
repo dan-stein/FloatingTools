@@ -2,7 +2,6 @@ from setuptools import find_packages, setup
 
 setup(
     name='FloatingTools',
-    version='v0.1',
     packages=find_packages(),
     package_data={
         '': ['templates/*.html']
