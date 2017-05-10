@@ -1,5 +1,24 @@
 {% extends "layout.html" %}
 {% block title %}Toolbox{% endblock %}
+
+{% block help_video %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Help Center
+    </div>
+    <div class="panel-body">
+        <ul>
+            <li>
+                <a href="http://www.hatfieldfx.com/toolbox-setup">How to set up your toolbox</a>
+            </li>
+            <li>
+                <a href="/toolbox_paths">How to set up your paths</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
 {% block body %}
 
 <script>
@@ -14,7 +33,6 @@ function handleToolboxChange(select) {
     width:auto;
     display:inline-block;
 }
-
 </style>
 
 
@@ -66,7 +84,6 @@ function handleToolboxChange(select) {
         </div>
     </div>
 </div>
-
 
 <form action="/toolbox/_setup">
     <div class="panel panel-default">

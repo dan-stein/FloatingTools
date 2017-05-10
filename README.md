@@ -30,6 +30,8 @@ we do is so that we don't go spraying these libraries all over your python site-
 Pip requires being installed in the python site-packages.
 
 ### Install instructions:
+For step by step videos for installing, go [here](http://www.hatfieldfx.com/floating-tools).
+
 1. Download the release you would like to use from [here](https://github.com/aldmbmtl/FloatingTools/releases). 
 Usually the latest is fine. If you are on Linux, download the .tar. The .zip will be fine for all other operating systems. 
 

@@ -1,5 +1,21 @@
 {% extends "layout.html" %}
 {% block title %}Settings{% endblock %}
+
+{% block help_video %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Help Center
+    </div>
+    <div class="panel-body">
+        <ul>
+            <li>
+                <a href="http://www.hatfieldfx.com/toolbox-setup">Setting up your install</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
 {% block body %}
 <h4><label>Current Install</label>: {{ current_release }}</h4>
 <a href="https://github.com/aldmbmtl/FloatingTools/releases/tag/{{ current_release }}">
