@@ -5,6 +5,7 @@ Utility functions for managing the server.
 import FloatingTools
 
 # python imports
+import requests
 import webbrowser
 
 # flask imports
@@ -34,13 +35,13 @@ def startServer(url=None):
     :type url: 
     :return: 
     """
-    # open the url that is passed
-    if url:
-        webbrowser.open(ADDRESS + url)
-
     # start the server
     t = Thread(target=SERVER.run, args=(HOST, PORT))
     t.start()
+
+    # open the url that is passed
+    if url:
+        webbrowser.open(ADDRESS + url)
 
 
 @SERVER.route('/shutdown', methods=['GET', 'POST'])
