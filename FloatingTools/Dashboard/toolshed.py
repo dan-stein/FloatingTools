@@ -61,6 +61,30 @@ def saveToolShed():
     return redirect('/tool_shed')
 
 
+@SERVER.route('/tool_shed/_addLocalToolbox')
+def _addLocalToolbox():
+    # get data
+    username = request.args.get('username')
+    repo = request.args.get('toolbox')
+
+    # validate the username and repository are passed
+    if not username and not repo:
+        return redirect('/tool_shed')
+
+    # repo path
+    path = "%(username)s/%(repo)s" % locals()
+
+    # load the source data
+    sourceData = FloatingTools.sourceData()
+    repositories = [repo['name'] for repo in sourceData['repositories']]
+
+    if path not in repositories:
+        sourceData['repositories'].append(dict(name=path, load=False))
+        FloatingTools.updateSources(sourceData)
+
+    return redirect('/tool_shed')
+
+
 @SERVER.route('/tool_shed/_addToolbox')
 def _addToolbox():
     # get data
