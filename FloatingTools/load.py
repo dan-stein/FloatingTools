@@ -137,7 +137,8 @@ def loadTools():
         FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
                                                FloatingTools.Dashboard.settings)
         FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__)
-        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Network Toolboxes', enabled=False)
+        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Network Toolboxes',
+                                               FloatingTools.Dashboard.toolShed)
 
     # pull repository data
     repoData = FloatingTools.sourceData()['repositories']
