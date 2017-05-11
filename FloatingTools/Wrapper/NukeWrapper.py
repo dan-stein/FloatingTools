@@ -53,6 +53,7 @@ class NukeWrapper(AbstractApplication):
 
     @staticmethod
     def addMenuSeparator(menuPath):
+        # handle windows nonsense
         menuPath = menuPath.replace('\\', '/').replace('//', '/')
         for menu in MENUS:
             try:
