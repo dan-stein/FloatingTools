@@ -167,21 +167,27 @@ def loadVersion():
         message = "Loading in DEV branch: " + branchData['devBranch']
 
     else:
-        # load in the release data from the repository
-        if branchData['release'] != branchData['installed']:
 
+        if branchData['release'] == 'latest' or branchData['release'] != branchData['installed']:
             # load all releases
             releases = {}
             for release in repository.get_tags():
                 releases[release.name] = release.commit.sha
 
+            # load in the release data from the repository
             if branchData['release'] == 'latest':
-                # find the latest version
-                version = releases[max(releases)]
-                message = "Downloading FloatingTools " + max(releases)
-            else:
+                latestVersion = releases[max(releases)]
+
+                if branchData['installed'] != version:
+                    version = latestVersion
+                    message = "Downloading FloatingTools " + latestVersion
+
+            elif branchData['release'] != branchData['installed']:
                 version = releases[branchData['release']]
                 message = "Downloading FloatingTools " + branchData['release']
+
+            else:
+                pass
 
     # begin download
     if version:
@@ -193,7 +199,7 @@ def loadVersion():
 
         if not branchData['dev']:
             # update the branch data
-            branchData['installed'] = branchData['release']
+            branchData['installed'] = version
 
             # save out data
             FloatingTools.updateBuild(branchData)
