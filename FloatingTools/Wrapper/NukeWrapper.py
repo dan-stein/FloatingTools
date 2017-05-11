@@ -53,6 +53,8 @@ class NukeWrapper(AbstractApplication):
 
     @staticmethod
     def addMenuSeparator(menuPath):
+        # handle windows nonsense
+        menuPath = menuPath.replace('\\', '/').replace('//', '/')
         for menu in MENUS:
             try:
                 nuke.executeInMainThread(nuke.menu(menu).findItem(menuPath).addSeparator)
@@ -67,6 +69,7 @@ class NukeWrapper(AbstractApplication):
 
     @staticmethod
     def addMenuEntry(menuPath, command=None, icon=None, enabled=True):
+        menuPath = menuPath.replace('\\', '/').replace('//', '/')
         if command is None:
             def command():
                 pass
