@@ -37,6 +37,29 @@ WILDCARDS = dict(
 FloatingTools.Dashboard.setDashboardVariable('wildcards', WILDCARDS)
 
 
+class CloudModule(object):
+    def __init__(self, name, code):
+        self.name = name
+        self.code = compile(str(code), '<string>', 'exec')
+
+        sys.modules[name] = self
+
+    def __getattribute__(self, item):
+        if item in ['name', 'code']:
+            return object.__getattribute__(self, item)
+
+        # instantiate module object
+        mod = imp.new_module(self.name)
+
+        # execute the code object
+        exec self.code in mod.__dict__
+
+        # register module object
+        sys.modules[self.name] = mod
+
+        return mod.__getattribute__(item)
+
+
 def cloudImport(repo, path):
     """
     Import a module from Github.
@@ -46,20 +69,8 @@ def cloudImport(repo, path):
     """
     try:
         moduleName = os.path.splitext(os.path.basename(path))[0]
-        mod = imp.new_module(moduleName)
-
-        code = compile(
-            str(FloatingTools.gitHubConnect().get_repo(repo).get_file_contents(path).decoded_content),
-            '<string>',
-            'exec'
-        )
-
-        # execute the code object
-        exec code in mod.__dict__
-
-        sys.modules[moduleName] = mod
-
-        return mod
+        CloudModule(moduleName, FloatingTools.gitHubConnect().get_repo(repo).get_file_contents(path).decoded_content)
+        return sys.modules[moduleName]
     except:
         print "Failed to import %s %s" % (repo, path)
         traceback.print_exc()
@@ -112,20 +123,26 @@ def repoWalk(repo, path, root):
 
 
 def timeWalk(repository, repoObj, path):
+    # execute repo walk with timer
     startTime = time.time()
     repoWalk(repoObj, path, path.strip('/'))
     endTime = time.time()
 
+    # load the source data to be stored
     sourceData = FloatingTools.sourceData()
-
     if 'loadTimes' not in sourceData:
         sourceData['loadTimes'] = {}
 
+    # add the repo to the load times catalog
     if repository not in sourceData['loadTimes']:
         sourceData['loadTimes'][repository] = {}
+
+    # log the data and update
     sourceData['loadTimes'][repository][
-        FloatingTools.APP_WRAPPER.name() if FloatingTools.APP_WRAPPER else 'Generic'] = endTime - startTime
+        FloatingTools.APP_WRAPPER.name() if FloatingTools.APP_WRAPPER else 'Generic'
+    ] = endTime - startTime
     FloatingTools.updateSources(sourceData)
+
 
 def loadTools():
     """
@@ -137,7 +154,8 @@ def loadTools():
         FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
                                                FloatingTools.Dashboard.settings)
         FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__)
-        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Network Toolboxes', enabled=False)
+        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Network Toolboxes',
+                                               FloatingTools.Dashboard.toolShed)
 
     # pull repository data
     repoData = FloatingTools.sourceData()['repositories']
