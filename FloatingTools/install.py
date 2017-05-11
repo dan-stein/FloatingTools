@@ -232,8 +232,10 @@ def _update_gloabls():
             sortedReleases.reverse()
             CURRENT_RELEASE = sortedReleases[0]
 
+    sortedReleases = sorted(RELEASES)
+    sortedReleases.reverse()
     FloatingTools.Dashboard.setDashboardVariable('branches', BRANCHES)
-    FloatingTools.Dashboard.setDashboardVariable('releases', sorted(RELEASES))
+    FloatingTools.Dashboard.setDashboardVariable('releases', sortedReleases)
     FloatingTools.Dashboard.setDashboardVariable('current_release', CURRENT_RELEASE)
 
 

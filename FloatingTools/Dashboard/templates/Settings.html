@@ -42,6 +42,7 @@
                 Change Release: (requires relaunch)
                 <select name="release" class="form-control">
                     <option value="latest">Latest</option>
+                    <option disabled>──────</option>
                     {% for release in releases %}
                     {% if release == build["release"] %}
                     <option value="{{ release }}" selected>{{ release }}</option>
