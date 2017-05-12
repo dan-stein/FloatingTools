@@ -9,7 +9,6 @@ __all__ = [
 # python imports
 import os
 import sys
-import imp
 import json
 import time
 import threading
@@ -37,29 +36,6 @@ WILDCARDS = dict(
 FloatingTools.Dashboard.setDashboardVariable('wildcards', WILDCARDS)
 
 
-class CloudModule(object):
-    def __init__(self, name, code):
-        self.name = name
-        self.code = compile(str(code), '<string>', 'exec')
-
-        sys.modules[name] = self
-
-    def __getattribute__(self, item):
-        if item in ['name', 'code']:
-            return object.__getattribute__(self, item)
-
-        # instantiate module object
-        mod = imp.new_module(self.name)
-
-        # execute the code object
-        exec self.code in mod.__dict__
-
-        # register module object
-        sys.modules[self.name] = mod
-
-        return mod.__getattribute__(item)
-
-
 def cloudImport(repo, path):
     """
     Import a module from Github.
@@ -69,7 +45,6 @@ def cloudImport(repo, path):
     """
     try:
         moduleName = os.path.splitext(os.path.basename(path))[0]
-        CloudModule(moduleName, FloatingTools.gitHubConnect().get_repo(repo).get_file_contents(path).decoded_content)
         return sys.modules[moduleName]
     except:
         print "Failed to import %s %s" % (repo, path)
@@ -87,36 +62,40 @@ def repoWalk(repo, path, root):
     try:
         repoContents = repo.get_dir_contents(path)
 
-        for fo in repoContents:
+        fileNames = [fo.name for fo in repoContents]
 
-            # loop over directories
-            if fo.type == 'dir':
-                repoWalk(repo, fo.path, root)
+        if '__init__.py' in fileNames:
+            FloatingTools.virtualPyImport(repo, path)
+        else:
+            for fo in repoContents:
+                # loop over directories
+                if fo.type == 'dir':
+                    repoWalk(repo, fo.path, root)
 
-            elif fo.name == 'ft_init.py':
-                # built in init file for floating tools
-                if FloatingTools.WRAPPER:
-                    FloatingTools.WRAPPER.cloudImport(repo.full_name, fo.path)
+                elif fo.name == 'ft_init.py':
+                    # built in init file for floating tools
+                    if FloatingTools.WRAPPER:
+                        FloatingTools.WRAPPER.cloudImport(repo.full_name, fo.path)
+                    else:
+                        cloudImport(repo.full_name, fo.path)
+
+                elif FloatingTools.APP_WRAPPER:
+                    # filter out files that do not pertain to this application
+                    basename, ext = os.path.splitext(fo.name)
+                    if ext not in FloatingTools.APP_WRAPPER.fileTypes():
+                        continue
+
+                    # register tool with the application
+                    FloatingTools.APP_WRAPPER.addMenuEntry(
+                        os.path.join(
+                            FloatingTools.__name__,
+                            repo.full_name.replace('/', '.'),
+                            fo.path
+                        ).replace(root, '').replace('//', '/'),
+                        partial(FloatingTools.APP_WRAPPER.loadFile, fo, ext))
+
                 else:
-                    cloudImport(repo.full_name, fo.path)
-
-            elif FloatingTools.APP_WRAPPER:
-                # filter out files that do not pertain to this application
-                basename, ext = os.path.splitext(fo.name)
-                if ext not in FloatingTools.APP_WRAPPER.fileTypes():
-                    continue
-
-                # register tool with the application
-                FloatingTools.APP_WRAPPER.addMenuEntry(
-                    os.path.join(
-                        FloatingTools.__name__,
-                        repo.full_name.replace('/', '.'),
-                        fo.path
-                    ).replace(root, '').replace('//', '/'),
-                    partial(FloatingTools.APP_WRAPPER.loadFile, fo, ext))
-
-            else:
-                pass
+                    pass
 
     except GithubException:
         FloatingTools.FT_LOOGER.error(path + ' is not a valid path in this toolbox.')
@@ -160,6 +139,8 @@ def loadTools():
     # pull repository data
     repoData = FloatingTools.sourceData()['repositories']
 
+    threads = []
+
     # begin repo loop.
     for repo in repoData:
 
@@ -202,7 +183,11 @@ def loadTools():
                 timeWalk(repoName, repo, path)
             else:
                 t = threading.Thread(name=repoName, target=timeWalk, args=(repoName, repo, path))
+                threads.append(t)
                 t.start()
+
+    for thread in threads:
+        thread.join()
 
     if FloatingTools.APP_WRAPPER:
         FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__)

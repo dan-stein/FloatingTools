@@ -71,6 +71,7 @@ try:
 
     # post install imports
     from connect import *
+    from virtual import *
     from load import *
 
     # verify the login data.
