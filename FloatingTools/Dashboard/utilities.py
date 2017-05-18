@@ -5,7 +5,6 @@ Utility functions for managing the server.
 import FloatingTools
 
 # python imports
-import requests
 import webbrowser
 
 # flask imports
@@ -62,6 +61,7 @@ def stopServer():
 def _launchApp():
     subprocess.Popen(['open', '"%s"'.replace(SERVER.static_folder, '') % request.args.get('app_path')])
     return redirect(request.args.get('url'))
+
 
 def setDashboardVariable(key, value):
     """

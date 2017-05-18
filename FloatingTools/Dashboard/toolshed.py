@@ -8,7 +8,9 @@ from flask import request, render_template, redirect
 from utilities import SERVER
 
 # python imports
+import pydoc
 import urllib
+import traceback
 
 
 @SERVER.route('/tool_shed', methods=['GET', 'POST'])
@@ -42,7 +44,32 @@ def saveToolShed():
     repositoryNames = [repo['name'] for repo in sourceData['repositories']]
 
     for repo in request.args:
+
         value = request.args.get(repo)
+
+        if '.' in repo:
+            toolbox, module = repo.split('.')
+
+            toolboxSettings = None
+            for box in sourceData['repositories']:
+                if box['name'] == toolbox:
+                    toolboxSettings = box
+                    break
+
+            app = 'Generic'
+            if FloatingTools.APP_WRAPPER:
+                app = FloatingTools.APP_WRAPPER.name()
+            if app not in toolboxSettings:
+                toolboxSettings[app] = {}
+
+            if value == 'true':
+                value = True
+            else:
+                value = False
+
+            toolboxSettings[app][module] = value
+            continue
+
         savedRepo = None
         for savedRepo in sourceData['repositories']:
             if savedRepo['name'] == repo:
@@ -59,6 +86,28 @@ def saveToolShed():
     FloatingTools.updateSources(sourceData)
 
     return redirect('/tool_shed')
+
+
+@SERVER.route('/tool_shed/_import')
+def pyImport():
+    try:
+        __import__(request.args.get('module'))
+    except Exception, e:
+        return render_template('Error.html',
+                               error_type=e,
+                               error=traceback.format_exc()
+                               )
+    return redirect('/tool_shed')
+
+
+@SERVER.route('/tool_shed/_doc')
+def pyDoc():
+    try:
+        mod = __import__(request.args.get('module'))
+    except Exception, e:
+        return render_template('Error.html', error_type=e, error=traceback.format_exc())
+
+    return render_template('PyDoc.html', module=request.args.get('module'), doc=pydoc.render_doc(mod, "Help on %s"))
 
 
 @SERVER.route('/tool_shed/_addLocalToolbox')

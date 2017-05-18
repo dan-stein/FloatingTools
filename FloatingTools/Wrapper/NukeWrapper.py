@@ -48,10 +48,6 @@ class NukeWrapper(AbstractApplication):
     EXECUTABLE = _launchers
 
     @staticmethod
-    def cloudImport(repository, filePath):
-        nuke.executeInMainThreadWithResult(FloatingTools.cloudImport, (repository, filePath))
-
-    @staticmethod
     def addMenuSeparator(menuPath):
         # handle windows nonsense
         menuPath = menuPath.replace('\\', '/').replace('//', '/')
@@ -90,12 +86,17 @@ class NukeWrapper(AbstractApplication):
         """
         # nk handler
         if fileType in ['.nk', '.gizmo']:
-            temp = tempfile.NamedTemporaryFile()
-            path = temp.name
+            # create temp file
+            path = os.path.join(FloatingTools.INSTALL_DIRECTORY, 'temp')
+            temp = open(path, mode='w')
             temp.write(gitHubFileObject.decoded_content.replace('Gizmo', 'Group'))
-            temp.seek(0)
-            nuke.nodePaste(path)
             temp.close()
+
+            # create node
+            nuke.nodePaste(path)
+
+            # clean temp file
+            os.unlink(path)
 
 
 setWrapper(NukeWrapper)
