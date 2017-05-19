@@ -77,26 +77,24 @@ class NukeWrapper(AbstractApplication):
                 pass
 
     @staticmethod
-    def loadFile(gitHubFileObject, fileType):
+    def loadFile(filePath):
         """
         Nuke handler
-        :param gitHubFileObject: 
-        :param fileType: 
+        :type filePath: 
         :return: 
         """
+        basename, ext = os.path.splitext(filePath)
+
         # nk handler
-        if fileType in ['.nk', '.gizmo']:
+        if ext in ['.nk', '.gizmo']:
+
             # create temp file
-            path = os.path.join(FloatingTools.INSTALL_DIRECTORY, 'temp')
-            temp = open(path, mode='w')
-            temp.write(gitHubFileObject.decoded_content.replace('Gizmo', 'Group'))
+            temp = open(filePath, mode='w')
+            temp.write(temp.read().replace('Gizmo {', 'Group {\n name ' + basename))
             temp.close()
 
             # create node
-            nuke.nodePaste(path)
-
-            # clean temp file
-            os.unlink(path)
+            nuke.nodePaste(filePath)
 
 
 setWrapper(NukeWrapper)

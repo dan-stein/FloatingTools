@@ -8,7 +8,9 @@ from flask import request, render_template, redirect
 from utilities import SERVER
 
 # python imports
+import os
 import pydoc
+import shutil
 import urllib
 import traceback
 
@@ -164,6 +166,18 @@ def _removeToolbox():
 
     # get data
     for toolbox in request.args:
+
+        # clean local cached package
+        localCache = os.path.join(FloatingTools.FLOATING_TOOLS_CACHE, *toolbox.split('/'))
+        userDirectory = os.path.dirname(localCache)
+        if os.path.exists(localCache):
+            shutil.rmtree(localCache)
+
+        # remove user directory if it is empty
+        if not os.listdir(userDirectory):
+            shutil.rmtree(userDirectory)
+
+        # remove from the resources list
         for repo in sources['repositories']:
             if repo['name'] == toolbox:
                 sources['repositories'].pop(sources['repositories'].index(repo))

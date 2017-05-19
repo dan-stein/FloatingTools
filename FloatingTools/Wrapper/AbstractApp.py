@@ -78,11 +78,10 @@ class AbstractApplication(object):
         raise NotImplementedError
 
     @staticmethod
-    def loadFile(gitHubFileObject, fileType):
+    def loadFile(filePath):
         """
         MUST BE SUB-CLASSED
-        :param gitHubFileObject: 
-        :param fileType: 
+        :param filePath: 
         :return: 
         """
         raise NotImplementedError

@@ -35,10 +35,9 @@ PYTHON_MODULES = {}
 FloatingTools.Dashboard.setDashboardVariable('wildcards', WILDCARDS)
 
 
-def repoWalk(repo):
+def loadToolbox(repo):
     """
     --private--
-    :param repo: 
     :return: 
     """
     global PYTHON_MODULES
@@ -88,9 +87,11 @@ def repoWalk(repo):
                     continue
 
                 # register tool with the application
+                toolboxPath = FloatingTools.__name__ + '/' + repo.full_name.replace('/', '.')
                 FloatingTools.APP_WRAPPER.addMenuEntry(
-                    os.path.join(FloatingTools.__name__, repo.full_name.replace('/', '.'), root.replace(repoPath, ''), fo).replace('\\', '/').replace('//', '/'),
-                    partial(FloatingTools.APP_WRAPPER.loadFile, fo, ext))
+                    (toolboxPath + '/' + root.replace(repoPath, '') + '/' + fo).replace('\\', '/').replace('//', '/'),
+                    partial(FloatingTools.APP_WRAPPER.loadFile, os.path.join(root, fo))
+                )
 
 
 def timeWalk(repository, repoObj, path):
