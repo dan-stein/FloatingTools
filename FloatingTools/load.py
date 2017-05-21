@@ -35,7 +35,7 @@ PYTHON_MODULES = {}
 FloatingTools.Dashboard.setDashboardVariable('wildcards', WILDCARDS)
 
 
-def loadToolbox(repo):
+def loadToolbox(handler, path):
     """
     --private--
     :return: 
@@ -43,13 +43,15 @@ def loadToolbox(repo):
     global PYTHON_MODULES
 
     # add this repo to the registered python modules
-    if repo.full_name not in PYTHON_MODULES:
-        PYTHON_MODULES[repo.full_name] = []
+    if handler.name() not in PYTHON_MODULES:
+        PYTHON_MODULES[handler.name()] = []
 
-    # get local repository path
-    repoPath = os.path.join(FloatingTools.FLOATING_TOOLS_CACHE, *repo.full_name.split('/'))
+    # compile search path
+    searchPath = handler.installDirectory() + path
 
-    for root, dirs, files in os.walk(repoPath):
+    # start timer for heavy processing functions
+    startTime = time.time()
+    for root, dirs, files in os.walk(searchPath):
 
         # py detection
         isPackage = False
@@ -68,51 +70,49 @@ def loadToolbox(repo):
             if isPackage:
                 pyPath = os.path.dirname(pyPath)
                 pyName = os.path.basename(pyPath)
-                if pyName not in PYTHON_MODULES[repo.full_name]:
-                    PYTHON_MODULES[repo.full_name].append(pyName)
+                if pyName not in PYTHON_MODULES[handler.name()]:
+                    PYTHON_MODULES[handler.name()].append(pyName)
 
             sys.path.append(pyPath)
 
         # loop over contents
         for fo in files:
             if fo.endswith('.py') and fo != '__init__.py':
-                PYTHON_MODULES[repo.full_name].append(fo.replace('.py', ''))
+                PYTHON_MODULES[handler.name()].append(fo.replace('.py', ''))
                 continue
 
-            if FloatingTools.APP_WRAPPER:
-
+            if FloatingTools.wrapper():
                 # filter out files that do not pertain to this application
                 basename, ext = os.path.splitext(fo)
-                if ext not in FloatingTools.APP_WRAPPER.fileTypes():
+                if ext not in FloatingTools.wrapper().fileTypes():
                     continue
 
                 # register tool with the application
-                toolboxPath = FloatingTools.__name__ + '/' + repo.full_name.replace('/', '.')
-                FloatingTools.APP_WRAPPER.addMenuEntry(
-                    (toolboxPath + '/' + root.replace(repoPath, '') + '/' + fo).replace('\\', '/').replace('//', '/'),
-                    partial(FloatingTools.APP_WRAPPER.loadFile, os.path.join(root, fo))
+                toolboxPath = FloatingTools.__name__ + '/' + handler.name().replace('/', '.')
+                menuPath = (toolboxPath + '/' + root.replace(searchPath, '') + '/' + fo)
+                FloatingTools.wrapper().addMenuEntry(
+                    menuPath.replace('\\', '/').replace('//', '/'),
+                    partial(FloatingTools.wrapper().loadFile, os.path.join(root, fo))
                 )
 
-
-def timeWalk(repository, repoObj, path):
-    # execute repo walk with timer
-    startTime = time.time()
-    repoWalk(repoObj)
+    # end time and log execution time
     endTime = time.time()
 
-    # load the source data to be stored
-    sourceData = FloatingTools.sourceData()
-    if 'loadTimes' not in sourceData:
-        sourceData['loadTimes'] = {}
-
-    # add the repo to the load times catalog
-    if repository not in sourceData['loadTimes']:
-        sourceData['loadTimes'][repository] = {}
-
     # log the data and update
-    sourceData['loadTimes'][repository][
-        FloatingTools.APP_WRAPPER.name() if FloatingTools.APP_WRAPPER else 'Generic'
-    ] = endTime - startTime
+    sourceData = FloatingTools.sourceData()
+    for source in sourceData:
+        if source['name'] != handler.name():
+            continue
+
+        # pull app data
+        app = 'Generic'
+        if FloatingTools.wrapper():
+            app = FloatingTools.wrapper().name()
+
+        # log load time for the current app
+        source['loadTimes'][app] = '{:.6f}'.format(endTime - startTime)
+        break
+
     FloatingTools.updateSources(sourceData)
 
 
@@ -122,72 +122,58 @@ def loadTools():
     :return: 
     """
     # set up dashboard in the application wrapper if there is one loaded.
-    if FloatingTools.APP_WRAPPER:
-        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
-                                               FloatingTools.Dashboard.settings)
-        FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__)
-        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Network Toolboxes',
-                                               FloatingTools.Dashboard.toolShed)
+    if FloatingTools.wrapper():
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Toolbox',
+                                             FloatingTools.Dashboard.toolbox)
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Tool Shed',
+                                             FloatingTools.Dashboard.toolShed)
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Applications',
+                                             FloatingTools.Dashboard.applications)
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
+                                             FloatingTools.Dashboard.settings)
+        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Toolboxes', FloatingTools.Dashboard.toolShed)
 
-    # pull repository data
-    repoData = FloatingTools.sourceData()['repositories']
+    # pull source data
+    sourceData = FloatingTools.sourceData()
 
     # log threads
     threads = []
 
     # begin repo loop.
-    for repo in repoData:
+    for source in sourceData:
 
-        # skip loading if the isn't requested
-        if not repo['load']:
+        # skip installing and loading if the toolbox isn't requested, but load the toolbox reference for potential
+        # later use.
+        if not source['load']:
+            FloatingTools.createToolbox(source['type'], source['source'], install=False)
             continue
 
+        # get handler data
+        toolbox = FloatingTools.createToolbox(source['type'], source['source'])
+
         # connect to the repository
-        FloatingTools.FT_LOOGER.info('Loading Repository: ' + repo['name'])
-        repoName = repo['name']
-        repo = FloatingTools.gitHubConnect().get_repo(repoName)
+        FloatingTools.FT_LOOGER.info('Loading %s with the %s handler...' % (source['name'], source['type']))
 
-        localRepoPath = os.path.join(FloatingTools.FLOATING_TOOLS_CACHE, *repo.full_name.split('/'))
-        if not os.path.exists(localRepoPath):
-            FloatingTools.downloadToolbox(repo)
-
-        # load toolbox data
-        toolboxData = dict(paths=['/'])
-        if 'toolbox.json' in os.listdir(localRepoPath):
-            toolboxData = json.loads(repo.get_file_contents('/toolbox.json').decoded_content)
-        else:
-            try:
-                toolboxData = json.loads(repo.get_file_contents('/toolbox.json').decoded_content)
-            except GithubException:
-                pass
-
-        if FloatingTools.APP_WRAPPER:
-            # make tool box information menus
-            toolboxPath = FloatingTools.__name__ + '/' + repo.full_name.replace('/', '.')
-            repoURL = "https://github.com/" + repo.full_name
-            FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/Open on Github',
-                                                   partial(webbrowser.open, repoURL)
-                                                   )
-            FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/License',
-                                                   partial(webbrowser.open, repoURL + '/blob/master/LICENSE')
-                                                   )
-            FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/About',
-                                                   partial(webbrowser.open, repoURL + '/blob/master/README.md')
-                                                   )
-            FloatingTools.APP_WRAPPER.addMenuSeparator(toolboxPath)
+        # make tool box information menus
+        if FloatingTools.wrapper():
+            toolboxPath = FloatingTools.__name__ + '/' + toolbox.name().replace('/', '.')
+            for menuItem in toolbox._toolbox_menu_order:
+                FloatingTools.wrapper().addMenuEntry(toolboxPath + menuItem, toolbox._toolbox_menu_content[menuItem])
+            FloatingTools.wrapper().addMenuSeparator(toolboxPath)
 
         # loop over the toolbox path
-        for path in toolboxData['paths']:
+        for path in toolbox.toolboxPaths():
 
             # handle wildcard logic
             for card in WILDCARDS:
                 path = path.replace('{%s}' % card, WILDCARDS[card]['value'])
 
             # spawn thread if it is a thread supporting application
-            if FloatingTools.APP_WRAPPER and not FloatingTools.APP_WRAPPER.MULTI_THREAD:
-                timeWalk(repoName, repo, path)
+            if FloatingTools.wrapper() and not FloatingTools.wrapper().MULTI_THREAD:
+                loadToolbox(toolbox, path)
             else:
-                t = threading.Thread(name=repoName, target=timeWalk, args=(repoName, repo, path))
+                t = threading.Thread(name=toolbox.name(), target=loadToolbox, args=(toolbox, path))
                 t.setDaemon(True)
                 threads.append(t)
                 t.start()
@@ -196,12 +182,10 @@ def loadTools():
     for thread in threads:
         thread.join()
 
-    if FloatingTools.APP_WRAPPER:
-        FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__)
-        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Support/HatfieldFX',
-                                               lambda: webbrowser.open("http://www.hatfieldfx.com/floating-tools"))
-        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Support/Repository',
-                                               lambda: webbrowser.open("https://github.com/aldmbmtl/FloatingTools"))
+    if FloatingTools.wrapper():
+        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Support/HatfieldFX', lambda: webbrowser.open("http://www.hatfieldfx.com/floating-tools"))
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Support/Repository', lambda: webbrowser.open("https://github.com/aldmbmtl/FloatingTools"))
 
 
 # set virtual system variables

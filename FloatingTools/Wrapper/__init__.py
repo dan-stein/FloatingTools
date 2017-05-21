@@ -41,7 +41,7 @@ for wrapperMod in os.listdir(os.path.dirname(__file__)):
                         if obj.EXECUTABLE:
                             obj.EXECUTABLE_ORDER = sorted(obj.EXECUTABLE)
                         APP_WRAPPERS.append(obj)
-                        wrap = obj().appTest()
+                        wrap = obj()
                         APP_WRAPPER = obj
                 except:
                     pass

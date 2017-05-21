@@ -35,7 +35,7 @@ def startServer(url=None):
     :return: 
     """
     # start the server
-    t = Thread(target=SERVER.run, args=(HOST, PORT))
+    t = Thread(name='FloatingTools Web-Service', target=SERVER.run, args=(HOST, PORT))
     t.start()
 
     # open the url that is passed
@@ -55,12 +55,6 @@ def stopServer():
     func()
 
     return "Server shut down... Close this window."
-
-
-@SERVER.route('/_launch', methods=['GET', 'POST'])
-def _launchApp():
-    subprocess.Popen(['open', '"%s"'.replace(SERVER.static_folder, '') % request.args.get('app_path')])
-    return redirect(request.args.get('url'))
 
 
 def setDashboardVariable(key, value):

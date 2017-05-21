@@ -31,6 +31,10 @@ class AbstractApplication(object):
     ARGS = None
     MULTI_THREAD = False
 
+    def __init__(self):
+        self.appTest()
+        setWrapper(self.__class__)
+
     @staticmethod
     def appTest():
         """

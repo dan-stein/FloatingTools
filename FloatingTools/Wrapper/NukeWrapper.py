@@ -95,6 +95,3 @@ class NukeWrapper(AbstractApplication):
 
             # create node
             nuke.nodePaste(filePath)
-
-
-setWrapper(NukeWrapper)

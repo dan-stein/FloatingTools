@@ -66,15 +66,15 @@ try:
     Dashboard.setDashboardVariable('install_location', INSTALL_DIRECTORY)
     Dashboard.setDashboardVariable('python_location', PYTHON_EXECUTABLE)
 
-    # handle wrapper
+    # import wrappers and services
     from Wrapper import *
 
     # imports
     from settings import *
-    from download import downloadToolbox
 
     # post install imports
     from connect import *
+    from Services import *
     from load import *
 
     # verify the login data.

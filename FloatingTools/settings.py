@@ -47,17 +47,18 @@ def buildData():
 
 def sourceData():
     """
-    Load the repository settings file
+    Load the sources settings file
     :return: 
     """
     if not os.path.exists(SOURCES):
-        defaultData = {'repositories': [
-            {
-                'name': 'aldmbmtl/toolbox',
-                'load': True
-            }
-        ]}
-        json.dump(defaultData, open(SOURCES, 'w'), indent=4, sort_keys=True)
+
+        # pull latest data model and create the default data information
+        defaultModel = FloatingTools.Handler.DATA_MODEL.copy()
+        defaultModel['type'] = 'GitHub'
+        defaultModel['name'] = 'aldmbmtl/toolbox'
+        defaultModel['load'] = True
+        defaultModel['source'] = dict(Username='aldmbmtl', Repository='toolbox')
+        json.dump([defaultModel], open(SOURCES, 'w'), indent=4, sort_keys=True)
 
     return json.load(open(SOURCES, 'r'))
 

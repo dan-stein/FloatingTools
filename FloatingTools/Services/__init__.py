@@ -1,4 +1,5 @@
 # import abstraction services
-from AbstractService import registerHandler, Handler
+from AbstractService import Handler, getHandler, getToolbox, toolboxes, createToolbox
 
 # predefined services
+import GitHubHandler
