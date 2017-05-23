@@ -46,7 +46,7 @@ function handleToolboxChange(select) {
                 </div>
                 <div class="modal-body">
                     Add a new load path to your toolbox.
-                    <hr>
+                    <br>
                     <input type="text" name="path" placeholder="your/path/here">
                 </div>
                 <div class="modal-footer">
@@ -68,7 +68,6 @@ function handleToolboxChange(select) {
                 </div>
                 <div class="modal-body">
                     Remove an existing load up path
-                    <hr>
                     <ul>
                         {% for path in toolbox_data["paths"] %}
                         <li>
@@ -85,116 +84,176 @@ function handleToolboxChange(select) {
     </div>
 </div>
 
-<form action="/toolbox/_setup">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <label>
-                <span class="glyphicon glyphicon-briefcase"></span> Toolbox:
-                <select class="form-control" name="toolbox" id="toolbox" onchange="handleToolboxChange(this)">
-                    {% for repo in user_repos %}
-                    {% if toolbox == repo %}
-                    <option value="{{ repo }}" selected>{{ repo }}</option>
-                    {% else %}
-                    <option value="{{ repo }}">{{ repo }}</option>
-                    {% endif %}
-                    {% endfor %}
-                </select>
-            </label>
-        </div>
 
-        <div class="panel-body">
-            {% if toolbox_data != None %}
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <span class="glyphicon glyphicon-time"></span> Benchmark
+<div id="createToolbox" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/toolbox/_createToolbox">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Create Toolbox</h4>
                 </div>
+                <div class="modal-body">
+                    <label>Name</label>
+                    <br>
+                    <input type="text" name="name">
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="Create">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-                <div class="panel-body">
-                    {% if benchmark_directory_count != 0 %}
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <span class="glyphicon glyphicon-compressed"></span> Toolbox Size (<a href="/toolbox_paths">mapped</a>)
-                            <ul>
-                                <li>
-                                    <span class="glyphicon glyphicon-file"></span> Files: {{ benchmark_file_count }}
-                                </li>
-                                <li>
-                                    <span class="glyphicon glyphicon-folder-open"></span> Directories: {{
-                                    benchmark_directory_count }}
-                                </li>
-                            </ul>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-sm-5">
+            </div>
+            <div class="col-sm-2">
+                {% if has_repo == True %}
+                    <label>Toolbox: </label>
+                    <select class="form-control" name="toolbox" id="toolbox" onchange="handleToolboxChange(this)">
+                        {% for repo in user_repos %}
+                            {% if toolbox == repo %}
+                                <option value="{{ repo }}" selected>{{ repo }}</option>
+                            {% else %}
+                                <option value="{{ repo }}">{{ repo }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <center>
+                        <label>
+                            <a data-toggle="modal" data-target="#createToolbox">
+                                <span class="glyphicon glyphicon-briefcase"></span> Create your first Toolbox
+                            </a>
+                        </label>
+                    </center>
+                {% endif %}
+            </div>
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-1">
+                {% if has_repo == True %}
+                    <a data-toggle="modal" data-target="#createToolbox"> Create Toolbox</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        {% if toolbox_data != None %}
+            <div class="row">
+                <div class="col-sm-2">
+                    <center><label>Repository</label></center>
+                    <ul class="list-group">
+
+                        <li class="list-group-item">
+                            <a href="https://github.com/{{ username }}/{{ toolbox }}">
+                                <center><span class="glyphicon glyphicon-home"></span> Home Page</center>
+                            </a>
+                        </li>
+
+                        <li class="list-group-item">
+                            <a href="https://github.com/{{ username }}/{{ toolbox }}/settings">
+                                <center><span class="glyphicon glyphicon-wrench"></span> Settings</center>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                    <center><label>Information</label></center>
+                    <ul class="list-group">
+                        {% if has_lic == False %}
+                        <li class="list-group-item">
+                            <a href="https://github.com/{{ username }}/{{ toolbox }}/new/master?filename=LICENSE.md">
+                                <center><span class="glyphicon glyphicon-copyright-mark"></span> Add License</center>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="list-group-item">
+                            <a href="https://github.com/{{ username }}/{{ toolbox }}/edit/master/LICENSE">
+                                <center><span class="glyphicon glyphicon-copyright-mark"></span> License</center>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if has_readme == False %}
+                            <li class="list-group-item">
+                                <a href="https://github.com/{{ username }}/{{ toolbox }}/new/master?filename=README.md">
+                                    <center><span class="glyphicon glyphicon-list-alt"></span> Add Documentation</center>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="list-group-item">
+                                <a href="https://github.com/{{ username }}/{{ toolbox }}/edit/master/README.md">
+                                    <center><span class="glyphicon glyphicon-list-alt"></span> Documentation</center>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+
+                    <center><label>Actions</label></center>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="https://github.com/{{ username }}/{{ toolbox }}/upload/master">
+                                <center><span class="glyphicon glyphicon-cloud-upload"></span> Upload Tools</center>
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+                <div class="col-sm-10">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <label><span class="glyphicon glyphicon-th-list"></span> Toolbox Paths</label><a href="/toolbox_paths"> (Help)</a>
                         </div>
-                        <div class="col-sm-4">
-                            <span class="glyphicon glyphicon-th-list"></span> Toolbox Paths
-                            <ul>
-                                {% for path in benchmark_data["paths"] %}
-                                {% if path == "/" %}
-                                <li>
-                                    <font color="red">{{ path }}</font>: {{ benchmark_data["paths"][path] }} seconds
-                                    <br>
-                                    <strong>
-                                        <font color="red">
-                                            Having a path set to the root like this will cost you a lot in
-                                            speed. This is a sign that you may have not set any Toolbox Paths.
-                                            We strongly recommend you set Toolbox Paths to avoid slow load times.
-                                        </font>
-                                    </strong>
-                                </li>
-                                {% else %}
-                                <li>
-                                    {{ path }}: {{ benchmark_data["paths"][path] }} seconds
-                                </li>
-                                {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="col-sm-4">
-                            <span class="glyphicon glyphicon-list-alt"></span> Application paths
-                            <ul>
-                                {% for app in benchmark_data["applications"] %}
-                                <li>
-                                    {{ app }}
-                                    <ul>
-                                        {% for appPath in benchmark_data["applications"][app] %}
-                                        <li>
-                                            {{ appPath }}: {{ benchmark_data["applications"][app][appPath] }} seconds
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <ul class="list-group">
+                                        {% for path in toolbox_data["paths"] %}
+                                        <li class="list-group-item">
+                                            {{ path }}
                                         </li>
                                         {% endfor %}
                                     </ul>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-
-                <div class="panel-footer">
-                    <a href="/toolbox/_benchmark"><span class="glyphicon glyphicon-dashboard"></span> Run
-                        Diagnostics</a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <label><span class="glyphicon glyphicon-th-list"></span> Toolbox Paths</label>
-                        </div>
-                        <div class="panel-body">
-                                <span class="help-block">
-                                    It is strongly recommended that you set up your load up paths. Paths are like maps you
-                                    can set up to speed up load up times and organize your tool box. For example, if there
-                                    are no paths set up, FloatingTools will look through ALL of the files in the toolbox. If
-                                    you have a path for each application, it will only load files for that application and
-                                    not files that are outside that application.
-                                </span>
-                            <ul class="list-group">
-                                {% for path in toolbox_data["paths"] %}
-                                <li class="list-group-item">
-                                    {{ path }}
-                                </li>
-                                {% endfor %}
-                            </ul>
+                                    <a data-toggle="collapse" data-target="#path-quick-help">Quick help</a>
+                                    <div id="path-quick-help" class="collapse">
+                                        <span class="help-block">
+                                                It is strongly recommended that you set up your load up paths. Paths are like maps you
+                                                can set up to speed up load up times and organize your tool box. For example, if there
+                                                are no paths set up, FloatingTools will look through ALL of the files in the toolbox. If
+                                                you have a path for each application, it will only load files for that application and
+                                                not files that are outside that application.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Wild card</th>
+                                            <th>Value</th>
+                                            <th>Documentation</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for wildcard in wildcards %}
+                                        <tr>
+                                            <td>{{ wildcard }}</td>
+                                            <td>{{ wildcards[wildcard]["value"] }}</td>
+                                            <td>{{ wildcards[wildcard]["doc"] }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                         <div class="panel-footer">
                             <a data-toggle="modal" data-target="#addPath">
@@ -206,31 +265,22 @@ function handleToolboxChange(select) {
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Wild card</th>
-                            <th>Value</th>
-                            <th>Documentation</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for wildcard in wildcards %}
-                        <tr>
-                            <td>{{ wildcard }}</td>
-                            <td>{{ wildcards[wildcard]["value"] }}</td>
-                            <td>{{ wildcards[wildcard]["doc"] }}</td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
             </div>
-            {% else %}
-            <input type="submit" class="form-control" value="Setup as Toolbox">
+        {% else %}
+            {% if has_repo == True %}
+                <div class="row">
+                    <div class="col-sm-5">
+                    </div>
+                    <div class="col-sm-2">
+                        <form action="/toolbox/_setup">
+                            <input type="submit" class="form-control" value="Setup as Toolbox">
+                        </form>
+                    </div>
+                    <div class="col-sm-5">
+                    </div>
+                </div>
             {% endif %}
-        </div>
+        {% endif %}
     </div>
-</form>
+</div>
 {% endblock %}

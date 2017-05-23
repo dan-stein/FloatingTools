@@ -93,6 +93,11 @@
             <ul class="list-group">
                 {% for name, toolbox in toolboxes.iteritems() %}
                 {% set settings = toolbox.settings() %}
+                {% if active_wrapper == None %}
+                    {% set app_name = "Generic" %}
+                {% else %}
+                    {% set app_name = active_wrapper.name() %}
+                {% endif %}
                 <li class="list-group-item">
                     <div class="row">
                         <div class="col-sm-2">
@@ -191,14 +196,9 @@
                                                                 </td>
                                                                 <td>
                                                                     <select name="{{ name + '.' + py}}" class="form-control">
-                                                                        {% if active_wrapper == None %}
-                                                                            {% set app = "Generic" %}
-                                                                        {% else %}
-                                                                            {% set app = active_wrapper.name() %}
-                                                                        {% endif %}
-                                                                        {% if app in settings["apps"].keys() %}
-                                                                            {% if py in settings["apps"][app].keys() %}
-                                                                                {% if settings["apps"][app][py] == True %}
+                                                                        {% if app_name in settings["apps"].keys() %}
+                                                                            {% if py in settings["apps"][app_name].keys() %}
+                                                                                {% if settings["apps"][app_name][py] == True %}
                                                                                     <option value="true" selected>Auto-Load</option>
                                                                                     <option value="false">Don't Auto-Load</option>
                                                                                 {% else %}

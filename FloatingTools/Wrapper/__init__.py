@@ -9,12 +9,13 @@ import os
 import sys
 
 # package imports
-from AbstractApp import AbstractApplication, setWrapper, wrapper
+from AbstractApp import AbstractApplication, setWrapper, wrapper, wrapperName
 
 __all__ = [
     'AbstractApplication',
     'wrapper',
     'setWrapper',
+    'wrapperName',
     'APP_WRAPPER',
     'APP_WRAPPERS'
 ]

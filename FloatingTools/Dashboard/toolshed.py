@@ -25,11 +25,22 @@ def renderToolShed():
 
 @SERVER.route('/tool_shed/_save')
 def saveToolShed():
-
     # grab toolbox
     for arg in request.args:
         if '.' in arg:
-            print arg
+            toolbox, module = arg.rsplit('.', 1)
+
+            handler = FloatingTools.getToolbox(toolbox)
+
+            # pull then set settings
+            currentSettings = handler.settings()
+
+            # add application if its not in the app list
+            appName = FloatingTools.wrapperName()
+            if appName not in currentSettings['apps']:
+                currentSettings['apps'][appName] = dict()
+
+            currentSettings['apps'][appName][module] = True if request.args.get(arg) == 'true' else False
         else:
             handler = FloatingTools.getToolbox(arg)
 
@@ -39,8 +50,8 @@ def saveToolShed():
             if request.args.get(arg) == 'false':
                 currentSettings['load'] = False
 
-            # save
-            handler.updateSettings(currentSettings)
+        # save
+        handler.updateSettings(currentSettings)
 
     return redirect('/tool_shed')
 
@@ -48,7 +59,9 @@ def saveToolShed():
 @SERVER.route('/tool_shed/_import')
 def pyImport():
     try:
-        __import__(request.args.get('module'))
+        mod = __import__(request.args.get('module'))
+        reload(mod)
+        FloatingTools.FT_LOOGER.info('Module Imported/Reloaded: %s' % mod)
     except Exception, e:
         return render_template('Error.html',
                                error_type=e,
@@ -78,7 +91,6 @@ def _addToolbox():
 
 @SERVER.route('/tool_shed/_removeToolbox')
 def _removeToolbox():
-
     # get data
     for toolbox in request.args:
         box = FloatingTools.getToolbox(toolbox)

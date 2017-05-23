@@ -8,17 +8,15 @@ __all__ = [
 # python imports
 import os
 import sys
-import json
 import time
 import threading
+import traceback
 import webbrowser
 from functools import partial
 
 # FloatingTools imports
 import FloatingTools
 
-# GitHub imports
-from github import GithubException
 
 # Globals
 WILDCARDS = dict(
@@ -105,12 +103,9 @@ def loadToolbox(handler, path):
             continue
 
         # pull app data
-        app = 'Generic'
-        if FloatingTools.wrapper():
-            app = FloatingTools.wrapper().name()
 
         # log load time for the current app
-        source['loadTimes'][app] = '{:.6f}'.format(endTime - startTime)
+        source['loadTimes'][FloatingTools.wrapperName()] = '{:.6f}'.format(endTime - startTime)
         break
 
     FloatingTools.updateSources(sourceData)
@@ -131,6 +126,13 @@ def loadTools():
                                              FloatingTools.Dashboard.applications)
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
                                              FloatingTools.Dashboard.settings)
+        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__ + '/Dashboard')
+        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Support/HatfieldFX',
+                                             lambda: webbrowser.open("http://www.hatfieldfx.com/floating-tools"))
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Support/Repository',
+                                             lambda: webbrowser.open("https://github.com/aldmbmtl/FloatingTools"))
+
         FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Toolboxes', FloatingTools.Dashboard.toolShed)
 
@@ -182,10 +184,21 @@ def loadTools():
     for thread in threads:
         thread.join()
 
-    if FloatingTools.wrapper():
-        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
-        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Support/HatfieldFX', lambda: webbrowser.open("http://www.hatfieldfx.com/floating-tools"))
-        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Support/Repository', lambda: webbrowser.open("https://github.com/aldmbmtl/FloatingTools"))
+    # load auto load modules
+    FloatingTools.FT_LOOGER.info('Starting Auto-Imports...')
+    for source in sourceData:
+        if source['load'] and FloatingTools.wrapperName() in source['apps']:
+            for mod, load in source['apps'][FloatingTools.wrapperName()].iteritems():
+                if load:
+                    try:
+                        FloatingTools.FT_LOOGER.info('\tAuto-Importing: ' + mod)
+                        __import__(mod)
+                        FloatingTools.FT_LOOGER.info('\t\tComplete')
+                    except ImportError:
+                        FloatingTools.FT_LOOGER.info('\t\tFailed')
+                        FloatingTools.FT_LOOGER.info('\n')
+                        traceback.print_exc()
+                        FloatingTools.FT_LOOGER.info('\n')
 
 
 # set virtual system variables

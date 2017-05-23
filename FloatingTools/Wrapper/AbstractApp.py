@@ -10,6 +10,20 @@ def wrapper():
     return FloatingTools.WRAPPER
 
 
+def wrapperName():
+    """
+    Get the name of the current wrapper/application you are in. If there is no wrapper loaded, it assumes you are 
+    running FloatingTools outside the context of any application and in straight python. If this is the case, it returns
+    "Generic" signaling you are in the os version of FloatingTools. 
+    
+    OTHERWISE
+    
+    It will return the name of the wrapper application you are in.
+    :return: 
+    """
+    return 'Generic' if not wrapper() else wrapper().name()
+
+
 def setWrapper(klass):
     """
     Register the Wrapper class for the application you are in.

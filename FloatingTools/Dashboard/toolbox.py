@@ -12,7 +12,7 @@ from utilities import SERVER
 
 # python imports
 import json
-import time
+
 
 # private globals
 _BENCHMARK_DATA = dict(directories=[], files=[], applications={}, paths={})
@@ -32,57 +32,87 @@ def renderToolbox():
     Render tool shed page to configure Floating Tools
     :return: 
     """
+    # handle local toolbox
+    localToolbox = request.args.get("toolbox")
 
     localRepos = {}
     for repo in FloatingTools.gitHubConnect().get_user().get_repos():
         localRepos[repo.name] = repo
 
+    # check if the user has any repositories set up.
+    FloatingTools.Dashboard.setDashboardVariable('has_repo', False)
+    if localRepos:
+        FloatingTools.Dashboard.setDashboardVariable('has_repo', True)
+        if not localToolbox:
+            localToolbox = sorted(localRepos.keys())[0]
+
+    # register toolbox
+    FloatingTools.Dashboard.setDashboardVariable('toolbox', localToolbox)
+
     # get the user repositories and add to the dashboard env
+    FloatingTools.Dashboard.setDashboardVariable('username', FloatingTools.gitHubConnect().get_user().login)
     FloatingTools.Dashboard.setDashboardVariable('user_repos', sorted(localRepos.keys()))
 
-    # handle local toolbox
-    localToolbox = request.args.get("toolbox")
-    if not localToolbox:
-        localToolbox = localRepos.keys()[0]
-    FloatingTools.Dashboard.setDashboardVariable('toolbox', localToolbox)
+    # pull the data for the repo
     FloatingTools.Dashboard.setDashboardVariable('toolbox_data', None)
+    FloatingTools.Dashboard.setDashboardVariable('has_lic', False)
+    FloatingTools.Dashboard.setDashboardVariable('has_readme', False)
 
-    # validate the local toolbox
-    data = None
     try:
-        data = json.loads(localRepos[localToolbox].get_file_contents('/toolbox.json').decoded_content)
-    except UnknownObjectException:
+        repo = FloatingTools.gitHubConnect().get_user().get_repo(localToolbox)
+        repo.get_file_contents('/LICENSE')
+        FloatingTools.Dashboard.setDashboardVariable('has_lic', True)
+    except (GithubException, UnknownObjectException):
         pass
-    finally:
-        FloatingTools.Dashboard.setDashboardVariable('toolbox_data', data)
 
-    FloatingTools.Dashboard.setDashboardVariable('benchmark_data', _BENCHMARK_DATA)
-    FloatingTools.Dashboard.setDashboardVariable('benchmark_file_count', len(_BENCHMARK_DATA['files']))
-    FloatingTools.Dashboard.setDashboardVariable('benchmark_directory_count', len(_BENCHMARK_DATA['directories']))
+    try:
+        repo = FloatingTools.gitHubConnect().get_user().get_repo(localToolbox)
+        repo.get_file_contents('/README.md')
+        FloatingTools.Dashboard.setDashboardVariable('has_readme', True)
+    except (GithubException, UnknownObjectException):
+        pass
+
+    try:
+        repo = FloatingTools.gitHubConnect().get_user().get_repo(localToolbox)
+        FloatingTools.Dashboard.setDashboardVariable('toolbox_data', json.loads(
+            repo.get_file_contents('/toolbox.json').decoded_content
+        ))
+    except (GithubException, UnknownObjectException):
+        pass
 
     return render_template('Toolbox.html', **FloatingTools.Dashboard.dashboardEnv())
 
 
-def recursiveRepoWalk(repo, path):
+@SERVER.route('/toolbox/_createToolbox')
+def createToolbox():
     """
     --private--
     :return: 
     """
-    global _BENCHMARK_DATA
+    # pull request data
+    name = request.args.get('name')
 
-    try:
-        repoContents = repo.get_dir_contents(path.strip('/'))
+    # do nothing if name is blank
+    if not name:
+        return redirect('/toolbox')
 
-        for fo in repoContents:
-            # loop over directories
-            if fo.type == 'dir':
-                _BENCHMARK_DATA['directories'].append(fo.name)
-                recursiveRepoWalk(repo, fo.path)
-            else:
-                _BENCHMARK_DATA['files'].append(fo.name)
+    # set env var for the toolbox in question
+    FloatingTools.Dashboard.setDashboardVariable('toolbox', name)
 
-    except GithubException:
-        pass
+    # pull users env
+    user = FloatingTools.gitHubConnect().get_user()
+
+    # create the repository if it doesnt exist
+    for repo in user.get_repos():
+        if repo.name == name:
+            return redirect('/toolbox?toolbox=' + name)
+
+    # create toolbox repository
+    user.create_repo(name)
+    _setUpToolbox()
+
+    # redirect
+    return redirect('/toolbox?toolbox=' + FloatingTools.Dashboard.dashboardEnv()['toolbox'])
 
 
 @SERVER.route('/toolbox/_setup')
@@ -91,66 +121,8 @@ def setUpToolbox():
     --private--
     :return: 
     """
-    toolbox = FloatingTools.Dashboard.dashboardEnv()['toolbox']
-    toolboxRepo = FloatingTools.gitHubConnect().get_user().get_repo(toolbox)
-
-    toolboxRepo.create_file(
-        '/toolbox.json',
-        'Setting up as FloatingTools Toolbox!',
-        json.dumps(dict(paths=[]), indent=4, sort_keys=True)
-    )
-
-    return redirect('/toolbox?toolbox=' + toolbox)
-
-
-@SERVER.route('/toolbox/_benchmark')
-def benchmark():
-    """
-    --private--
-    :return: 
-    """
-    global _BENCHMARK_DATA
-    _BENCHMARK_DATA = dict(directories=[], files=[], applications={}, paths={})
-
-    toolbox = FloatingTools.Dashboard.dashboardEnv()['toolbox']
-    toolboxRepo = FloatingTools.gitHubConnect().get_user().get_repo(toolbox)
-    contentFile = toolboxRepo.get_file_contents('toolbox.json')
-    toolboxMap = json.loads(contentFile.decoded_content)
-
-    paths = toolboxMap['paths']
-    if not paths:
-        paths = ['/']
-
-    for path in paths:
-        if '{Applications}' in path:
-            for app in FloatingTools.APP_WRAPPERS:
-                try:
-                    appPath = path.replace('{Applications}', app.NAME)
-                    toolboxRepo.get_dir_contents(appPath.strip('/'))
-
-                    if app.NAME not in _BENCHMARK_DATA['applications']:
-                        _BENCHMARK_DATA['applications'][app.NAME] = {}
-
-                    startTime = time.time()
-                    recursiveRepoWalk(toolboxRepo, appPath)
-                    endTime = time.time()
-
-                    _BENCHMARK_DATA['applications'][app.NAME][appPath] = endTime - startTime
-                except GithubException:
-                    pass
-
-        else:
-            try:
-                startTime = time.time()
-                recursiveRepoWalk(toolboxRepo, path)
-                endTime = time.time()
-
-                _BENCHMARK_DATA['paths'][path] = endTime - startTime
-
-            except GithubException:
-                pass
-
-    return redirect('/toolbox?toolbox=' + toolbox)
+    _setUpToolbox()
+    return redirect('/toolbox?toolbox=' + FloatingTools.Dashboard.dashboardEnv()['toolbox'])
 
 
 @SERVER.route('/toolbox/_addPath')
@@ -177,15 +149,6 @@ def addToolboxPath():
     )
 
     return redirect('/toolbox?toolbox=' + toolbox)
-
-
-@SERVER.route('/toolbox/_save')
-def saveToolbox():
-    """
-    --private--
-    :return: 
-    """
-    return redirect('/toolbox')
 
 
 @SERVER.route('/toolbox/_removePath')
@@ -217,3 +180,14 @@ def removeToolboxPath():
 @SERVER.route('/toolbox_paths')
 def toolboxPaths():
     return render_template('ToolboxPaths.html')
+
+
+def _setUpToolbox():
+    toolbox = FloatingTools.Dashboard.dashboardEnv()['toolbox']
+    toolboxRepo = FloatingTools.gitHubConnect().get_user().get_repo(toolbox)
+
+    toolboxRepo.create_file(
+        '/toolbox.json',
+        'Setting up as FloatingTools Toolbox!',
+        json.dumps(dict(paths=[]), indent=4, sort_keys=True)
+    )
