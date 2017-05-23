@@ -138,6 +138,12 @@ def loadTools():
 
     # pull source data
     sourceData = FloatingTools.sourceData()
+    if FloatingTools.APP_WRAPPER:
+        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
+                                               FloatingTools.Dashboard.settings)
+        FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__)
+        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Network Toolboxes',
+                                               FloatingTools.Dashboard.toolShed)
 
     # log threads
     threads = []
