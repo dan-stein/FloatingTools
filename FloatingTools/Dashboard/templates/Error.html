@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}Error{% endblock %}
+{% block body %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>
+            <span class="glyphicon glyphicon-remove"></span>
+            <strong>
+                <font color="red">
+                    {{ error_type }}
+                </font>
+            </strong>
+        </h4>
+    </div>
+    <div class="panel-body">
+        <textarea wrap="soft" rows="15" cols="150" disabled>
+            {{ error }}
+        </textarea>
+    </div>
+</div>
+{% endblock %}

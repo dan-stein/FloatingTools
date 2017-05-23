@@ -25,7 +25,6 @@ SOFTWARE.
 import os
 import sys
 import socket
-import threading
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -44,12 +43,16 @@ __all__ = [
 # Global variables
 FT_LOOGER = logging.getLogger('FloatingTools')
 FLOATING_TOOLS_ROOT = os.path.dirname(os.path.realpath(__file__))
+FLOATING_TOOLS_CACHE = os.path.join(FLOATING_TOOLS_ROOT, 'cache')
 INSTALL_DIRECTORY = os.path.dirname(FLOATING_TOOLS_ROOT)
 PACKAGES = os.path.join(FLOATING_TOOLS_ROOT, 'packages')
 DATA = os.path.join(FLOATING_TOOLS_ROOT, 'data')
 WRAPPER = None
 PYTHON_EXECUTABLE = sys.executable
 
+# create cache directory
+if not os.path.exists(FLOATING_TOOLS_CACHE):
+    os.makedirs(FLOATING_TOOLS_CACHE)
 
 try:
     # validate the install
@@ -63,7 +66,7 @@ try:
     Dashboard.setDashboardVariable('install_location', INSTALL_DIRECTORY)
     Dashboard.setDashboardVariable('python_location', PYTHON_EXECUTABLE)
 
-    # handle wrapper
+    # import wrappers and services
     from Wrapper import *
 
     # imports
@@ -71,6 +74,7 @@ try:
 
     # post install imports
     from connect import *
+    from Services import *
     from load import *
 
     # verify the login data.
@@ -80,12 +84,8 @@ try:
     # validate installed version of FloatingTools.
     install.loadVersion()
 
-    # handle multi-threaded wrapper settings.
-    if WRAPPER and WRAPPER.MULTI_THREAD or WRAPPER is None:
-        threading.Thread(target=loadTools).start()
-    else:
-        print "Application does not support multi-threaded load up."
-        loadTools()
+    # load tool call
+    loadTools()
 
 except socket.gaierror:
     FT_LOOGER.error('No connection to Github could be established. Check your internet connection.')

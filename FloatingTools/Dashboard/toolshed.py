@@ -8,7 +8,7 @@ from flask import request, render_template, redirect
 from utilities import SERVER
 
 # python imports
-import urllib
+import traceback
 
 
 @SERVER.route('/tool_shed', methods=['GET', 'POST'])
@@ -17,86 +17,85 @@ def renderToolShed():
     Render tool shed page to configure Floating Tools
     :return: 
     """
-    # tool shed link
-    link = "https://github.com/aldmbmtl/FloatingTools/wiki/Tool-Shed"
-    shed = urllib.urlopen(link).read().split('<div class="markdown-body">')[1].split('</div>')[0]
-
-    toolshed = []
-
-    for i in shed.split('<li>'):
-        if '</li>' not in i:
-            continue
-        toolshed.append(i.split('</li>')[0])
-
     # grab latest source data.
-    FloatingTools.Dashboard.setDashboardVariable('sources', FloatingTools.sourceData())
-    FloatingTools.Dashboard.setDashboardVariable('tool_shed', toolshed)
+    FloatingTools.Dashboard.setDashboardVariable('toolboxes', FloatingTools.toolboxes())
 
     return render_template('ToolShed.html', **FloatingTools.Dashboard.dashboardEnv())
 
 
 @SERVER.route('/tool_shed/_save')
 def saveToolShed():
-    sourceData = FloatingTools.sourceData()
+    # grab toolbox
+    for arg in request.args:
+        if '.' in arg:
+            toolbox, module = arg.rsplit('.', 1)
 
-    repositoryNames = [repo['name'] for repo in sourceData['repositories']]
+            handler = FloatingTools.getToolbox(toolbox)
 
-    for repo in request.args:
-        value = request.args.get(repo)
-        savedRepo = None
-        for savedRepo in sourceData['repositories']:
-            if savedRepo['name'] == repo:
-                break
-        if value == 'true':
-            value = True
+            # pull then set settings
+            currentSettings = handler.settings()
+
+            # add application if its not in the app list
+            appName = FloatingTools.wrapperName()
+            if appName not in currentSettings['apps']:
+                currentSettings['apps'][appName] = dict()
+
+            currentSettings['apps'][appName][module] = True if request.args.get(arg) == 'true' else False
         else:
-            value = False
-        if repo not in repositoryNames:
-            sourceData['repositories'].append({'name': repo, 'load': value})
-        else:
-            savedRepo['load'] = value
+            handler = FloatingTools.getToolbox(arg)
 
-    FloatingTools.updateSources(sourceData)
+            # pull then set settings
+            currentSettings = handler.settings()
+            currentSettings['load'] = True
+            if request.args.get(arg) == 'false':
+                currentSettings['load'] = False
 
+        # save
+        handler.updateSettings(currentSettings)
+
+    return redirect('/tool_shed')
+
+
+@SERVER.route('/tool_shed/_import')
+def pyImport():
+    try:
+        mod = __import__(request.args.get('module'))
+        reload(mod)
+        FloatingTools.FT_LOOGER.info('Module Imported/Reloaded: %s' % mod)
+    except Exception, e:
+        return render_template('Error.html',
+                               error_type=e,
+                               error=traceback.format_exc()
+                               )
     return redirect('/tool_shed')
 
 
 @SERVER.route('/tool_shed/_addToolbox')
 def _addToolbox():
-    # get data
-    username = request.args.get('username')
-    repo = request.args.get('toolbox')
+    # vars
+    source = {}
+    service = None
 
-    # validate the username and repository are passed
-    if not username and not repo:
-        return redirect('/tool_shed')
+    # pull vars from the form data passed from the website
+    for key in request.args:
+        if key == 'service':
+            service = request.args.get(key)
+        else:
+            source[key] = request.args.get(key)
 
-    # repo path
-    path = "%(username)s/%(repo)s" % locals()
-
-    # load the source data
-    sourceData = FloatingTools.sourceData()
-    repositories = [repo['name'] for repo in sourceData['repositories']]
-
-    if path not in repositories:
-        sourceData['repositories'].append(dict(name=path, load=False))
-        FloatingTools.updateSources(sourceData)
+    # create new toolbox
+    FloatingTools.createToolbox(service, source)
 
     return redirect('/tool_shed')
 
 
 @SERVER.route('/tool_shed/_removeToolbox')
 def _removeToolbox():
-    sources = FloatingTools.sourceData()
-
     # get data
     for toolbox in request.args:
-        for repo in sources['repositories']:
-            if repo['name'] == toolbox:
-                sources['repositories'].pop(sources['repositories'].index(repo))
-                break
-
-    FloatingTools.updateSources(sources)
+        box = FloatingTools.getToolbox(toolbox)
+        if box:
+            box.uninstall()
 
     return redirect('/tool_shed')
 

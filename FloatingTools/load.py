@@ -2,15 +2,12 @@
 Handles all loading operations
 """
 __all__ = [
-    'cloudImport',
     'loadTools'
 ]
 
 # python imports
 import os
 import sys
-import imp
-import json
 import time
 import threading
 import traceback
@@ -20,8 +17,6 @@ from functools import partial
 # FloatingTools imports
 import FloatingTools
 
-# GitHub imports
-from github import GithubException
 
 # Globals
 WILDCARDS = dict(
@@ -32,100 +27,89 @@ WILDCARDS = dict(
         value=os.name,
         doc='The operating systems python name.')
 )
+PYTHON_MODULES = {}
 
 # add to dashboard
 FloatingTools.Dashboard.setDashboardVariable('wildcards', WILDCARDS)
 
 
-def cloudImport(repo, path):
-    """
-    Import a module from Github.
-    :param repo: 
-    :param path: 
-    :return: 
-    """
-    try:
-        moduleName = os.path.splitext(os.path.basename(path))[0]
-        mod = imp.new_module(moduleName)
-
-        code = compile(
-            str(FloatingTools.gitHubConnect().get_repo(repo).get_file_contents(path).decoded_content),
-            '<string>',
-            'exec'
-        )
-
-        # execute the code object
-        exec code in mod.__dict__
-
-        sys.modules[moduleName] = mod
-
-        return mod
-    except:
-        print "Failed to import %s %s" % (repo, path)
-        traceback.print_exc()
-
-
-def repoWalk(repo, path, root):
+def loadToolbox(handler, path):
     """
     --private--
-    :param repo: 
-    :param path:
-    :param root: 
     :return: 
     """
-    try:
-        repoContents = repo.get_dir_contents(path)
+    global PYTHON_MODULES
 
-        for fo in repoContents:
+    # add this repo to the registered python modules
+    if handler.name() not in PYTHON_MODULES:
+        PYTHON_MODULES[handler.name()] = []
 
-            # loop over directories
-            if fo.type == 'dir':
-                repoWalk(repo, fo.path, root)
+    # compile search path
+    searchPath = handler.installDirectory() + path
 
-            elif fo.name == 'ft_init.py':
-                # built in init file for floating tools
-                if FloatingTools.WRAPPER:
-                    FloatingTools.WRAPPER.cloudImport(repo.full_name, fo.path)
-                else:
-                    cloudImport(repo.full_name, fo.path)
+    # start timer for heavy processing functions
+    startTime = time.time()
+    for root, dirs, files in os.walk(searchPath):
 
-            elif FloatingTools.APP_WRAPPER:
+        # py detection
+        isPackage = False
+        hasPython = False
+        for fo in files:
+            if isPackage and hasPython:
+                break
+            if fo.endswith('.py'):
+                hasPython = True
+            if fo == '__init__.py':
+                isPackage = True
+
+        # handle python files
+        if hasPython:
+            pyPath = root
+            if isPackage:
+                pyPath = os.path.dirname(pyPath)
+                pyName = os.path.basename(pyPath)
+                if pyName not in PYTHON_MODULES[handler.name()]:
+                    PYTHON_MODULES[handler.name()].append(pyName)
+
+            sys.path.append(pyPath)
+
+        # loop over contents
+        for fo in files:
+            if fo.endswith('.py') and fo != '__init__.py':
+                PYTHON_MODULES[handler.name()].append(fo.replace('.py', ''))
+                continue
+
+            if FloatingTools.wrapper():
                 # filter out files that do not pertain to this application
-                basename, ext = os.path.splitext(fo.name)
-                if ext not in FloatingTools.APP_WRAPPER.fileTypes():
+                basename, ext = os.path.splitext(fo)
+                if ext not in FloatingTools.wrapper().fileTypes():
                     continue
 
                 # register tool with the application
-                FloatingTools.APP_WRAPPER.addMenuEntry(
-                    os.path.join(
-                        FloatingTools.__name__,
-                        repo.full_name.replace('/', '.'),
-                        fo.path
-                    ).replace(root, '').replace('//', '/'),
-                    partial(FloatingTools.APP_WRAPPER.loadFile, fo, ext))
+                toolboxPath = FloatingTools.__name__ + '/' + handler.name().replace('/', '.')
+                menuPath = (toolboxPath + '/' + root.replace(searchPath, '') + '/' + fo)
+                FloatingTools.wrapper().addMenuEntry(
+                    menuPath.replace('\\', '/').replace('//', '/'),
+                    partial(FloatingTools.wrapper().loadFile, os.path.join(root, fo))
+                )
 
-            else:
-                pass
-
-    except GithubException:
-        FloatingTools.FT_LOOGER.error(path + ' is not a valid path in this toolbox.')
-
-
-def timeWalk(repository, repoObj, path):
-    startTime = time.time()
-    repoWalk(repoObj, path, path.strip('/'))
+    # end time and log execution time
     endTime = time.time()
 
+    # log the data and update
     sourceData = FloatingTools.sourceData()
+    for source in sourceData:
+        if source['name'] != handler.name():
+            continue
 
-    if 'loadTimes' not in sourceData:
-        sourceData['loadTimes'] = {}
+        # pull app data
 
-    if repository not in sourceData['loadTimes']:
-        sourceData['loadTimes'][repository] = {}
-    sourceData['loadTimes'][repository][
-        FloatingTools.APP_WRAPPER.name() if FloatingTools.APP_WRAPPER else 'Generic'] = endTime - startTime
+        # log load time for the current app
+        source['loadTimes'][FloatingTools.wrapperName()] = '{:.6f}'.format(endTime - startTime)
+        break
+
     FloatingTools.updateSources(sourceData)
+
 
 def loadTools():
     """
@@ -133,6 +117,27 @@ def loadTools():
     :return: 
     """
     # set up dashboard in the application wrapper if there is one loaded.
+    if FloatingTools.wrapper():
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Toolbox',
+                                             FloatingTools.Dashboard.toolbox)
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Tool Shed',
+                                             FloatingTools.Dashboard.toolShed)
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Applications',
+                                             FloatingTools.Dashboard.applications)
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
+                                             FloatingTools.Dashboard.settings)
+        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__ + '/Dashboard')
+        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Support/HatfieldFX',
+                                             lambda: webbrowser.open("http://www.hatfieldfx.com/floating-tools"))
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Support/Repository',
+                                             lambda: webbrowser.open("https://github.com/aldmbmtl/FloatingTools"))
+
+        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Toolboxes', FloatingTools.Dashboard.toolShed)
+
+    # pull source data
+    sourceData = FloatingTools.sourceData()
     if FloatingTools.APP_WRAPPER:
         FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
                                                FloatingTools.Dashboard.settings)
@@ -140,56 +145,67 @@ def loadTools():
         FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Network Toolboxes',
                                                FloatingTools.Dashboard.toolShed)
 
-    # pull repository data
-    repoData = FloatingTools.sourceData()['repositories']
+    # log threads
+    threads = []
 
     # begin repo loop.
-    for repo in repoData:
+    for source in sourceData:
 
-        if not repo['load']:
+        # skip installing and loading if the toolbox isn't requested, but load the toolbox reference for potential
+        # later use.
+        if not source['load']:
+            FloatingTools.createToolbox(source['type'], source['source'], install=False)
             continue
 
+        # get handler data
+        toolbox = FloatingTools.createToolbox(source['type'], source['source'])
+
         # connect to the repository
-        FloatingTools.FT_LOOGER.info('Loading Repository: ' + repo['name'])
-        repoName = repo['name']
-        repo = FloatingTools.gitHubConnect().get_repo(repoName)
+        FloatingTools.FT_LOOGER.info('Loading %s with the %s handler...' % (source['name'], source['type']))
 
-        # load toolbox data
-        try:
-            toolboxData = json.loads(repo.get_file_contents('/toolbox.json').decoded_content)
-        except GithubException:
-            toolboxData = dict(paths=['/'])
-
-        if FloatingTools.APP_WRAPPER:
-            toolboxPath = FloatingTools.__name__ + '/' + repo.full_name.replace('/', '.')
-            repoURL = "https://github.com/" + repo.full_name
-            FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/Open on Github',
-                                                   partial(webbrowser.open, repoURL)
-                                                   )
-            FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/License',
-                                                   partial(webbrowser.open, repoURL + '/blob/master/LICENSE')
-                                                   )
-            FloatingTools.APP_WRAPPER.addMenuEntry(toolboxPath + '/About',
-                                                   partial(webbrowser.open, repoURL + '/blob/master/README.md')
-                                                   )
-            FloatingTools.APP_WRAPPER.addMenuSeparator(toolboxPath)
+        # make tool box information menus
+        if FloatingTools.wrapper():
+            toolboxPath = FloatingTools.__name__ + '/' + toolbox.name().replace('/', '.')
+            for menuItem in toolbox._toolbox_menu_order:
+                FloatingTools.wrapper().addMenuEntry(toolboxPath + menuItem, toolbox._toolbox_menu_content[menuItem])
+            FloatingTools.wrapper().addMenuSeparator(toolboxPath)
 
         # loop over the toolbox path
-        for path in toolboxData['paths']:
+        for path in toolbox.toolboxPaths():
 
+            # handle wildcard logic
             for card in WILDCARDS:
                 path = path.replace('{%s}' % card, WILDCARDS[card]['value'])
 
-            # spawn thread
-            if FloatingTools.APP_WRAPPER and not FloatingTools.APP_WRAPPER.MULTI_THREAD:
-                timeWalk(repoName, repo, path)
+            # spawn thread if it is a thread supporting application
+            if FloatingTools.wrapper() and not FloatingTools.wrapper().MULTI_THREAD:
+                loadToolbox(toolbox, path)
             else:
-                t = threading.Thread(name=repoName, target=timeWalk, args=(repoName, repo, path))
+                t = threading.Thread(name=toolbox.name(), target=loadToolbox, args=(toolbox, path))
+                t.setDaemon(True)
+                threads.append(t)
                 t.start()
 
-    if FloatingTools.APP_WRAPPER:
-        FloatingTools.APP_WRAPPER.addMenuSeparator(FloatingTools.__name__)
-        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Support/HatfieldFX',
-                                               lambda: webbrowser.open("http://www.hatfieldfx.com/floating-tools"))
-        FloatingTools.APP_WRAPPER.addMenuEntry(FloatingTools.__name__ + '/Support/Repository',
-                                               lambda: webbrowser.open("https://github.com/aldmbmtl/FloatingTools"))
+    # hold the main thread till load up is complete.
+    for thread in threads:
+        thread.join()
+
+    # load auto load modules
+    FloatingTools.FT_LOOGER.info('Starting Auto-Imports...')
+    for source in sourceData:
+        if source['load'] and FloatingTools.wrapperName() in source['apps']:
+            for mod, load in source['apps'][FloatingTools.wrapperName()].iteritems():
+                if load:
+                    try:
+                        FloatingTools.FT_LOOGER.info('\tAuto-Importing: ' + mod)
+                        __import__(mod)
+                        FloatingTools.FT_LOOGER.info('\t\tComplete')
+                    except ImportError:
+                        FloatingTools.FT_LOOGER.info('\t\tFailed')
+                        FloatingTools.FT_LOOGER.info('\n')
+                        traceback.print_exc()
+                        FloatingTools.FT_LOOGER.info('\n')
+
+
+# set virtual system variables
+FloatingTools.Dashboard.setDashboardVariable('python_cloud', PYTHON_MODULES)

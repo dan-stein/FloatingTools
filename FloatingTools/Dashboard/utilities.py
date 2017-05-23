@@ -34,13 +34,13 @@ def startServer(url=None):
     :type url: 
     :return: 
     """
+    # start the server
+    t = Thread(name='FloatingTools Web-Service', target=SERVER.run, args=(HOST, PORT))
+    t.start()
+
     # open the url that is passed
     if url:
         webbrowser.open(ADDRESS + url)
-
-    # start the server
-    t = Thread(target=SERVER.run, args=(HOST, PORT))
-    t.start()
 
 
 @SERVER.route('/shutdown', methods=['GET', 'POST'])
@@ -56,11 +56,6 @@ def stopServer():
 
     return "Server shut down... Close this window."
 
-
-@SERVER.route('/_launch', methods=['GET', 'POST'])
-def _launchApp():
-    subprocess.Popen(['open', '"%s"'.replace(SERVER.static_folder, '') % request.args.get('app_path')])
-    return redirect(request.args.get('url'))
 
 def setDashboardVariable(key, value):
     """

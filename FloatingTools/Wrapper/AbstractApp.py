@@ -10,6 +10,20 @@ def wrapper():
     return FloatingTools.WRAPPER
 
 
+def wrapperName():
+    """
+    Get the name of the current wrapper/application you are in. If there is no wrapper loaded, it assumes you are 
+    running FloatingTools outside the context of any application and in straight python. If this is the case, it returns
+    "Generic" signaling you are in the os version of FloatingTools. 
+    
+    OTHERWISE
+    
+    It will return the name of the wrapper application you are in.
+    :return: 
+    """
+    return 'Generic' if not wrapper() else wrapper().name()
+
+
 def setWrapper(klass):
     """
     Register the Wrapper class for the application you are in.
@@ -31,21 +45,9 @@ class AbstractApplication(object):
     ARGS = None
     MULTI_THREAD = False
 
-    @staticmethod
-    def cloudImport(repository, filePath):
-        """
-        Some applications have a specific call to execute code in the main thread. This is only needed if you are 
-        wrapping an application for multi-threaded load up.
-          
-          For example, when adding menu items to Nuke; if the call is made from an outside thread, the menu item will 
-          do nothing when clicked. To fix this, you must use Nukes nuke.executeInMainThread(). In some applications, 
-          this is not an issue. By default, this is a direct wrap to FloatingTools.cloudImport.
-        
-        :param repository: 
-        :param filePath: 
-        :return: 
-        """
-        FloatingTools.cloudImport(repository, filePath)
+    def __init__(self):
+        self.appTest()
+        setWrapper(self.__class__)
 
     @staticmethod
     def appTest():
@@ -94,11 +96,10 @@ class AbstractApplication(object):
         raise NotImplementedError
 
     @staticmethod
-    def loadFile(gitHubFileObject, fileType):
+    def loadFile(filePath):
         """
         MUST BE SUB-CLASSED
-        :param gitHubFileObject: 
-        :param fileType: 
+        :param filePath: 
         :return: 
         """
         raise NotImplementedError

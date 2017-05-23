@@ -59,8 +59,5 @@ class MayaWrapper(AbstractApplication):
         pm.separator(MayaWrapper.MENUS['/' + menuPath])
 
     @staticmethod
-    def loadFile(gitHubFileObject, fileType):
+    def loadFile(filePath):
         pass
-
-
-setWrapper(MayaWrapper)

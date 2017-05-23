@@ -48,11 +48,8 @@ class NukeWrapper(AbstractApplication):
     EXECUTABLE = _launchers
 
     @staticmethod
-    def cloudImport(repository, filePath):
-        nuke.executeInMainThreadWithResult(FloatingTools.cloudImport, (repository, filePath))
-
-    @staticmethod
     def addMenuSeparator(menuPath):
+        # handle windows nonsense
         menuPath = menuPath.replace('\\', '/').replace('//', '/')
         for menu in MENUS:
             try:
@@ -80,21 +77,21 @@ class NukeWrapper(AbstractApplication):
                 pass
 
     @staticmethod
-    def loadFile(gitHubFileObject, fileType):
+    def loadFile(filePath):
         """
         Nuke handler
-        :param gitHubFileObject: 
-        :param fileType: 
+        :type filePath: 
         :return: 
         """
+        basename, ext = os.path.splitext(filePath)
+
         # nk handler
-        if fileType in ['.nk', '.gizmo']:
-            temp = tempfile.NamedTemporaryFile()
-            path = temp.name
-            temp.write(gitHubFileObject.decoded_content.replace('Gizmo', 'Group'))
-            temp.seek(0)
-            nuke.nodePaste(path)
+        if ext in ['.nk', '.gizmo']:
+
+            # create temp file
+            temp = open(filePath, mode='w')
+            temp.write(temp.read().replace('Gizmo {', 'Group {\n name ' + basename))
             temp.close()
 
-
-setWrapper(NukeWrapper)
+            # create node
+            nuke.nodePaste(filePath)

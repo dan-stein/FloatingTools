@@ -9,12 +9,13 @@ import os
 import sys
 
 # package imports
-from AbstractApp import AbstractApplication, setWrapper, wrapper
+from AbstractApp import AbstractApplication, setWrapper, wrapper, wrapperName
 
 __all__ = [
     'AbstractApplication',
     'wrapper',
     'setWrapper',
+    'wrapperName',
     'APP_WRAPPER',
     'APP_WRAPPERS'
 ]
@@ -41,7 +42,7 @@ for wrapperMod in os.listdir(os.path.dirname(__file__)):
                         if obj.EXECUTABLE:
                             obj.EXECUTABLE_ORDER = sorted(obj.EXECUTABLE)
                         APP_WRAPPERS.append(obj)
-                        wrap = obj().appTest()
+                        wrap = obj()
                         APP_WRAPPER = obj
                 except:
                     pass
