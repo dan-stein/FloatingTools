@@ -89,8 +89,12 @@ class NukeWrapper(AbstractApplication):
         if ext in ['.nk', '.gizmo']:
 
             # create temp file
+            fo = open(filePath, mode='r')
+            code = fo.read()
+            fo.close()
+
             temp = open(filePath, mode='w')
-            temp.write(temp.read().replace('Gizmo {', 'Group {\n name ' + basename))
+            temp.write(code.replace('Gizmo {', 'Group {\n name ' + basename))
             temp.close()
 
             # create node
