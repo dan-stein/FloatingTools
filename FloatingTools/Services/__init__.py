@@ -3,3 +3,4 @@ from AbstractService import Handler, getHandler, getToolbox, toolboxes, createTo
 
 # predefined services
 import GitHubHandler
+import URLHandler

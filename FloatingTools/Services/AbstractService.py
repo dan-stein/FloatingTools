@@ -78,7 +78,7 @@ class Handler(object):
     # reserved
     _TYPE_ = None
     SOURCE_FIELDS = dict()
-    SOURCE_FIELDS_ORDER = list()
+    SOURCE_FIELDS_ORDER = dict()
 
     # data model for Toolboxes
     DATA_MODEL = dict(
@@ -107,8 +107,13 @@ class Handler(object):
 
         :return: 
         """
-        cls.SOURCE_FIELDS[label] = _type
-        cls.SOURCE_FIELDS_ORDER.append(label)
+        if cls.__name__ not in cls.SOURCE_FIELDS:
+            cls.SOURCE_FIELDS[cls.__name__] = {}
+        cls.SOURCE_FIELDS[cls.__name__][label] = _type
+
+        if cls.__name__ not in cls.SOURCE_FIELDS_ORDER:
+            cls.SOURCE_FIELDS_ORDER[cls.__name__] = []
+        cls.SOURCE_FIELDS_ORDER[cls.__name__].append(label)
 
     @classmethod
     def registerHandler(cls, _type):
