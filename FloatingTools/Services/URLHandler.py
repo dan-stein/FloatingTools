@@ -3,7 +3,6 @@ Direct url handler class
 """
 # python imports
 import os
-import json
 import shutil
 import urllib
 import zipfile
@@ -11,7 +10,6 @@ import webbrowser
 from functools import partial
 
 # FT imports
-import FloatingTools
 from AbstractService import Handler
 
 
