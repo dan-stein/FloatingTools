@@ -16,11 +16,14 @@ import FloatingTools
 # python imports
 import os
 import json
+import threading
 
 # globals
 USER = os.path.join(FloatingTools.DATA, 'User.json')
 SOURCES = os.path.join(FloatingTools.DATA, 'Sources.json')
 BUILD = os.path.join(FloatingTools.DATA, 'Build.json')
+
+_LOCK = threading.Lock()
 
 # make the internal data folder if it doesnt exist.
 if not os.path.exists(os.path.dirname(USER)):
@@ -81,7 +84,9 @@ def userData():
 
 
 def updateSources(data):
+    _LOCK.acquire()
     json.dump(data, open(SOURCES, 'w'), indent=4, sort_keys=True)
+    _LOCK.release()
 
 
 def updateBuild(data):

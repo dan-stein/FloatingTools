@@ -8,6 +8,8 @@ from flask import request, render_template, redirect
 from utilities import SERVER
 
 # python imports
+import os
+import imp
 import traceback
 
 
@@ -19,6 +21,14 @@ def renderToolShed():
     """
     # grab latest source data.
     FloatingTools.Dashboard.setDashboardVariable('toolboxes', FloatingTools.toolboxes())
+    FloatingTools.Dashboard.setDashboardVariable('sorted_toolboxes', sorted(FloatingTools.toolboxes().keys()))
+
+    # create module key
+    modules = {}
+    for box in FloatingTools.Dashboard.dashboardEnv()['python_cloud'].values():
+        for path in box:
+            modules[path] = os.path.basename(path).replace('.py', '')
+    FloatingTools.Dashboard.setDashboardVariable('python_module_key', modules)
 
     return render_template('ToolShed.html', **FloatingTools.Dashboard.dashboardEnv())
 
@@ -27,8 +37,8 @@ def renderToolShed():
 def saveToolShed():
     # grab toolbox
     for arg in request.args:
-        if '.' in arg:
-            toolbox, module = arg.rsplit('.', 1)
+        try:
+            toolbox, module = arg.split('|%|', 1)
 
             handler = FloatingTools.getToolbox(toolbox)
 
@@ -41,7 +51,9 @@ def saveToolShed():
                 currentSettings['apps'][appName] = dict()
 
             currentSettings['apps'][appName][module] = True if request.args.get(arg) == 'true' else False
-        else:
+            continue
+
+        except:
             handler = FloatingTools.getToolbox(arg)
 
             # pull then set settings
@@ -59,7 +71,7 @@ def saveToolShed():
 @SERVER.route('/tool_shed/_import')
 def pyImport():
     try:
-        mod = __import__(request.args.get('module'))
+        mod = imp.load_source(os.path.basename(request.args.get('module')).replace('.py', ''), request.args.get('module'))
         reload(mod)
         FloatingTools.FT_LOOGER.info('Module Imported/Reloaded: %s' % mod)
     except Exception, e:

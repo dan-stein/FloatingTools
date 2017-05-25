@@ -91,8 +91,11 @@
         <div class="panel-body">
             <label>Network Toolboxes</label>
             <ul class="list-group">
-                {% for name, toolbox in toolboxes.iteritems() %}
-                {% set settings = toolbox.settings() %}
+                {% for name in sorted_toolboxes %}
+
+                {% set toolbox = toolboxes[name] %}
+                {% set settings = toolboxes[name].settings() %}
+
                 {% if active_wrapper == None %}
                     {% set app_name = "Generic" %}
                 {% else %}
@@ -110,54 +113,54 @@
                                 <option value="false" selected>Disable</option>
                             {% endif %}
                             </select>
-                            <center><a href="#">Reinstall</a></center>
                         </div>
                         <div class="col-sm-4">
                             <label>
                                 <span class="glyphicon glyphicon-briefcase"></span>
                                 <a data-toggle="collapse" href="#repo-{{ toolbox._id }}"> {{ name }}</a>
-                            </label>
-
+                            </label> ({{ toolbox._TYPE_ }})
+                            <ul>
+                                {% for menu_item in toolbox._toolbox_menu_order %}
+                                    {% if menu_item in toolbox._toolbox_html_content %}
+                                        <li>
+                                            <a href="{{ toolbox._toolbox_html_content[menu_item]['html'] }}">{{ toolbox._toolbox_html_content[menu_item]["tag"] }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
                             <div id="repo-{{ toolbox._id }}" class="collapse">
+                                <br>
+                                <span class="glyphicon glyphicon-cog"></span> Technical Information
                                 <ul>
                                     <li>
-                                        <span class="glyphicon glyphicon-info-sign"></span> Toolbox Menu
+                                        <span class="glyphicon glyphicon-time"></span>
+                                        Load Time
                                         <ul>
-                                            {% for menu_item in toolbox._toolbox_menu_order %}
-                                                {% if menu_item in toolbox._toolbox_html_content %}
-                                                    <li>
-                                                        <a href="{{ toolbox._toolbox_html_content[menu_item]['html'] }}">{{ toolbox._toolbox_html_content[menu_item]["tag"] }}</a>
-                                                    </li>
-                                                {% endif %}
-                                            {% endfor %}
+                                        {% for app in settings["loadTimes"] %}
+                                            {% if app == open_app %}
+                                                <li>
+                                                    <font color="green"><strong>{{ app }}:</strong></font> {{ settings["loadTimes"][app] }} seconds
+                                                </li>
+                                            {% else %}
+                                                <li>
+                                                    <strong>{{ app }}:</strong> {{ settings["loadTimes"][app] }} seconds
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
                                         </ul>
                                     </li>
                                     <li>
-                                        <span class="glyphicon glyphicon-compressed"></span>
-                                        Technical Information
+                                        <span class="glyphicon glyphicon-save"></span>
+                                        Source
                                         <ul>
+                                        {% for field, value in settings["source"].iteritems() %}
                                             <li>
-                                                {{ toolbox._TYPE_ }}
+                                                {{ field }}: {{ value }}
                                             </li>
-                                            <li>
-                                                <span class="glyphicon glyphicon-time"></span>
-                                                Load Time
-                                                <ul>
-                                                {% for app in settings["loadTimes"] %}
-                                                    {% if app == open_app %}
-                                                        <li>
-                                                            <font color="green"><strong>{{ app }}:</strong></font> {{ settings["loadTimes"][app] }} seconds
-                                                        </li>
-                                                    {% else %}
-                                                        <li>
-                                                            <strong>{{ app }}:</strong> {{ settings["loadTimes"][app] }} seconds
-                                                        </li>
-                                                    {% endif %}
-                                                {% endfor %}
-                                                </ul>
-                                            </li>
+                                        {% endfor %}
                                         </ul>
                                     </li>
+
                                 </ul>
                             </div>
                         </div>
@@ -186,7 +189,7 @@
                                                                 <td>
                                                                     <center>
                                                                         <strong>
-                                                                            {{ py }}
+                                                                            {{ python_module_key[py] }}
                                                                         </strong>
                                                                     </center>
                                                                 </td>
@@ -196,7 +199,7 @@
                                                                     </center>
                                                                 </td>
                                                                 <td>
-                                                                    <select name="{{ name + '.' + py}}" class="form-control">
+                                                                    <select name="{{ name + '|%|' + py}}" class="form-control">
                                                                         {% if app_name in settings["apps"].keys() %}
                                                                             {% if py in settings["apps"][app_name].keys() %}
                                                                                 {% if settings["apps"][app_name][py] == True %}
@@ -240,7 +243,6 @@
                         Add
                     </a>
                     <div id="toolboxList" class="collapse">
-                        Supported Services
                         <ul>
                             {% for service in services %}
                                 <li>
@@ -248,8 +250,8 @@
                                 </li>
                             {% endfor %}
                         </ul>
-                        <br>
                     </div>
+                    <br>
                     <a data-toggle="modal" data-target="#removeToolbox"><span
                             class="glyphicon glyphicon-minus"></span> Remove </a>
                 </div>

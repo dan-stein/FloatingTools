@@ -74,7 +74,7 @@ class URLHandler(Handler):
         # set handler variables
         self.setSourcePath(source['URL'])
         repository, ext = os.path.splitext(os.path.basename(self.sourcePath()))
-        self.setName(('www.' + website.split('www.')[1]).replace('.', '_') + '/' + repository)
+        self.setName(('www.' + website.split('www.')[1]) + '/' + repository)
 
         # menu items
         self.addMenuItem('/Open Home', partial(webbrowser.open, website), html=website)

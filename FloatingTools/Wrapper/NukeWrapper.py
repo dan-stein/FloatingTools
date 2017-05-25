@@ -55,8 +55,7 @@ class NukeWrapper(AbstractApplication):
             try:
                 nuke.executeInMainThread(nuke.menu(menu).findItem(menuPath).addSeparator)
             except AttributeError:
-                nuke.executeInMainThreadWithResult(nuke.menu(menu).addMenu, args=(menuPath,))
-                nuke.executeInMainThread(nuke.menu(menu).findItem(menuPath).addSeparator)
+                pass
 
     @staticmethod
     def appTest():
@@ -94,7 +93,7 @@ class NukeWrapper(AbstractApplication):
             fo.close()
 
             temp = open(filePath, mode='w')
-            temp.write(code.replace('Gizmo {', 'Group {\n name ' + basename))
+            temp.write(code.replace('Gizmo {', 'Group {\n name ' + os.path.basename(basename)))
             temp.close()
 
             # create node

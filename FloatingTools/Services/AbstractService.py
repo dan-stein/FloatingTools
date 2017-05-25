@@ -161,7 +161,9 @@ class Handler(object):
         self._toolbox_menu_order = []
         self._toolbox_menu_content = {}
         self._toolbox_html_content = {}
+        self._install_path = None
         self._id = id(self)
+        self._is_pointer = False
 
         # run init functions
         self.loadSource(self._source)
@@ -200,7 +202,6 @@ class Handler(object):
                 break
 
         FloatingTools.updateSources(sourceData)
-
 
     def settings(self):
         """
@@ -318,16 +319,43 @@ class Handler(object):
         """
         raise NotImplementedError()
 
+    def setIsPointer(self, value=False):
+        """
+        Set this to be a pointer toolbox path.
+        :param value: 
+        :return: 
+        """
+        self._is_pointer = value
+
+    def isPointer(self):
+        """
+        Is this a pointer box.
+        :return: 
+        """
+        return self._is_pointer
+
+    def setInstallLocation(self, location):
+        """
+        Set the location that the toolbox is to be installed in.
+        :param location: 
+        :return: 
+        """
+        self._install_path = location
+
     def installDirectory(self):
         """
-        Get the designated install directory for this toolbox. This is assigned to the cache directory inside FT.
+        Get the designated install directory for this toolbox. This is assigned to the cache directory inside FT by 
+        default. You can set this in your handler.loadSource() function by using  
         
         This will respect '/' for declaring subdirectories. For example, 'aldmbmtl/toolbox' will create toolbox inside 
         aldmbmtl.
         
         :return: 
         """
-        return os.path.join(FloatingTools.FLOATING_TOOLS_CACHE, *self.name().split('/'))
+        if not self._install_path:
+            return os.path.join(FloatingTools.FLOATING_TOOLS_CACHE, *self.name().split('/'))
+
+        return self._install_path
 
     def install(self):
         """
@@ -338,14 +366,16 @@ class Handler(object):
 
         :return: 
         """
-        raise NotImplementedError()
+        if not self._is_pointer:
+            raise NotImplementedError()
 
     def uninstall(self):
         """
         Uninstalls this toolbox from the installation directory
         :return: 
         """
-        shutil.rmtree(self.installDirectory())
+        if not self._is_pointer:
+            shutil.rmtree(self.installDirectory())
 
         # purge all settings from the source data
         data = FloatingTools.sourceData()

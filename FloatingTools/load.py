@@ -8,6 +8,7 @@ __all__ = [
 # python imports
 import os
 import sys
+import imp
 import time
 import threading
 import traceback
@@ -28,6 +29,7 @@ WILDCARDS = dict(
         doc='The operating systems python name.')
 )
 PYTHON_MODULES = {}
+_LOCK = threading.Lock()
 
 # add to dashboard
 FloatingTools.Dashboard.setDashboardVariable('wildcards', WILDCARDS)
@@ -67,16 +69,15 @@ def loadToolbox(handler, path):
             pyPath = root
             if isPackage:
                 pyPath = os.path.dirname(pyPath)
-                pyName = os.path.basename(pyPath)
-                if pyName not in PYTHON_MODULES[handler.name()]:
-                    PYTHON_MODULES[handler.name()].append(pyName)
+                if pyPath not in PYTHON_MODULES[handler.name()]:
+                    PYTHON_MODULES[handler.name()].append(pyPath)
 
             sys.path.append(pyPath)
 
         # loop over contents
         for fo in files:
             if fo.endswith('.py') and fo != '__init__.py':
-                PYTHON_MODULES[handler.name()].append(fo.replace('.py', ''))
+                PYTHON_MODULES[handler.name()].append(os.path.join(root, fo))
                 continue
 
             if FloatingTools.wrapper():
@@ -97,18 +98,18 @@ def loadToolbox(handler, path):
     endTime = time.time()
 
     # log the data and update
+    _LOCK.acquire()
     sourceData = FloatingTools.sourceData()
     for source in sourceData:
         if source['name'] != handler.name():
             continue
-
-        # pull app data
 
         # log load time for the current app
         source['loadTimes'][FloatingTools.wrapperName()] = '{:.6f}'.format(endTime - startTime)
         break
 
     FloatingTools.updateSources(sourceData)
+    _LOCK.release()
 
 
 def loadTools():
@@ -147,12 +148,14 @@ def loadTools():
 
         # skip installing and loading if the toolbox isn't requested, but load the toolbox reference for potential
         # later use.
+        _LOCK.acquire()
         if not source['load']:
             FloatingTools.createToolbox(source['type'], source['source'], install=False)
             continue
 
         # get handler data
         toolbox = FloatingTools.createToolbox(source['type'], source['source'])
+        _LOCK.release()
 
         # connect to the repository
         FloatingTools.FT_LOOGER.info('Loading %s with the %s handler...' % (source['name'], source['type']))
@@ -192,7 +195,7 @@ def loadTools():
                 if load:
                     try:
                         FloatingTools.FT_LOOGER.info('\tAuto-Importing: ' + mod)
-                        __import__(mod)
+                        imp.load_source(os.path.basename(mod).replace('.py', ''), mod)
                         FloatingTools.FT_LOOGER.info('\t\tComplete')
                     except ImportError:
                         FloatingTools.FT_LOOGER.info('\t\tFailed')
