@@ -1,0 +1,32 @@
+FloatingTools API
+=================
+
+FloatingTools provides a simple API for extending the capabilities as you see fit.
+
+Service Handlers
+----------------
+
+.. autofunction:: FloatingTools.toolboxes
+.. autofunction:: FloatingTools.getToolbox
+.. autofunction:: FloatingTools.getHandler
+.. autofunction:: FloatingTools.createToolbox
+
+.. autoclass:: FloatingTools.Handler
+    :members:
+
+
+Application Wrapper
+-------------------
+
+.. autofunction:: FloatingTools.wrapper
+.. autofunction:: FloatingTools.wrapperName
+.. autofunction:: FloatingTools.setWrapper
+
+.. autoclass:: FloatingTools.AbstractApplication
+    :members:
+
+License and Information
+-----------------------
+
+.. automodule:: FloatingTools
+    :members:

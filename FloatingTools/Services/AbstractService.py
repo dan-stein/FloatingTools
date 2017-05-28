@@ -4,6 +4,9 @@ Forward preparation for supporting more services.
 # python imports
 import os
 import shutil
+import urllib
+import urllib2
+import zipfile
 
 # ft imports
 import FloatingTools
@@ -30,9 +33,9 @@ class InvalidToolbox(Exception):
 # functions
 def getHandler(handlerType):
     """
-    Get the class associated with the handler type passed.
-    :param handlerType: str key in the FloatingTools.Services.SERVICES
-    :return: 
+Get the class associated with the handler type passed.
+
+:param handlerType: str key in the FloatingTools.Services.SERVICES
     """
     try:
         return SERVICES[handlerType]
@@ -42,9 +45,9 @@ def getHandler(handlerType):
 
 def getToolbox(name):
     """
-    Get a toolbox by its name.
-    :param name: 
-    :return: 
+Get a toolbox by its name.
+
+:param name: 
     """
     try:
         return TOOLBOXES[name]
@@ -54,18 +57,17 @@ def getToolbox(name):
 
 def toolboxes():
     """
-    Get all the currently loaded toolboxes
-    :return: 
+Get all the currently loaded toolboxes
     """
     return TOOLBOXES
 
 
 def createToolbox(_type, source, install=True):
     """
-    Create a toolbox. You must pass a valid type of handler with the proper 
-    :param _type: 
-    :param source: 
-    :return: 
+Creates a toolbox with the handler type passed using the source data.
+
+:param _type: 
+:param source: 
     """
     return getHandler(_type)(install=install, **source)
 
@@ -95,17 +97,35 @@ class Handler(object):
         loadTimes={},   # toolbox load times organized by application
     )
 
+    @staticmethod
+    def downloadSource(url, path, timeout=5):
+        """
+        Download source from a passed url and install it where you defined using the path parameter. This includes a 
+        time out function.
+        
+        :parameter url: str
+        :parameter path: str
+        :parameter timeout: How long to wait before timing out.
+        """
+        try:
+            urllib2.urlopen(url=url, timeout=timeout)
+            urllib.urlretrieve(url, path)
+            return True
+        except:
+            FloatingTools.FT_LOOGER.warning('Connection time out from %s.\nPath may be invalid or the website has '
+                                            'direct downloads blocked my flagging FloatingTools as spam.\nContact the '
+                                            'site admin OR download and unpack to zip manually and point to it using '
+                                            'the "Local" service instead of the URL service.' % url)
+            return False
+
     @classmethod
     def addSourceField(cls, label, _type=str):
         """
         Adding a source field is required for setting up the source data. This can be a url field or fields. Usually 
         string types are fine.
 
-        :param label: The label that will be presented on the field 
-        :param _type: This will determine the kind of field that will be presented when the field is rendered on the 
-        website front end
-
-        :return: 
+        :parameter label: The label that will be presented on the field 
+        :parameter _type: This will determine the kind of field that will be presented when the field is rendered on the website front end
         """
         if cls.__name__ not in cls.SOURCE_FIELDS:
             cls.SOURCE_FIELDS[cls.__name__] = {}
@@ -119,8 +139,8 @@ class Handler(object):
     def registerHandler(cls, _type):
         """
         This needs to be done so FT knows how to handle different source types.
-        :param _type: 
-        :return: 
+        
+        :parameter _type:  
         """
         global SERVICES
 
@@ -134,7 +154,9 @@ class Handler(object):
     def handlerName(cls):
         """
         This handlers name. This will be whatever you named the class.
-        :return: 
+        
+        
+        
         """
         return cls.__name__
 
@@ -146,10 +168,6 @@ class Handler(object):
         )
 
     def __init__(self, install=True, **sourceFields):
-        """
-        init toolbox
-        :param source: 
-        """
         global TOOLBOXES
 
         # instance variables
@@ -187,11 +205,42 @@ class Handler(object):
         # settings file
         self.settings()
 
+    def installZip(self, zipPath):
+        """
+        Helper for installing zips.
+        
+        :parameter zipPath: str
+        """
+        # load zip file
+        zipRef = zipfile.ZipFile(zipPath, 'r')
+
+        # begin unpack
+        os.chdir(self.installDirectory())
+        root = zipRef.filelist[0].filename.split('/')[0]
+        for i in zipRef.filelist:
+            # create local paths
+            cleanPath = i.filename.replace(root + '/', '')
+            if cleanPath == '' or i.filename.startswith('__MACOSX') or os.path.basename(i.filename).startswith('.'):
+                continue
+
+            # extract file contents
+            initialInstall = zipRef.extract(i)
+            reinstallPath = os.path.join(self.installDirectory(), *i.filename.replace(root, '').split('/'))
+
+            # move
+            shutil.move(initialInstall, reinstallPath)
+
+        # delete directory
+        shutil.rmtree(os.path.join(self.installDirectory(), root))
+
+        # remove old zip
+        os.unlink(zipPath)
+
     def updateSettings(self, update):
         """
-        pass the new dictionary with the settings for this toolbox
-        :param update: 
-        :return: 
+        Update the settings that are associated with this toolbox.
+        
+        :parameter update: dictionary 
         """
         sourceData = FloatingTools.sourceData()
         for source in sourceData:
@@ -205,8 +254,7 @@ class Handler(object):
 
     def settings(self):
         """
-        Get the saved settings for this toolbox.
-        :return: 
+        Settings associated with the toolbox.
         """
         if not self._source_settings:
             # pull source data
@@ -235,11 +283,12 @@ class Handler(object):
 
     def addMenuItem(self, menu, command, html=None):
         """
-        Add a command that will show up in the application with your handler.
-        :param menu: 
-        :param command:
-        :param html: 
-        :return: 
+        A menu item will show up wrapper application and, if the html argument is passed as well, it will show up in 
+        Dashboard in the ToolShed.
+
+        :parameter menu: str for the menu to display. You can submenu with '/'
+        :parameter command: callable function
+        :parameter html: The raw html call as a string
         """
         self._toolbox_menu_order.append(menu)
         self._toolbox_menu_content[menu] = command
@@ -250,8 +299,7 @@ class Handler(object):
 
     def toolboxPaths(self):
         """
-        Get the path for this toolbox.
-        :return: 
+        The current set of toolbox paths.
         """
         # default is the whole toolbox
         paths = ['/']
@@ -264,9 +312,29 @@ class Handler(object):
 
     def setToolboxPaths(self, listOfPaths):
         """
-        Must be a list of load up paths. Wild card values are evaluated at tool loading. No substitution required here.
-        :param listOfPaths: 
-        :return: 
+        Toolbox paths are set to allow for tool separation within the context of a single toolbox and to increase load 
+        speed.
+        
+.. code-block:: none
+    
+    toolbox/
+        nuke/
+            toolA
+        maya/
+            toolB
+
+In the context of the above example, a path can be passed to load a tools from nuke and not maya by passing the path 
+directly.
+
+.. code-block:: python
+    
+    Handler.setToolboxPaths(['/toolbox/nuke'])
+    
+This is automatically done for you at load by the wildcard system, but it is good to understand where this is and how it
+ works.
+ 
+:parameter listOfPaths: list
+
         """
         if not isinstance(listOfPaths, list):
             raise TypeError('Must be a <list> of paths')
@@ -276,81 +344,99 @@ class Handler(object):
     def sourcePath(self):
         """
         Path to the source data that builds the toolbox
-        :return: 
         """
         return self._source_path
 
     def setSourcePath(self, path):
         """
-        Set the path that the original source is coming from.
-        :param path: 
-        :return: 
+        Set the path that the original source is coming from. Set during the Handler.loadSource()
+        
+.. code-block:: python
+    :linenos:
+    
+    def loadSource(self, source):
+        # simple example pulled from the URLHandler class
+        
+        website = source['URL'].split('.com')[0] + '.com'
+        toolLink = os.path.dirname(source['URL']).rstrip('/')
+
+        # set handler variables
+        self.setSourcePath(source['URL']) # pass the website url that the zip will be downloaded from.
+        
+        etc...
+
+:parameter path: any kind of python object
         """
         self._source_path = path
 
     def name(self):
         """
-        Get the name of the toolbox that this handler represents.
-        :return: 
+        Each Handler instance has a name that represents what toolbox it has loaded. This name is used for many 
+        functions including the data model that the settings file saves.
         """
         return self._toolbox_name
 
     def setName(self, name):
         """
-        Set the name of the toolbox that this handler represents.
-        :param name: 
-        :return: 
+        This MUST be set during the Handler.loadSource() function.
         """
         self._toolbox_name = name
 
     def loadSource(self, source):
         """
-        --MUST SUBCLASS--
+        This will be called when the tool box is initiated. Subclass this function to load your source information add 
+        your files (but not install). To execute the installation of files, redefine Handler.install()
         
-        This will be called when the tool box is initiated. Subclass this function to load your source information. 
-        You should add your files here. To execute the installation of files, redefine Handler.install()
+.. code-block:: python
+    :linenos:
+    
+    def loadSource(self, source):
+        # simple example pulled from the GitHubHandler class
+    
+        username = source['username']
+        repository = source['repository']
         
-        Variables that should be set:
-            self.setName(name of the toolbox)
-            self.setSourcePath(where the source came from)
+        githubLink = "www.github.com/%s/%s/" % (username, repository) 
         
-        :param source: 
-        :return: 
+        self.setName(username + '/' + repository)
+        self.setSourcePath(githubLink)
+
+
+:parameter source: dictionary with keys representing source field names and the associated values
         """
         raise NotImplementedError()
 
     def setIsPointer(self, value=False):
         """
-        Set this to be a pointer toolbox path.
-        :param value: 
-        :return: 
+        Handlers can either "pull" or "point". Pull boxes usually require files to be installed. Point boxes point to a 
+        location on disk and do not modify the location at all. If you want to protect a location on disk from 
+        accidental deletion through the Handler.uninstall() function, set this handler to be a pointer to block the 
+        uninstall call.  
         """
         self._is_pointer = value
 
     def isPointer(self):
         """
-        Is this a pointer box.
-        :return: 
+        Handlers can either "pull" or "point". Pull boxes usually require files to be installed. Point boxes point to a 
+        location on disk and do not modify the location at all. 
         """
         return self._is_pointer
 
     def setInstallLocation(self, location):
         """
-        Set the location that the toolbox is to be installed in.
-        :param location: 
-        :return: 
+        Set the location that the toolbox is to be installed in. This MUST be done if you intend on allowing for 
+        Handler.uninstall() to work correctly.
+        :parameter location: str
         """
         self._install_path = location
 
     def installDirectory(self):
         """
-        Get the designated install directory for this toolbox. This is assigned to the cache directory inside FT by 
-        default. You can set this in your handler.loadSource() function by using  
+        Get the designated install directory for this toolbox. This is assigned to the cache directory inside 
+        FloatingTools by default. You can set this in your handler.loadSource() function by using handler.setInstallLocation(Your path).
         
         This will respect '/' for declaring subdirectories. For example, 'aldmbmtl/toolbox' will create toolbox inside 
         aldmbmtl.
-        
-        :return: 
         """
         if not self._install_path:
             return os.path.join(FloatingTools.FLOATING_TOOLS_CACHE, *self.name().split('/'))
@@ -359,20 +445,28 @@ class Handler(object):
 
     def install(self):
         """
-        --MUST SUBCLASS--
-
-        This will be called when the tool box is initiated and after handler.loadSource. Subclass this function to 
-        perform the actual install call.
-
-        :return: 
+        This will be called when the tool box is initiated and after the Handler.loadSource() call. Subclass this for 
+        installing your content. This is required if the handler needs to download and unpack content from the internet.
+        
+        If this handler is defined in the loadSource as a "pointer" using Handler.setIsPointer(True), this function is 
+        not required. Otherwise, you must sub-class this function or it will throw NotImplementedError.
+        
+.. code-block:: python
+    :linenos:
+    
+    def install(self):
+        # simple example pulled from the GitHubHandler class
+        
+        zipURL = self.sourcePath().get_archive_link('zipball')
+        self.downloadSource(zipURL, zipPath)
+        self.installZip(zipPath)
         """
         if not self._is_pointer:
             raise NotImplementedError()
 
     def uninstall(self):
         """
-        Uninstalls this toolbox from the installation directory
-        :return: 
+        Uninstalls this toolbox from the installation directory. This can not be undone and there is no safety question.
         """
         if not self._is_pointer:
             shutil.rmtree(self.installDirectory())

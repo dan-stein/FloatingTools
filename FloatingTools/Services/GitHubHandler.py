@@ -5,7 +5,6 @@ Github handler class
 import os
 import json
 import shutil
-import urllib
 import zipfile
 import webbrowser
 from functools import partial
@@ -29,37 +28,17 @@ class GitHubHandler(Handler):
 
         # download data
         zipURL = self.sourcePath().get_archive_link('zipball')
-        urllib.urlretrieve(zipURL, zipPath)
+        if not self.downloadSource(zipURL, zipPath):
+            return
 
         # set up download path for repo
         if os.path.exists(toolboxPath):
             shutil.rmtree(toolboxPath)
         os.makedirs(toolboxPath)
 
-        # load zip file
-        zip_ref = zipfile.ZipFile(zipPath, 'r')
+        # install zip ball
+        self.installZip(zipPath)
 
-        # begin unpack
-        os.chdir(toolboxPath)
-        root = zip_ref.filelist[0].filename.split('/')[0]
-        for i in zip_ref.filelist:
-            # create local paths
-            cleanPath = i.filename.replace(root + '/', '')
-            if cleanPath == '':
-                continue
-
-            # extract file contents
-            localPath = zip_ref.extract(i)
-            targetPath = localPath.replace(root + '/', '')
-
-            # move to proper location
-            shutil.move(localPath, targetPath)
-
-        # clear old download path
-        shutil.rmtree(os.path.join(toolboxPath, root))
-
-        # remove old zip
-        os.unlink(zipPath)
 
     def loadSource(self, source):
         """
