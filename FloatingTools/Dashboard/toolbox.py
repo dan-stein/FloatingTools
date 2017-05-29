@@ -20,8 +20,7 @@ _BENCHMARK_DATA = dict(directories=[], files=[], applications={}, paths={})
 
 def toolbox():
     """
-    Launch tool shed page to configure Floating Tools
-    :return: 
+    Launch toolbox page to configure Floating Tools
     """
     FloatingTools.Dashboard.startServer(url='toolbox')
 

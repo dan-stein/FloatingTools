@@ -26,7 +26,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Tutorials" href="tutorials.html" /> 
+    <link rel="next" title="Service Handlers" href="handlers.html" />
+    <link rel="prev" title="FloatingTools Documentation" href="index.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -39,7 +40,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="tutorials.html" title="Tutorials"
+          <a href="handlers.html" title="Service Handlers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="FloatingTools Documentation"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">FloatingTools v0.6.0 documentation</a> &#187;</li> 
       </ul>
@@ -53,53 +57,65 @@
   <div class="section" id="floatingtools-api">
 <h1>FloatingTools API<a class="headerlink" href="#floatingtools-api" title="Permalink to this headline">¶</a></h1>
 <p>FloatingTools provides a simple API for extending the capabilities as you see fit.</p>
-<div class="section" id="service-handlers">
-<h2>Service Handlers<a class="headerlink" href="#service-handlers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="dashboard">
+<h2>Dashboard<a class="headerlink" href="#dashboard" title="Permalink to this headline">¶</a></h2>
+<p>Dashboard is the web front end for FloatingTools. Direct modification is not allowed, but you can make calls to launch
+the pages using the wrapper functions.</p>
 <dl class="function">
-<dt id="FloatingTools.toolboxes">
-<code class="descclassname">FloatingTools.</code><code class="descname">toolboxes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#toolboxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.toolboxes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get all the currently loaded toolboxes</p>
+<dt id="FloatingTools.Dashboard.toolShed">
+<code class="descclassname">FloatingTools.Dashboard.</code><code class="descname">toolShed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/toolshed.html#toolShed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.toolShed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launch tool shed page to configure Floating Tools</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="FloatingTools.getToolbox">
-<code class="descclassname">FloatingTools.</code><code class="descname">getToolbox</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#getToolbox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.getToolbox" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a toolbox by its name.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> &#8211; </td>
-</tr>
-</tbody>
-</table>
+<dt id="FloatingTools.Dashboard.toolbox">
+<code class="descclassname">FloatingTools.Dashboard.</code><code class="descname">toolbox</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/toolbox.html#toolbox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.toolbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launch toolbox page to configure Floating Tools</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="FloatingTools.getHandler">
-<code class="descclassname">FloatingTools.</code><code class="descname">getHandler</code><span class="sig-paren">(</span><em>handlerType</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#getHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.getHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the class associated with the handler type passed.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handlerType</strong> &#8211; str key in the FloatingTools.Services.SERVICES</td>
-</tr>
-</tbody>
-</table>
+<dt id="FloatingTools.Dashboard.applications">
+<code class="descclassname">FloatingTools.Dashboard.</code><code class="descname">applications</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/applications.html#applications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.applications" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launch applications page</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="FloatingTools.createToolbox">
-<code class="descclassname">FloatingTools.</code><code class="descname">createToolbox</code><span class="sig-paren">(</span><em>_type</em>, <em>source</em>, <em>install=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#createToolbox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.createToolbox" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a toolbox with the handler type passed using the source data.</p>
+<dt id="FloatingTools.Dashboard.settings">
+<code class="descclassname">FloatingTools.Dashboard.</code><code class="descname">settings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/settings.html#settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launch settings page to configure Floating Tools</p>
+</dd></dl>
+
+</div>
+<div class="section" id="settings">
+<h2>Settings<a class="headerlink" href="#settings" title="Permalink to this headline">¶</a></h2>
+<p>Settings are stored in FloatingTools/data. Calls to update these settings are useful if you are developing more direct
+interaction with FloatingTools.</p>
+<dl class="function">
+<dt id="FloatingTools.buildData">
+<code class="descclassname">FloatingTools.</code><code class="descname">buildData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/settings.html#buildData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.buildData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FloatingTools.updateBuild">
+<code class="descclassname">FloatingTools.</code><code class="descname">updateBuild</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/settings.html#updateBuild"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.updateBuild" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FloatingTools.userData">
+<code class="descclassname">FloatingTools.</code><code class="descname">userData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/settings.html#userData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.userData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FloatingTools.updateLogin">
+<code class="descclassname">FloatingTools.</code><code class="descname">updateLogin</code><span class="sig-paren">(</span><em>username</em>, <em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/settings.html#updateLogin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.updateLogin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the login information.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>_type</strong> &#8211; </li>
-<li><strong>source</strong> &#8211; </li>
+<li><strong>username</strong> &#8211; str</li>
+<li><strong>password</strong> &#8211; str</li>
 </ul>
 </td>
 </tr>
@@ -107,546 +123,16 @@
 </table>
 </dd></dl>
 
-<dl class="class">
-<dt id="FloatingTools.Handler">
-<em class="property">class </em><code class="descclassname">FloatingTools.</code><code class="descname">Handler</code><span class="sig-paren">(</span><em>install=True</em>, <em>**sourceFields</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents a FloatingTools compatible toolbox service</p>
-<dl class="method">
-<dt id="FloatingTools.Handler.addMenuItem">
-<code class="descname">addMenuItem</code><span class="sig-paren">(</span><em>menu</em>, <em>command</em>, <em>html=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.addMenuItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.addMenuItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>A menu item will show up wrapper application and, if the html argument is passed as well, it will show up in 
-Dashboard in the ToolShed.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>menu</strong> &#8211; str for the menu to display. You can submenu with &#8216;/&#8217;</li>
-<li><strong>command</strong> &#8211; callable function</li>
-<li><strong>html</strong> &#8211; The raw html call as a string</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="FloatingTools.Handler.addSourceField">
-<em class="property">classmethod </em><code class="descname">addSourceField</code><span class="sig-paren">(</span><em>label</em>, <em>_type=&lt;type 'str'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.addSourceField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.addSourceField" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adding a source field is required for setting up the source data. This can be a url field or fields. Usually 
-string types are fine.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>label</strong> &#8211; The label that will be presented on the field</li>
-<li><strong>_type</strong> &#8211; This will determine the kind of field that will be presented when the field is rendered on the website front end</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="FloatingTools.Handler.downloadSource">
-<em class="property">static </em><code class="descname">downloadSource</code><span class="sig-paren">(</span><em>url</em>, <em>path</em>, <em>timeout=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.downloadSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.downloadSource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Download source from a passed url and install it where you defined using the path parameter. This includes a 
-time out function.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>url</strong> &#8211; str</li>
-<li><strong>path</strong> &#8211; str</li>
-<li><strong>timeout</strong> &#8211; How long to wait before timing out.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="FloatingTools.Handler.handlerName">
-<em class="property">classmethod </em><code class="descname">handlerName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.handlerName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.handlerName" title="Permalink to this definition">¶</a></dt>
-<dd><p>This handlers name. This will be whatever you named the class.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.install">
-<code class="descname">install</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.install"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.install" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div><p>This will be called when the tool box is initiated and after the Handler.loadSource() call. Subclass this for 
-installing your content. This is required if the handler needs to download and unpack content from the internet.</p>
-<p>If this handler is defined in the loadSource as a &#8220;pointer&#8221; using Handler.setIsPointer(True), this function is 
-not required. Otherwise, you must sub-class this function or it will throw NotImplementedError.</p>
-</div></blockquote>
-<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="c1"># simple example pulled from the GitHubHandler class</span>
-    
-    <span class="n">zipURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourcePath</span><span class="p">()</span><span class="o">.</span><span class="n">get_archive_link</span><span class="p">(</span><span class="s1">&#39;zipball&#39;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">downloadSource</span><span class="p">(</span><span class="n">zipURL</span><span class="p">,</span> <span class="n">zipPath</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">installZip</span><span class="p">(</span><span class="n">zipPath</span><span class="p">)</span>
-</pre></div>
-</td></tr></table></div>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.installDirectory">
-<code class="descname">installDirectory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.installDirectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.installDirectory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the designated install directory for this toolbox. This is assigned to the cache directory inside 
-FloatingTools by default. You can set this in your handler.loadSource() function by using handler.setInstallLocation(Your path).</p>
-<p>This will respect &#8216;/&#8217; for declaring subdirectories. For example, &#8216;aldmbmtl/toolbox&#8217; will create toolbox inside 
-aldmbmtl.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.installZip">
-<code class="descname">installZip</code><span class="sig-paren">(</span><em>zipPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.installZip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.installZip" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper for installing zips.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>zipPath</strong> &#8211; str</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.isPointer">
-<code class="descname">isPointer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.isPointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.isPointer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handlers can either &#8220;pull&#8221; or &#8220;point&#8221;. Pull boxes usually require files to be installed. Point boxes point to a 
-location on disk and do not modify the location at all.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.loadSource">
-<code class="descname">loadSource</code><span class="sig-paren">(</span><em>source</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.loadSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.loadSource" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>This will be called when the tool box is initiated. Subclass this function to load your source information add 
-your files (but not install). To execute the installation of files, redefine Handler.install()</div></blockquote>
-<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">loadSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-    <span class="c1"># simple example pulled from the GitHubHandler class</span>
-
-    <span class="n">username</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
-    <span class="n">repository</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;repository&#39;</span><span class="p">]</span>
-    
-    <span class="n">githubLink</span> <span class="o">=</span> <span class="s2">&quot;www.github.com/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">/&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">repository</span><span class="p">)</span> 
-    
-    <span class="bp">self</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="n">username</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">repository</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">setSourcePath</span><span class="p">(</span><span class="n">githubLink</span><span class="p">)</span>
-</pre></div>
-</td></tr></table></div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>source</strong> &#8211; dictionary with keys representing source field names and the associated values</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.name">
-<code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Each Handler instance has a name that represents what toolbox it has loaded. This name is used for many 
-functions including the data model that the settings file saves.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="FloatingTools.Handler.registerHandler">
-<em class="property">classmethod </em><code class="descname">registerHandler</code><span class="sig-paren">(</span><em>_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.registerHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.registerHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>This needs to be done so FT knows how to handle different source types.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>_type</strong> &#8211; </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.setInstallLocation">
-<code class="descname">setInstallLocation</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.setInstallLocation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.setInstallLocation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the location that the toolbox is to be installed in. This MUST be done if you intend on allowing for 
-Handler.uninstall() to work correctly.
-:parameter location: str</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.setIsPointer">
-<code class="descname">setIsPointer</code><span class="sig-paren">(</span><em>value=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.setIsPointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.setIsPointer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handlers can either &#8220;pull&#8221; or &#8220;point&#8221;. Pull boxes usually require files to be installed. Point boxes point to a 
-location on disk and do not modify the location at all. If you want to protect a location on disk from 
-accidental deletion through the Handler.uninstall() function, set this handler to be a pointer to block the 
-uninstall call.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.setName">
-<code class="descname">setName</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.setName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.setName" title="Permalink to this definition">¶</a></dt>
-<dd><p>This MUST be set during the Handler.loadSource() function.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.setSourcePath">
-<code class="descname">setSourcePath</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.setSourcePath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.setSourcePath" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>Set the path that the original source is coming from. Set during the Handler.loadSource()</div></blockquote>
-<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">loadSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-    <span class="c1"># simple example pulled from the URLHandler class</span>
-    
-    <span class="n">website</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.com&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.com&#39;</span>
-    <span class="n">toolLink</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
-
-    <span class="c1"># set handler variables</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">setSourcePath</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">])</span> <span class="c1"># pass the website url that the zip will be downloaded from.</span>
-    
-    <span class="n">etc</span><span class="o">...</span>
-</pre></div>
-</td></tr></table></div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> &#8211; any kind of python object</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.setToolboxPaths">
-<code class="descname">setToolboxPaths</code><span class="sig-paren">(</span><em>listOfPaths</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.setToolboxPaths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.setToolboxPaths" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>Toolbox paths are set to allow for tool separation within the context of a single toolbox and to increase load 
-speed.</div></blockquote>
-<div class="highlight-none"><div class="highlight"><pre><span></span>toolbox/
-    nuke/
-        toolA
-    maya/
-        toolB
-</pre></div>
-</div>
-<p>In the context of the above example, a path can be passed to load a tools from nuke and not maya by passing the path 
-directly.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Handler</span><span class="o">.</span><span class="n">setToolboxPaths</span><span class="p">([</span><span class="s1">&#39;/toolbox/nuke&#39;</span><span class="p">])</span>
-</pre></div>
-</div>
-<dl class="docutils">
-<dt>This is automatically done for you at load by the wildcard system, but it is good to understand where this is and how it</dt>
-<dd>works.</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>listOfPaths</strong> &#8211; list</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.settings">
-<code class="descname">settings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.settings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Settings associated with the toolbox.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.sourcePath">
-<code class="descname">sourcePath</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.sourcePath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.sourcePath" title="Permalink to this definition">¶</a></dt>
-<dd><p>Path to the source data that builds the toolbox</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.toolboxPaths">
-<code class="descname">toolboxPaths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.toolboxPaths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.toolboxPaths" title="Permalink to this definition">¶</a></dt>
-<dd><p>The current set of toolbox paths.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.uninstall">
-<code class="descname">uninstall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.uninstall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.uninstall" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uninstalls this toolbox from the installation directory. This can not be undone and there is no safety question.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="FloatingTools.Handler.updateSettings">
-<code class="descname">updateSettings</code><span class="sig-paren">(</span><em>update</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.updateSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.updateSettings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the settings that are associated with this toolbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>update</strong> &#8211; dictionary</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="application-wrapper">
-<h2>Application Wrapper<a class="headerlink" href="#application-wrapper" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="FloatingTools.wrapper">
-<code class="descclassname">FloatingTools.</code><code class="descname">wrapper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#wrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.wrapper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper object for the context of the application you are working in.</p>
-</dd></dl>
+<dt id="FloatingTools.sourceData">
+<code class="descclassname">FloatingTools.</code><code class="descname">sourceData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/settings.html#sourceData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.sourceData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
-<dt id="FloatingTools.wrapperName">
-<code class="descclassname">FloatingTools.</code><code class="descname">wrapperName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#wrapperName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.wrapperName" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the name of the current wrapper/application you are in. If there is no wrapper loaded, it assumes you are 
-running FloatingTools outside the context of any application and in straight python. If this is the case, it returns
-&#8220;Generic&#8221; signaling you are in the os version of FloatingTools.</p>
-<p>OTHERWISE</p>
-<p>It will return the name of the wrapper application you are in.</p>
-</dd></dl>
+<dt id="FloatingTools.updateSources">
+<code class="descclassname">FloatingTools.</code><code class="descname">updateSources</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/settings.html#updateSources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.updateSources" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<dl class="function">
-<dt id="FloatingTools.setWrapper">
-<code class="descclassname">FloatingTools.</code><code class="descname">setWrapper</code><span class="sig-paren">(</span><em>klass</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#setWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.setWrapper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Register the Wrapper class for the application you are in.</p>
-<blockquote>
-<div><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">param klass:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</div></blockquote>
-</dd></dl>
-
-<dl class="class">
-<dt id="FloatingTools.AbstractApplication">
-<em class="property">class </em><code class="descclassname">FloatingTools.</code><code class="descname">AbstractApplication</code><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstraction class for wrapping an application so FloatingTools can interact with the application it was loaded in.</p>
-<p>Wrappers have specific class variables that must be set to help define how FloatingTools should handle the application 
-at load up.</p>
-<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AbstractApplication</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="c1"># Default settings</span>
-    <span class="n">FILE_TYPES</span>      <span class="o">=</span> <span class="p">[]</span>        <span class="c1"># The file extensions associated with this application</span>
-    <span class="n">NAME</span>            <span class="o">=</span> <span class="bp">None</span>      <span class="c1"># Name of the application (REQUIRED)</span>
-    <span class="n">APP_ICON</span>        <span class="o">=</span> <span class="bp">None</span>      <span class="c1"># The HTML icon for the application (Just for looks)</span>
-    <span class="n">EXECUTABLE</span>      <span class="o">=</span> <span class="bp">None</span>      <span class="c1"># This is the executable path that the application would use to run its Python Interpreter.</span>
-    <span class="n">ARGS</span>            <span class="o">=</span> <span class="bp">None</span>      <span class="c1"># sometimes you need to pass flags to the executable to execute a Python Script</span>
-    <span class="n">MULTI_THREAD</span>    <span class="o">=</span> <span class="bp">False</span>     <span class="c1"># Set whether the application supports Python multi threading</span>
-</pre></div>
-</td></tr></table></div>
-<p>You can modify all these settings...</p>
-<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NukeWrapper</span><span class="p">(</span><span class="n">AbstractApplication</span><span class="p">):</span>
-    <span class="c1"># Wrapper settings</span>
-    <span class="n">FILE_TYPES</span>      <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.nk&#39;</span><span class="p">,</span> <span class="s1">&#39;.py&#39;</span><span class="p">,</span> <span class="s1">&#39;.gizmo&#39;</span><span class="p">]</span>
-    <span class="n">NAME</span>            <span class="o">=</span> <span class="s1">&#39;Nuke&#39;</span>
-    <span class="n">APP_ICON</span>        <span class="o">=</span> <span class="s1">&#39;http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg&#39;</span>
-    <span class="n">ARGS</span>            <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-t&#39;</span><span class="p">]</span>
-    <span class="n">MULTI_THREAD</span>    <span class="o">=</span> <span class="bp">True</span>
-</pre></div>
-</td></tr></table></div>
-<dl class="staticmethod">
-<dt id="FloatingTools.AbstractApplication.addMenuEntry">
-<em class="property">static </em><code class="descname">addMenuEntry</code><span class="sig-paren">(</span><em>menuPath</em>, <em>command=None</em>, <em>icon=None</em>, <em>enabled=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.addMenuEntry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.addMenuEntry" title="Permalink to this definition">¶</a></dt>
-<dd><p>MUST BE SUB-CLASSED</p>
-<p>Each application requires the certain calls to modify the UI. FloatingTools only targets the top bar of the 
-application you are trying to modify.</p>
-<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NukeWrapper</span><span class="p">(</span><span class="n">AbstractApplication</span><span class="p">):</span>
-
-    <span class="k">def</span> <span class="nf">addMenuEntry</span><span class="p">(</span><span class="n">menuPath</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-        <span class="c1"># from NukeWrapper</span>
-        <span class="n">nuke</span><span class="o">.</span><span class="n">executeInMainThread</span><span class="p">(</span><span class="n">nuke</span><span class="o">.</span><span class="n">menu</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span><span class="o">.</span><span class="n">addCommand</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">menuPath</span><span class="p">,</span> <span class="n">command</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">icon</span><span class="p">})</span>
-</pre></div>
-</td></tr></table></div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">If your wrapper supports multi threading, you may need to make sure you execute the application specific command in 
-the main thread. In the example above, you can see I had to use nuke.executeInMainThread. The reason being this is 
-all called from the spawned threads at the load up process.</p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>enabled</strong> &#8211; bool</li>
-<li><strong>menuPath</strong> &#8211; a string laying out how the menu to the command should be laid out. Example: &#8216;top/sub/command&#8217;</li>
-<li><strong>command</strong> &#8211; a callable to be executed</li>
-<li><strong>icon</strong> &#8211; optional</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="FloatingTools.AbstractApplication.addMenuSeparator">
-<em class="property">static </em><code class="descname">addMenuSeparator</code><span class="sig-paren">(</span><em>menuPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.addMenuSeparator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.addMenuSeparator" title="Permalink to this definition">¶</a></dt>
-<dd><p>If your application allows for UI separators, define the behavior here.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>menuPath</strong> &#8211; Path to add the separator to</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="FloatingTools.AbstractApplication.appTest">
-<em class="property">static </em><code class="descname">appTest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.appTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.appTest" title="Permalink to this definition">¶</a></dt>
-<dd><p>This should ideally return True if this is the wrapper for the app you&#8217;re in. If you don&#8217;t do this, FloatingTools wraps 
-the function and if it fails, assumes this is not the wrapper for the application it is in.</p>
-<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NukeWrapper</span><span class="p">(</span><span class="n">AbstractApplication</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">appTest</span><span class="p">():</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">nuke</span>
-            <span class="k">return</span> <span class="bp">True</span>
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">False</span>
-    
-    <span class="c1"># --- OR --- #</span>
-    
-    <span class="k">def</span> <span class="nf">appTest</span><span class="p">():</span>
-        <span class="kn">import</span> <span class="nn">nuke</span>
-</pre></div>
-</td></tr></table></div>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="FloatingTools.AbstractApplication.fileTypes">
-<em class="property">classmethod </em><code class="descname">fileTypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.fileTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.fileTypes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the file types associated with this application.</p>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="FloatingTools.AbstractApplication.loadFile">
-<em class="property">static </em><code class="descname">loadFile</code><span class="sig-paren">(</span><em>filePath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.loadFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.loadFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Each application has a special way of importing data. For example, in nuke you can take the file path and paste
-it into the the node graph. You would define that behavior here.</p>
-<p>The file path is passed to you from the loader in FloatingTools. All you need to do is handle it how you&#8217;d like.</p>
-<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filePath</span><span class="p">):</span>
-    <span class="c1"># from NukeWrapper</span>
-    <span class="n">basename</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
-
-    <span class="c1"># nk handler</span>
-    <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.nk&#39;</span><span class="p">,</span> <span class="s1">&#39;.gizmo&#39;</span><span class="p">]:</span>
-    
-        <span class="c1"># create node</span>
-        <span class="n">nuke</span><span class="o">.</span><span class="n">nodePaste</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
-</pre></div>
-</td></tr></table></div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filePath</strong> &#8211; str</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="FloatingTools.AbstractApplication.name">
-<em class="property">classmethod </em><code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the name of the current application.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-FloatingTools">
-<span id="license-and-information"></span><h2>License and Information<a class="headerlink" href="#module-FloatingTools" title="Permalink to this headline">¶</a></h2>
-<p>FloatingTools is protected under the MIT license and is owned and maintained by Hatfield FX, LLC.</p>
-<p>Copyright (c) 2017 Hatfield FX, LLC</p>
-<p>Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the &#8220;Software&#8221;), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:</p>
-<p>The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.</p>
-<p>THE SOFTWARE IS PROVIDED &#8220;AS IS&#8221;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</p>
 </div>
 </div>
 
@@ -659,16 +145,18 @@ SOFTWARE.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">FloatingTools API</a><ul>
-<li><a class="reference internal" href="#service-handlers">Service Handlers</a></li>
-<li><a class="reference internal" href="#application-wrapper">Application Wrapper</a></li>
-<li><a class="reference internal" href="#module-FloatingTools">License and Information</a></li>
+<li><a class="reference internal" href="#dashboard">Dashboard</a></li>
+<li><a class="reference internal" href="#settings">Settings</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="tutorials.html"
-                        title="previous chapter">Tutorials</a></p>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">FloatingTools Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="handlers.html"
+                        title="next chapter">Service Handlers</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -700,7 +188,10 @@ SOFTWARE.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="tutorials.html" title="Tutorials"
+          <a href="handlers.html" title="Service Handlers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="FloatingTools Documentation"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">FloatingTools v0.6.0 documentation</a> &#187;</li> 
       </ul>

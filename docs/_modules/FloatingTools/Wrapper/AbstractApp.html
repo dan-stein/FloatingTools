@@ -52,14 +52,14 @@
 <span class="kn">import</span> <span class="nn">FloatingTools</span>
 
 
-<div class="viewcode-block" id="wrapper"><a class="viewcode-back" href="../../../api.html#FloatingTools.wrapper">[docs]</a><span class="k">def</span> <span class="nf">wrapper</span><span class="p">():</span>
+<div class="viewcode-block" id="wrapper"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.wrapper">[docs]</a><span class="k">def</span> <span class="nf">wrapper</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Wrapper object for the context of the application you are working in. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">WRAPPER</span></div>
 
 
-<div class="viewcode-block" id="wrapperName"><a class="viewcode-back" href="../../../api.html#FloatingTools.wrapperName">[docs]</a><span class="k">def</span> <span class="nf">wrapperName</span><span class="p">():</span>
+<div class="viewcode-block" id="wrapperName"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.wrapperName">[docs]</a><span class="k">def</span> <span class="nf">wrapperName</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Get the name of the current wrapper/application you are in. If there is no wrapper loaded, it assumes you are </span>
 <span class="sd">running FloatingTools outside the context of any application and in straight python. If this is the case, it returns</span>
@@ -72,7 +72,7 @@
     <span class="k">return</span> <span class="s1">&#39;Generic&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">wrapper</span><span class="p">()</span> <span class="k">else</span> <span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="setWrapper"><a class="viewcode-back" href="../../../api.html#FloatingTools.setWrapper">[docs]</a><span class="k">def</span> <span class="nf">setWrapper</span><span class="p">(</span><span class="n">klass</span><span class="p">):</span>
+<div class="viewcode-block" id="setWrapper"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.setWrapper">[docs]</a><span class="k">def</span> <span class="nf">setWrapper</span><span class="p">(</span><span class="n">klass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Register the Wrapper class for the application you are in.</span>
 <span class="sd">    </span>
@@ -81,7 +81,7 @@
     <span class="n">FloatingTools</span><span class="o">.</span><span class="n">WRAPPER</span> <span class="o">=</span> <span class="n">klass</span></div>
 
 
-<div class="viewcode-block" id="AbstractApplication"><a class="viewcode-back" href="../../../api.html#FloatingTools.AbstractApplication">[docs]</a><span class="k">class</span> <span class="nc">AbstractApplication</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractApplication"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication">[docs]</a><span class="k">class</span> <span class="nc">AbstractApplication</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Abstraction class for wrapping an application so FloatingTools can interact with the application it was loaded in.</span>
 
@@ -127,7 +127,7 @@
         <span class="n">setWrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="AbstractApplication.appTest"><a class="viewcode-back" href="../../../api.html#FloatingTools.AbstractApplication.appTest">[docs]</a>    <span class="k">def</span> <span class="nf">appTest</span><span class="p">():</span>
+<div class="viewcode-block" id="AbstractApplication.appTest"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication.appTest">[docs]</a>    <span class="k">def</span> <span class="nf">appTest</span><span class="p">():</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This should ideally return True if this is the wrapper for the app you&#39;re in. If you don&#39;t do this, FloatingTools wraps </span>
 <span class="sd">the function and if it fails, assumes this is not the wrapper for the application it is in.</span>
@@ -152,7 +152,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="AbstractApplication.addMenuSeparator"><a class="viewcode-back" href="../../../api.html#FloatingTools.AbstractApplication.addMenuSeparator">[docs]</a>    <span class="k">def</span> <span class="nf">addMenuSeparator</span><span class="p">(</span><span class="n">menuPath</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractApplication.addMenuSeparator"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication.addMenuSeparator">[docs]</a>    <span class="k">def</span> <span class="nf">addMenuSeparator</span><span class="p">(</span><span class="n">menuPath</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">If your application allows for UI separators, define the behavior here.</span>
 
@@ -161,7 +161,7 @@
         <span class="k">pass</span></div>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="AbstractApplication.addMenuEntry"><a class="viewcode-back" href="../../../api.html#FloatingTools.AbstractApplication.addMenuEntry">[docs]</a>    <span class="k">def</span> <span class="nf">addMenuEntry</span><span class="p">(</span><span class="n">menuPath</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractApplication.addMenuEntry"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication.addMenuEntry">[docs]</a>    <span class="k">def</span> <span class="nf">addMenuEntry</span><span class="p">(</span><span class="n">menuPath</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">MUST BE SUB-CLASSED</span>
 
@@ -191,7 +191,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="AbstractApplication.loadFile"><a class="viewcode-back" href="../../../api.html#FloatingTools.AbstractApplication.loadFile">[docs]</a>    <span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="n">filePath</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractApplication.loadFile"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication.loadFile">[docs]</a>    <span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="n">filePath</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Each application has a special way of importing data. For example, in nuke you can take the file path and paste</span>
 <span class="sd">it into the the node graph. You would define that behavior here.</span>
@@ -216,14 +216,14 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="AbstractApplication.fileTypes"><a class="viewcode-back" href="../../../api.html#FloatingTools.AbstractApplication.fileTypes">[docs]</a>    <span class="k">def</span> <span class="nf">fileTypes</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractApplication.fileTypes"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication.fileTypes">[docs]</a>    <span class="k">def</span> <span class="nf">fileTypes</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Return the file types associated with this application.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FILE_TYPES</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="AbstractApplication.name"><a class="viewcode-back" href="../../../api.html#FloatingTools.AbstractApplication.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractApplication.name"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Get the name of the current application.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

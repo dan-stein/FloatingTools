@@ -81,7 +81,7 @@
 
 
 <span class="c1"># functions</span>
-<div class="viewcode-block" id="getHandler"><a class="viewcode-back" href="../../../api.html#FloatingTools.getHandler">[docs]</a><span class="k">def</span> <span class="nf">getHandler</span><span class="p">(</span><span class="n">handlerType</span><span class="p">):</span>
+<div class="viewcode-block" id="getHandler"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.getHandler">[docs]</a><span class="k">def</span> <span class="nf">getHandler</span><span class="p">(</span><span class="n">handlerType</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Get the class associated with the handler type passed.</span>
 
@@ -93,7 +93,7 @@
         <span class="k">raise</span> <span class="n">InvalidHandlerType</span><span class="p">(</span><span class="s1">&#39;Handler Type passed does not exists.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="getToolbox"><a class="viewcode-back" href="../../../api.html#FloatingTools.getToolbox">[docs]</a><span class="k">def</span> <span class="nf">getToolbox</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="getToolbox"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.getToolbox">[docs]</a><span class="k">def</span> <span class="nf">getToolbox</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Get a toolbox by its name.</span>
 
@@ -105,14 +105,14 @@
         <span class="k">raise</span> <span class="n">InvalidToolbox</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; is not a valid toolbox.&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="toolboxes"><a class="viewcode-back" href="../../../api.html#FloatingTools.toolboxes">[docs]</a><span class="k">def</span> <span class="nf">toolboxes</span><span class="p">():</span>
+<div class="viewcode-block" id="toolboxes"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.toolboxes">[docs]</a><span class="k">def</span> <span class="nf">toolboxes</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Get all the currently loaded toolboxes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">TOOLBOXES</span></div>
 
 
-<div class="viewcode-block" id="createToolbox"><a class="viewcode-back" href="../../../api.html#FloatingTools.createToolbox">[docs]</a><span class="k">def</span> <span class="nf">createToolbox</span><span class="p">(</span><span class="n">_type</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">install</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="createToolbox"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.createToolbox">[docs]</a><span class="k">def</span> <span class="nf">createToolbox</span><span class="p">(</span><span class="n">_type</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">install</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Creates a toolbox with the handler type passed using the source data.</span>
 
@@ -123,9 +123,9 @@
 
 
 <span class="c1"># main abstract class</span>
-<div class="viewcode-block" id="Handler"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler">[docs]</a><span class="k">class</span> <span class="nc">Handler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler">[docs]</a><span class="k">class</span> <span class="nc">Handler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents a FloatingTools compatible toolbox service</span>
+<span class="sd">Represents a FloatingTools compatible toolbox service</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># reserved</span>
     <span class="n">_TYPE_</span> <span class="o">=</span> <span class="kc">None</span>
@@ -148,7 +148,7 @@
     <span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="Handler.downloadSource"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.downloadSource">[docs]</a>    <span class="k">def</span> <span class="nf">downloadSource</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.downloadSource"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.downloadSource">[docs]</a>    <span class="k">def</span> <span class="nf">downloadSource</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Download source from a passed url and install it where you defined using the path parameter. This includes a </span>
 <span class="sd">        time out function.</span>
@@ -169,7 +169,7 @@
             <span class="k">return</span> <span class="kc">False</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Handler.addSourceField"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.addSourceField">[docs]</a>    <span class="k">def</span> <span class="nf">addSourceField</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">_type</span><span class="o">=</span><span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.addSourceField"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.addSourceField">[docs]</a>    <span class="k">def</span> <span class="nf">addSourceField</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">_type</span><span class="o">=</span><span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adding a source field is required for setting up the source data. This can be a url field or fields. Usually </span>
 <span class="sd">        string types are fine.</span>
@@ -186,7 +186,7 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">SOURCE_FIELDS_ORDER</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Handler.registerHandler"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.registerHandler">[docs]</a>    <span class="k">def</span> <span class="nf">registerHandler</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_type</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.registerHandler"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.registerHandler">[docs]</a>    <span class="k">def</span> <span class="nf">registerHandler</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This needs to be done so FT knows how to handle different source types.</span>
 <span class="sd">        </span>
@@ -201,7 +201,7 @@
         <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;services&#39;</span><span class="p">,</span> <span class="n">SERVICES</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Handler.handlerName"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.handlerName">[docs]</a>    <span class="k">def</span> <span class="nf">handlerName</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.handlerName"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.handlerName">[docs]</a>    <span class="k">def</span> <span class="nf">handlerName</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This handlers name. This will be whatever you named the class.</span>
 <span class="sd">        </span>
@@ -255,7 +255,7 @@
         <span class="c1"># settings file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Handler.installZip"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.installZip">[docs]</a>    <span class="k">def</span> <span class="nf">installZip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zipPath</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.installZip"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.installZip">[docs]</a>    <span class="k">def</span> <span class="nf">installZip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zipPath</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper for installing zips.</span>
 <span class="sd">        </span>
@@ -286,7 +286,7 @@
         <span class="c1"># remove old zip</span>
         <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">zipPath</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Handler.updateSettings"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.updateSettings">[docs]</a>    <span class="k">def</span> <span class="nf">updateSettings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.updateSettings"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.updateSettings">[docs]</a>    <span class="k">def</span> <span class="nf">updateSettings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the settings that are associated with this toolbox.</span>
 <span class="sd">        </span>
@@ -302,7 +302,7 @@
 
         <span class="n">FloatingTools</span><span class="o">.</span><span class="n">updateSources</span><span class="p">(</span><span class="n">sourceData</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Handler.settings"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.settings">[docs]</a>    <span class="k">def</span> <span class="nf">settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.settings"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.settings">[docs]</a>    <span class="k">def</span> <span class="nf">settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Settings associated with the toolbox.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -331,7 +331,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_settings</span></div>
 
-<div class="viewcode-block" id="Handler.addMenuItem"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.addMenuItem">[docs]</a>    <span class="k">def</span> <span class="nf">addMenuItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">menu</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">html</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.addMenuItem"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.addMenuItem">[docs]</a>    <span class="k">def</span> <span class="nf">addMenuItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">menu</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">html</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A menu item will show up wrapper application and, if the html argument is passed as well, it will show up in </span>
 <span class="sd">        Dashboard in the ToolShed.</span>
@@ -347,7 +347,7 @@
         <span class="k">if</span> <span class="n">html</span> <span class="ow">and</span> <span class="n">menu</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_toolbox_html_content</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_toolbox_html_content</span><span class="p">[</span><span class="n">menu</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">menu</span><span class="p">),</span> <span class="n">html</span><span class="o">=</span><span class="n">html</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Handler.toolboxPaths"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.toolboxPaths">[docs]</a>    <span class="k">def</span> <span class="nf">toolboxPaths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.toolboxPaths"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.toolboxPaths">[docs]</a>    <span class="k">def</span> <span class="nf">toolboxPaths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The current set of toolbox paths.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -360,7 +360,7 @@
 
         <span class="k">return</span> <span class="n">paths</span></div>
 
-<div class="viewcode-block" id="Handler.setToolboxPaths"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.setToolboxPaths">[docs]</a>    <span class="k">def</span> <span class="nf">setToolboxPaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listOfPaths</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.setToolboxPaths"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.setToolboxPaths">[docs]</a>    <span class="k">def</span> <span class="nf">setToolboxPaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listOfPaths</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Toolbox paths are set to allow for tool separation within the context of a single toolbox and to increase load </span>
 <span class="sd">        speed.</span>
@@ -391,13 +391,13 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_toolbox_paths</span> <span class="o">=</span> <span class="n">listOfPaths</span></div>
 
-<div class="viewcode-block" id="Handler.sourcePath"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.sourcePath">[docs]</a>    <span class="k">def</span> <span class="nf">sourcePath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.sourcePath"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.sourcePath">[docs]</a>    <span class="k">def</span> <span class="nf">sourcePath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Path to the source data that builds the toolbox</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_path</span></div>
 
-<div class="viewcode-block" id="Handler.setSourcePath"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.setSourcePath">[docs]</a>    <span class="k">def</span> <span class="nf">setSourcePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.setSourcePath"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.setSourcePath">[docs]</a>    <span class="k">def</span> <span class="nf">setSourcePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the path that the original source is coming from. Set during the Handler.loadSource()</span>
 <span class="sd">        </span>
@@ -419,20 +419,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_path</span> <span class="o">=</span> <span class="n">path</span></div>
 
-<div class="viewcode-block" id="Handler.name"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.name"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Each Handler instance has a name that represents what toolbox it has loaded. This name is used for many </span>
 <span class="sd">        functions including the data model that the settings file saves.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_toolbox_name</span></div>
 
-<div class="viewcode-block" id="Handler.setName"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.setName">[docs]</a>    <span class="k">def</span> <span class="nf">setName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.setName"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.setName">[docs]</a>    <span class="k">def</span> <span class="nf">setName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This MUST be set during the Handler.loadSource() function.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_toolbox_name</span> <span class="o">=</span> <span class="n">name</span></div>
 
-<div class="viewcode-block" id="Handler.loadSource"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.loadSource">[docs]</a>    <span class="k">def</span> <span class="nf">loadSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.loadSource"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.loadSource">[docs]</a>    <span class="k">def</span> <span class="nf">loadSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This will be called when the tool box is initiated. Subclass this function to load your source information add </span>
 <span class="sd">        your files (but not install). To execute the installation of files, redefine Handler.install()</span>
@@ -456,7 +456,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Handler.setIsPointer"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.setIsPointer">[docs]</a>    <span class="k">def</span> <span class="nf">setIsPointer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.setIsPointer"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.setIsPointer">[docs]</a>    <span class="k">def</span> <span class="nf">setIsPointer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Handlers can either &quot;pull&quot; or &quot;point&quot;. Pull boxes usually require files to be installed. Point boxes point to a </span>
 <span class="sd">        location on disk and do not modify the location at all. If you want to protect a location on disk from </span>
@@ -465,14 +465,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_pointer</span> <span class="o">=</span> <span class="n">value</span></div>
 
-<div class="viewcode-block" id="Handler.isPointer"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.isPointer">[docs]</a>    <span class="k">def</span> <span class="nf">isPointer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.isPointer"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.isPointer">[docs]</a>    <span class="k">def</span> <span class="nf">isPointer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Handlers can either &quot;pull&quot; or &quot;point&quot;. Pull boxes usually require files to be installed. Point boxes point to a </span>
 <span class="sd">        location on disk and do not modify the location at all. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pointer</span></div>
 
-<div class="viewcode-block" id="Handler.setInstallLocation"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.setInstallLocation">[docs]</a>    <span class="k">def</span> <span class="nf">setInstallLocation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.setInstallLocation"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.setInstallLocation">[docs]</a>    <span class="k">def</span> <span class="nf">setInstallLocation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the location that the toolbox is to be installed in. This MUST be done if you intend on allowing for </span>
 <span class="sd">        Handler.uninstall() to work correctly.</span>
@@ -480,7 +480,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_install_path</span> <span class="o">=</span> <span class="n">location</span></div>
 
-<div class="viewcode-block" id="Handler.installDirectory"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.installDirectory">[docs]</a>    <span class="k">def</span> <span class="nf">installDirectory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.installDirectory"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.installDirectory">[docs]</a>    <span class="k">def</span> <span class="nf">installDirectory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the designated install directory for this toolbox. This is assigned to the cache directory inside </span>
 <span class="sd">        FloatingTools by default. You can set this in your handler.loadSource() function by using handler.setInstallLocation(Your path).</span>
@@ -493,7 +493,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_install_path</span></div>
 
-<div class="viewcode-block" id="Handler.install"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.install">[docs]</a>    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.install"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.install">[docs]</a>    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This will be called when the tool box is initiated and after the Handler.loadSource() call. Subclass this for </span>
 <span class="sd">        installing your content. This is required if the handler needs to download and unpack content from the internet.</span>
@@ -514,7 +514,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pointer</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Handler.uninstall"><a class="viewcode-back" href="../../../api.html#FloatingTools.Handler.uninstall">[docs]</a>    <span class="k">def</span> <span class="nf">uninstall</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Handler.uninstall"><a class="viewcode-back" href="../../../handlers.html#FloatingTools.Handler.uninstall">[docs]</a>    <span class="k">def</span> <span class="nf">uninstall</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Uninstalls this toolbox from the installation directory. This can not be undone and there is no safety question.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

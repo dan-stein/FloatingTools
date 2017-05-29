@@ -1,0 +1,176 @@
+Application Wrappers
+====================
+Application wrappers abstract away any kind of application specific code which allows FloatingTools to be future ready.
+Meaning when a new application comes out that you want to use, just create a new wrapper and FloatingTools will work
+exactly the same as it would in any other application.
+
+.. note::
+    Wrappers are not meant to be interacted with directly. They are loaded at start up and that's it.
+
+
+Functions
+---------
+
+.. autofunction:: FloatingTools.wrapper
+.. autofunction:: FloatingTools.wrapperName
+.. autofunction:: FloatingTools.setWrapper
+
+AbstractApplication
+-------------------
+
+.. autoclass:: FloatingTools.AbstractApplication
+    :members:
+
+How to create a wrapper
+-----------------------
+Now we will show you how to extend FloatingTools by creating a Nuke wrapper.
+
+Firstly, we need to import FloatingTools and subclass the ApplicationWrapper class and create placeholders for required
+functions that must be defined.
+
+.. code-block:: python
+    :linenos:
+
+    import FloatingTools
+
+    class NukeWrapper(FloatingTools.AbstractApplication):
+
+        @staticmethod
+        def addMenuSeparator(menuPath):
+            pass
+
+        @staticmethod
+        def appTest():
+            pass
+
+        @staticmethod
+        def addMenuEntry(menuPath, command=None, icon=None, enabled=True):
+            pass
+
+        @staticmethod
+        def loadFile(filePath):
+            pass
+
+We now need to set up the class variables that are needed for FloatingTools to be able to profile and load the wrapper.
+Nuke supports multi-threading in python so we can set that to True. We should also associate .nk, .py and .gizmo files
+through the FILE_TYPES variable. Just for looks we can add an HTML icon and we will also name the wrapper Nuke with the
+NAME variable.
+
+.. code-block:: python
+    :linenos:
+
+    class NukeWrapper(FloatingTools.AbstractApplication):
+
+        # Wrapper settings
+        FILE_TYPES = ['.nk', '.py', '.gizmo']
+        NAME = 'Nuke'
+        APP_ICON = 'http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg'
+        ARGS = ['-t']
+        MULTI_THREAD = True
+
+        ...
+
+Next we need to put a test in using the appTest function. This test is what should be determining if we are in Nuke or
+not and should either return True or False or just throw an error. We will try to import nuke and return true if it
+works or False if it fails.
+
+.. code-block:: python
+    :linenos:
+
+    ...
+
+    @staticmethod
+    def appTest():
+        try:
+            import nuke
+            return True
+        except ImportError:
+            return False
+
+    ...
+
+Now FloatingTools will run this test at start up and will know if its in Nuke or not.
+
+Next, we define how Nuke will load in the content being passed to it. When the user clicks the tool in the FloatingTools
+menu, a string for the file to load in is passed and that's it. So, we need to write the handler function for that.
+
+.. code-block:: python
+    :linenos:
+
+    ...
+
+    @staticmethod
+    def loadFile(filePath):
+        basename, ext = os.path.splitext(filePath)
+
+        if ext in ['.nk', '.gizmo']:
+            nuke.nodePaste(filePath)
+
+    ...
+
+Now for the UI functions. We are passed a string in the format of path/to/command. Luckily, Nuke handles this menu
+path syntax out of the box. So, we don't need to recursively build the nested menus.
+
+.. note::
+    In applications that do not support single string menu pathing, you will need to write your own recursive menu
+    creator. Sorry, I know that sucks.
+
+We also need to keep in mind that since this is a multi threaded wrapper, we need to make all UI modification through
+the main thread. Nuke has nuke.executeInMainThread for this. You should make sure the application you are writing for
+has something similar.
+
+.. code-block:: python
+    :linenos:
+
+    ...
+
+    @staticmethod
+    def addMenuEntry(menuPath, command=None, icon=None, enabled=True):
+        nuke.executeInMainThread(nuke.menu(menu).addCommand, args=(menuPath, command), kwargs={'icon': icon})
+
+    @staticmethod
+    def addMenuSeparator(menuPath):
+        nuke.executeInMainThread(nuke.menu(menu).findItem(menuPath).addSeparator)
+
+    ...
+
+Now you're wrapper is ready! Save this to a module in the FloatingTools/Wrapper directory and it will automatically load
+your wrapper.
+
+.. note::
+    FloatingTools automatically loads wrappers from the FloatingTools/Wrapper directory.
+
+.. code-block:: python
+    :linenos:
+
+    class NukeWrapper(FloatingTools.AbstractApplication):
+
+        # Wrapper settings
+        FILE_TYPES = ['.nk', '.py', '.gizmo']
+        NAME = 'Nuke'
+        APP_ICON = 'http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg'
+        ARGS = ['-t']
+        MULTI_THREAD = True
+
+        @staticmethod
+        def appTest():
+            try:
+                import nuke
+                return True
+            except ImportError:
+                return False
+
+        @staticmethod
+        def loadFile(filePath):
+            basename, ext = os.path.splitext(filePath)
+
+            if ext in ['.nk', '.gizmo']:
+                nuke.nodePaste(filePath)
+
+        @staticmethod
+        def addMenuEntry(menuPath, command=None, icon=None, enabled=True):
+            nuke.executeInMainThread(nuke.menu(menu).addCommand, args=(menuPath, command), kwargs={'icon': icon})
+
+        @staticmethod
+        def addMenuSeparator(menuPath):
+            nuke.executeInMainThread(nuke.menu(menu).findItem(menuPath).addSeparator)

@@ -3,30 +3,24 @@ FloatingTools API
 
 FloatingTools provides a simple API for extending the capabilities as you see fit.
 
-Service Handlers
-----------------
+Dashboard
+---------
+Dashboard is the web front end for FloatingTools. Direct modification is not allowed, but you can make calls to launch
+the pages using the wrapper functions.
 
-.. autofunction:: FloatingTools.toolboxes
-.. autofunction:: FloatingTools.getToolbox
-.. autofunction:: FloatingTools.getHandler
-.. autofunction:: FloatingTools.createToolbox
+.. autofunction:: FloatingTools.Dashboard.toolShed
+.. autofunction:: FloatingTools.Dashboard.toolbox
+.. autofunction:: FloatingTools.Dashboard.applications
+.. autofunction:: FloatingTools.Dashboard.settings
 
-.. autoclass:: FloatingTools.Handler
-    :members:
+Settings
+--------
+Settings are stored in FloatingTools/data. Calls to update these settings are useful if you are developing more direct
+interaction with FloatingTools.
 
-
-Application Wrapper
--------------------
-
-.. autofunction:: FloatingTools.wrapper
-.. autofunction:: FloatingTools.wrapperName
-.. autofunction:: FloatingTools.setWrapper
-
-.. autoclass:: FloatingTools.AbstractApplication
-    :members:
-
-License and Information
------------------------
-
-.. automodule:: FloatingTools
-    :members:
+.. autofunction:: FloatingTools.buildData
+.. autofunction:: FloatingTools.updateBuild
+.. autofunction:: FloatingTools.userData
+.. autofunction:: FloatingTools.updateLogin
+.. autofunction:: FloatingTools.sourceData
+.. autofunction:: FloatingTools.updateSources

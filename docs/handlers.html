@@ -1,0 +1,773 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Service Handlers &#8212; FloatingTools v0.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'v0.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Application Wrappers" href="wrappers.html" />
+    <link rel="prev" title="FloatingTools API" href="api.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="wrappers.html" title="Application Wrappers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="FloatingTools API"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">FloatingTools v0.6.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="service-handlers">
+<h1>Service Handlers<a class="headerlink" href="#service-handlers" title="Permalink to this headline">¶</a></h1>
+<p>Internally, FloatingTools looks at a collection of tools as a toolbox. But due to the vast number of possible sources,
+each source type needs a Handler. We call these Service Handlers. Service Handlers allow for future development of new
+storage systems in the cloud or locally.</p>
+<p>The idea is if a new service, like AWS or google Drive, has a large repository of tools and you would like to source it
+with FloatingTools; you can create a new Handler class. A handler basic handler class will have an install() function
+and a loadSource() function.</p>
+<p>So really, a Handler is just a toolbox but it abstracts away all the service specific code which allows for tools from
+GitHub or a URL to be treated exactly the same as tools being loaded locally.</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="FloatingTools.toolboxes">
+<code class="descclassname">FloatingTools.</code><code class="descname">toolboxes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#toolboxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.toolboxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all the currently loaded toolboxes</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="FloatingTools.getToolbox">
+<code class="descclassname">FloatingTools.</code><code class="descname">getToolbox</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#getToolbox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.getToolbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a toolbox by its name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="FloatingTools.getHandler">
+<code class="descclassname">FloatingTools.</code><code class="descname">getHandler</code><span class="sig-paren">(</span><em>handlerType</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#getHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.getHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the class associated with the handler type passed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handlerType</strong> &#8211; str key in the FloatingTools.Services.SERVICES</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="FloatingTools.createToolbox">
+<code class="descclassname">FloatingTools.</code><code class="descname">createToolbox</code><span class="sig-paren">(</span><em>_type</em>, <em>source</em>, <em>install=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#createToolbox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.createToolbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a toolbox with the handler type passed using the source data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>_type</strong> &#8211; </li>
+<li><strong>source</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="handler">
+<h2>Handler<a class="headerlink" href="#handler" title="Permalink to this headline">¶</a></h2>
+<p>As mentioned above, the main functions here to keep in mind of are loadSource() and install()</p>
+<dl class="class">
+<dt id="FloatingTools.Handler">
+<em class="property">class </em><code class="descclassname">FloatingTools.</code><code class="descname">Handler</code><span class="sig-paren">(</span><em>install=True</em>, <em>**sourceFields</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a FloatingTools compatible toolbox service</p>
+<dl class="method">
+<dt id="FloatingTools.Handler.addMenuItem">
+<code class="descname">addMenuItem</code><span class="sig-paren">(</span><em>menu</em>, <em>command</em>, <em>html=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.addMenuItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.addMenuItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>A menu item will show up wrapper application and, if the html argument is passed as well, it will show up in 
+Dashboard in the ToolShed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>menu</strong> &#8211; str for the menu to display. You can submenu with &#8216;/&#8217;</li>
+<li><strong>command</strong> &#8211; callable function</li>
+<li><strong>html</strong> &#8211; The raw html call as a string</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="FloatingTools.Handler.addSourceField">
+<em class="property">classmethod </em><code class="descname">addSourceField</code><span class="sig-paren">(</span><em>label</em>, <em>_type=&lt;type 'str'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.addSourceField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.addSourceField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adding a source field is required for setting up the source data. This can be a url field or fields. Usually 
+string types are fine.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>label</strong> &#8211; The label that will be presented on the field</li>
+<li><strong>_type</strong> &#8211; This will determine the kind of field that will be presented when the field is rendered on the website front end</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="FloatingTools.Handler.downloadSource">
+<em class="property">static </em><code class="descname">downloadSource</code><span class="sig-paren">(</span><em>url</em>, <em>path</em>, <em>timeout=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.downloadSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.downloadSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download source from a passed url and install it where you defined using the path parameter. This includes a 
+time out function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>url</strong> &#8211; str</li>
+<li><strong>path</strong> &#8211; str</li>
+<li><strong>timeout</strong> &#8211; How long to wait before timing out.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="FloatingTools.Handler.handlerName">
+<em class="property">classmethod </em><code class="descname">handlerName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.handlerName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.handlerName" title="Permalink to this definition">¶</a></dt>
+<dd><p>This handlers name. This will be whatever you named the class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.install">
+<code class="descname">install</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.install"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.install" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>This will be called when the tool box is initiated and after the Handler.loadSource() call. Subclass this for 
+installing your content. This is required if the handler needs to download and unpack content from the internet.</p>
+<p>If this handler is defined in the loadSource as a &#8220;pointer&#8221; using Handler.setIsPointer(True), this function is 
+not required. Otherwise, you must sub-class this function or it will throw NotImplementedError.</p>
+</div></blockquote>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># simple example pulled from the GitHubHandler class</span>
+    
+    <span class="n">zipURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourcePath</span><span class="p">()</span><span class="o">.</span><span class="n">get_archive_link</span><span class="p">(</span><span class="s1">&#39;zipball&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">downloadSource</span><span class="p">(</span><span class="n">zipURL</span><span class="p">,</span> <span class="n">zipPath</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">installZip</span><span class="p">(</span><span class="n">zipPath</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.installDirectory">
+<code class="descname">installDirectory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.installDirectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.installDirectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the designated install directory for this toolbox. This is assigned to the cache directory inside 
+FloatingTools by default. You can set this in your handler.loadSource() function by using handler.setInstallLocation(Your path).</p>
+<p>This will respect &#8216;/&#8217; for declaring subdirectories. For example, &#8216;aldmbmtl/toolbox&#8217; will create toolbox inside 
+aldmbmtl.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.installZip">
+<code class="descname">installZip</code><span class="sig-paren">(</span><em>zipPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.installZip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.installZip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper for installing zips.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>zipPath</strong> &#8211; str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.isPointer">
+<code class="descname">isPointer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.isPointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.isPointer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handlers can either &#8220;pull&#8221; or &#8220;point&#8221;. Pull boxes usually require files to be installed. Point boxes point to a 
+location on disk and do not modify the location at all.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.loadSource">
+<code class="descname">loadSource</code><span class="sig-paren">(</span><em>source</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.loadSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.loadSource" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>This will be called when the tool box is initiated. Subclass this function to load your source information add 
+your files (but not install). To execute the installation of files, redefine Handler.install()</div></blockquote>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">loadSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+    <span class="c1"># simple example pulled from the GitHubHandler class</span>
+
+    <span class="n">username</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+    <span class="n">repository</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;repository&#39;</span><span class="p">]</span>
+    
+    <span class="n">githubLink</span> <span class="o">=</span> <span class="s2">&quot;www.github.com/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">/&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">repository</span><span class="p">)</span> 
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="n">username</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">repository</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">setSourcePath</span><span class="p">(</span><span class="n">githubLink</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>source</strong> &#8211; dictionary with keys representing source field names and the associated values</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.name">
+<code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Each Handler instance has a name that represents what toolbox it has loaded. This name is used for many 
+functions including the data model that the settings file saves.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="FloatingTools.Handler.registerHandler">
+<em class="property">classmethod </em><code class="descname">registerHandler</code><span class="sig-paren">(</span><em>_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.registerHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.registerHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This needs to be done so FT knows how to handle different source types.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>_type</strong> &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.setInstallLocation">
+<code class="descname">setInstallLocation</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.setInstallLocation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.setInstallLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the location that the toolbox is to be installed in. This MUST be done if you intend on allowing for 
+Handler.uninstall() to work correctly.
+:parameter location: str</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.setIsPointer">
+<code class="descname">setIsPointer</code><span class="sig-paren">(</span><em>value=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.setIsPointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.setIsPointer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handlers can either &#8220;pull&#8221; or &#8220;point&#8221;. Pull boxes usually require files to be installed. Point boxes point to a 
+location on disk and do not modify the location at all. If you want to protect a location on disk from 
+accidental deletion through the Handler.uninstall() function, set this handler to be a pointer to block the 
+uninstall call.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.setName">
+<code class="descname">setName</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.setName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.setName" title="Permalink to this definition">¶</a></dt>
+<dd><p>This MUST be set during the Handler.loadSource() function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.setSourcePath">
+<code class="descname">setSourcePath</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.setSourcePath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.setSourcePath" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>Set the path that the original source is coming from. Set during the Handler.loadSource()</div></blockquote>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">loadSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+    <span class="c1"># simple example pulled from the URLHandler class</span>
+    
+    <span class="n">website</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.com&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.com&#39;</span>
+    <span class="n">toolLink</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+    <span class="c1"># set handler variables</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">setSourcePath</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">])</span> <span class="c1"># pass the website url that the zip will be downloaded from.</span>
+    
+    <span class="n">etc</span><span class="o">...</span>
+</pre></div>
+</td></tr></table></div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> &#8211; any kind of python object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.setToolboxPaths">
+<code class="descname">setToolboxPaths</code><span class="sig-paren">(</span><em>listOfPaths</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.setToolboxPaths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.setToolboxPaths" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>Toolbox paths are set to allow for tool separation within the context of a single toolbox and to increase load 
+speed.</div></blockquote>
+<div class="highlight-none"><div class="highlight"><pre><span></span>toolbox/
+    nuke/
+        toolA
+    maya/
+        toolB
+</pre></div>
+</div>
+<p>In the context of the above example, a path can be passed to load a tools from nuke and not maya by passing the path 
+directly.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Handler</span><span class="o">.</span><span class="n">setToolboxPaths</span><span class="p">([</span><span class="s1">&#39;/toolbox/nuke&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>This is automatically done for you at load by the wildcard system, but it is good to understand where this is and how it</dt>
+<dd>works.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>listOfPaths</strong> &#8211; list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.settings">
+<code class="descname">settings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Settings associated with the toolbox.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.sourcePath">
+<code class="descname">sourcePath</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.sourcePath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.sourcePath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to the source data that builds the toolbox</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.toolboxPaths">
+<code class="descname">toolboxPaths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.toolboxPaths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.toolboxPaths" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current set of toolbox paths.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.uninstall">
+<code class="descname">uninstall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.uninstall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.uninstall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uninstalls this toolbox from the installation directory. This can not be undone and there is no safety question.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Handler.updateSettings">
+<code class="descname">updateSettings</code><span class="sig-paren">(</span><em>update</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Services/AbstractService.html#Handler.updateSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Handler.updateSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the settings that are associated with this toolbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>update</strong> &#8211; dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="how-to-create-a-handler">
+<h2>How to create a Handler<a class="headerlink" href="#how-to-create-a-handler" title="Permalink to this headline">¶</a></h2>
+<p>Now we will show you how to extend FloatingTools by creating a URL Handler Service.</p>
+<p>Firstly, we need to import FloatingTools and subclass the Handler class and create placeholders for required
+functions that must be defined.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="k">class</span> <span class="nc">URLHandler</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">loadSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+</td></tr></table></div>
+<p>Next, we want to think about what information need to download the tools. All we need is a Source Field that the user
+can enter the URL they want to download the tool from. Lets call our Source Field &#8216;URL&#8217;.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="k">class</span> <span class="nc">URLHandler</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">loadSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="c1"># add fields</span>
+<span class="n">URLHandler</span><span class="o">.</span><span class="n">addSourceField</span><span class="p">(</span><span class="s1">&#39;URL&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Now, when the user clicks the add new toolbox button for your handler, it will drop down a string field that they can
+paste the URL string into. Now we need to load that url and prepare the Handler to download and install the toolbox. To
+do this we define the loadSource() function.</p>
+<p>The source variable that is passed into loadSource is a dictionary with your Source Fields names as the key and the
+values the user passed as the value. In this case, we defined &#8216;URL&#8217; as a field so the resulting dictionary will be as
+follows.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;URL&#39;</span><span class="p">:</span> <span class="s1">&#39;www.whatever.com/tool.zip&#39;</span><span class="p">}</span> <span class="c1"># the user pasted www.whatever.com/tool.zip</span>
+</pre></div>
+</td></tr></table></div>
+<p>Now we can unpack the source and handle the information that was passed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">DO NOT DOWNLOAD ANYTHING IN LOADSOURCE! All downloading should be done in install().</p>
+</div>
+<p>We want to make sure we pull the website url so we can credit the creator and also set the sourcePath as the original
+path the tools are coming from. We also MUST set the name of this handler since now we are representing a toolbox.
+Usually the website plus the toolboxes source is a good name so the name also lets you know where it came from.</p>
+<p>To create a menu item that will show up in both the application wrapper and the toolShed, we are going to addMenuItem
+and link to the creator site.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">loadSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+    <span class="c1"># pull data</span>
+    <span class="n">website</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.com&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.com&#39;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">setSourcePath</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">setName</span><span class="p">((</span><span class="s1">&#39;www.&#39;</span> <span class="o">+</span> <span class="n">website</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;www.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">repository</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">addMenuItem</span><span class="p">(</span><span class="s1">&#39;/Open Home&#39;</span><span class="p">,</span> <span class="n">partial</span><span class="p">(</span><span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="n">website</span><span class="p">),</span> <span class="n">html</span><span class="o">=</span><span class="n">website</span><span class="p">)</span>
+
+<span class="o">...</span>
+</pre></div>
+</td></tr></table></div>
+<p>Now we can move on to the install process. All downloading and installing of files should be done here. The reason being
+that FloatingTools sometimes loads the source data but doesn&#8217;t need to install anything. It does this to reduce overhead
+and also isolate the install call for possible need to call a reinstall.</p>
+<p>In the case of this handler, we may want to have this remove the older version and install the latest every time it is
+run. You don&#8217;t have to do this, but in this example we will. Handlers automatically assign an installDirectory in
+FloatingTools/cache. So we are going to leverage this by using the default install path and save us the trouble of
+building paths. We are also going to use downloadSource(). This call is a wrapped function that has a timeout built in
+of 5 seconds. So if the source is slow and you don&#8217;t want FloatingTools to hang, you can drop the timeout down.</p>
+<p>The Handler also comes with installZip as a helper function. So we are going to check if its a zip and then use that
+instead of needing to manually unpacking the zip ourselves.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># pull install path</span>
+    <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sourcePath</span><span class="p">())</span>
+    <span class="n">repository</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
+
+    <span class="c1"># set up download path for repo</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">installDirectory</span><span class="p">()):</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">installDirectory</span><span class="p">())</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">installDirectory</span><span class="p">())</span>
+
+    <span class="c1"># download data</span>
+    <span class="n">local</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">installDirectory</span><span class="p">(),</span> <span class="n">basename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">downloadSource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sourcePath</span><span class="p">(),</span> <span class="n">local</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="c1"># determine how to handle source.</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;.zip&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">installZip</span><span class="p">(</span><span class="n">local</span><span class="p">)</span>
+
+<span class="o">...</span>
+</pre></div>
+</td></tr></table></div>
+<p>Now our Handler will take a url from the user, download the content and install it to the default cache directoy. If the
+content is a zip, it will automatically unpack it and prepare it for use.</p>
+<p>Lastly we need to register our handler and you&#8217;re done!</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="k">class</span> <span class="nc">URLHandler</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">loadSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="c1"># pull data</span>
+        <span class="n">website</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.com&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.com&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setSourcePath</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setName</span><span class="p">((</span><span class="s1">&#39;www.&#39;</span> <span class="o">+</span> <span class="n">website</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;www.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">repository</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">addMenuItem</span><span class="p">(</span><span class="s1">&#39;/Open Home&#39;</span><span class="p">,</span> <span class="n">partial</span><span class="p">(</span><span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="n">website</span><span class="p">),</span> <span class="n">html</span><span class="o">=</span><span class="n">website</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># pull install path</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sourcePath</span><span class="p">())</span>
+        <span class="n">repository</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
+
+        <span class="c1"># set up download path for repo</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">installDirectory</span><span class="p">()):</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">installDirectory</span><span class="p">())</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">installDirectory</span><span class="p">())</span>
+
+        <span class="c1"># download data</span>
+        <span class="n">local</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">installDirectory</span><span class="p">(),</span> <span class="n">basename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">downloadSource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sourcePath</span><span class="p">(),</span> <span class="n">local</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="c1"># determine how to handle source.</span>
+        <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;.zip&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">installZip</span><span class="p">(</span><span class="n">local</span><span class="p">)</span>
+
+<span class="c1"># add fields</span>
+<span class="n">URLHandler</span><span class="o">.</span><span class="n">addSourceField</span><span class="p">(</span><span class="s1">&#39;URL&#39;</span><span class="p">)</span>
+
+<span class="c1"># register handler</span>
+<span class="n">URLHandler</span><span class="o">.</span><span class="n">registerHandler</span><span class="p">(</span><span class="s1">&#39;URL&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="pointer-handlers">
+<h2>Pointer Handlers<a class="headerlink" href="#pointer-handlers" title="Permalink to this headline">¶</a></h2>
+<p>Here is a simple example of a pointer handler. They are very simple to create and are meant to just point to a location
+on disk. The thing to note is that the load up location is set not with setSource, but with setInstallLocation. Also,
+make sure you set the Handler as a pointer. If you don&#8217;t, when you remove it from the toolShed it will delete the whole
+directory and there is no warning.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Make sure you set the Handler as a pointer. If you don&#8217;t, when you remove it from the toolShed it will delete the
+whole directory and there is no warning.</p>
+</div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LocalHandler</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">loadSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="c1"># define as pointer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setIsPointer</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="c1"># set vars</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setName</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;Path&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setInstallLocation</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;Path&#39;</span><span class="p">])</span>
+
+
+<span class="c1"># add fields</span>
+<span class="n">LocalHandler</span><span class="o">.</span><span class="n">addSourceField</span><span class="p">(</span><span class="s1">&#39;Path&#39;</span><span class="p">)</span>
+
+<span class="c1"># register handler</span>
+<span class="n">LocalHandler</span><span class="o">.</span><span class="n">registerHandler</span><span class="p">(</span><span class="s1">&#39;Local&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Service Handlers</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#handler">Handler</a></li>
+<li><a class="reference internal" href="#how-to-create-a-handler">How to create a Handler</a></li>
+<li><a class="reference internal" href="#pointer-handlers">Pointer Handlers</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="previous chapter">FloatingTools API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="wrappers.html"
+                        title="next chapter">Application Wrappers</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/handlers.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="wrappers.html" title="Application Wrappers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="FloatingTools API"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">FloatingTools v0.6.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Alex Hatfield.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.2.
+    </div>
+  </body>
+</html>

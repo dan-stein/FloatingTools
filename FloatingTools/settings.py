@@ -31,10 +31,7 @@ if not os.path.exists(os.path.dirname(USER)):
 
 
 def buildData():
-    """
-    Load the build data file. 
-    :return: 
-    """
+
     if not os.path.exists(BUILD):
         defaultData = {
             "collaborator": False,
@@ -49,10 +46,6 @@ def buildData():
 
 
 def sourceData():
-    """
-    Load the sources settings file
-    :return: 
-    """
     if not os.path.exists(SOURCES):
 
         # pull latest data model and create the default data information
@@ -67,10 +60,6 @@ def sourceData():
 
 
 def userData():
-    """
-    Load the User.json contents.
-    :return: 
-    """
     if not os.path.exists(USER):
         defaultData = {'Login':
             {
@@ -96,9 +85,9 @@ def updateBuild(data):
 def updateLogin(username, password):
     """
     Update the login information.
-    :param username: 
-    :param password: 
-    :return: 
+    
+    :param username: str
+    :param password: str
     """
     # load user data
     data = userData()

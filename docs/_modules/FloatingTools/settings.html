@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FloatingTools.settings &#8212; FloatingTools v0.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'v0.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for FloatingTools.settings</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Settings API</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;sourceData&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;userData&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;buildData&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;updateLogin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;updateSources&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;updateBuild&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># FloatingTools imports</span>
+<span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="c1"># python imports</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+
+<span class="c1"># globals</span>
+<span class="n">USER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">DATA</span><span class="p">,</span> <span class="s1">&#39;User.json&#39;</span><span class="p">)</span>
+<span class="n">SOURCES</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">DATA</span><span class="p">,</span> <span class="s1">&#39;Sources.json&#39;</span><span class="p">)</span>
+<span class="n">BUILD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">DATA</span><span class="p">,</span> <span class="s1">&#39;Build.json&#39;</span><span class="p">)</span>
+
+<span class="n">_LOCK</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+<span class="c1"># make the internal data folder if it doesnt exist.</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">USER</span><span class="p">)):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">USER</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="buildData"><a class="viewcode-back" href="../../api.html#FloatingTools.buildData">[docs]</a><span class="k">def</span> <span class="nf">buildData</span><span class="p">():</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">BUILD</span><span class="p">):</span>
+        <span class="n">defaultData</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;collaborator&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;dev&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;devBranch&quot;</span><span class="p">:</span> <span class="s2">&quot;disable&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;installed&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;release&quot;</span><span class="p">:</span> <span class="s2">&quot;latest&quot;</span>
+        <span class="p">}</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">defaultData</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">BUILD</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">BUILD</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="sourceData"><a class="viewcode-back" href="../../api.html#FloatingTools.sourceData">[docs]</a><span class="k">def</span> <span class="nf">sourceData</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">SOURCES</span><span class="p">):</span>
+
+        <span class="c1"># pull latest data model and create the default data information</span>
+        <span class="n">defaultModel</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Handler</span><span class="o">.</span><span class="n">DATA_MODEL</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">defaultModel</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;GitHub&#39;</span>
+        <span class="n">defaultModel</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;aldmbmtl/toolbox&#39;</span>
+        <span class="n">defaultModel</span><span class="p">[</span><span class="s1">&#39;load&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">defaultModel</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Username</span><span class="o">=</span><span class="s1">&#39;aldmbmtl&#39;</span><span class="p">,</span> <span class="n">Repository</span><span class="o">=</span><span class="s1">&#39;toolbox&#39;</span><span class="p">)</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">([</span><span class="n">defaultModel</span><span class="p">],</span> <span class="nb">open</span><span class="p">(</span><span class="n">SOURCES</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">SOURCES</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="userData"><a class="viewcode-back" href="../../api.html#FloatingTools.userData">[docs]</a><span class="k">def</span> <span class="nf">userData</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">USER</span><span class="p">):</span>
+        <span class="n">defaultData</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Login&#39;</span><span class="p">:</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="kc">None</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">defaultData</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">USER</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">USER</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="updateSources"><a class="viewcode-back" href="../../api.html#FloatingTools.updateSources">[docs]</a><span class="k">def</span> <span class="nf">updateSources</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">_LOCK</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">SOURCES</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">_LOCK</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="updateBuild"><a class="viewcode-back" href="../../api.html#FloatingTools.updateBuild">[docs]</a><span class="k">def</span> <span class="nf">updateBuild</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">BUILD</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="updateLogin"><a class="viewcode-back" href="../../api.html#FloatingTools.updateLogin">[docs]</a><span class="k">def</span> <span class="nf">updateLogin</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update the login information.</span>
+<span class="sd">    </span>
+<span class="sd">    :param username: str</span>
+<span class="sd">    :param password: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># load user data</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">userData</span><span class="p">()</span>
+
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Login&#39;</span><span class="p">][</span><span class="s1">&#39;username&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">username</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Login&#39;</span><span class="p">][</span><span class="s1">&#39;password&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">password</span>
+
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">USER</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Alex Hatfield.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.2.
+    </div>
+  </body>
+</html>

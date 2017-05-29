@@ -55,6 +55,5 @@ def saveSettings():
 def settings():
     """
     Launch settings page to configure Floating Tools
-    :return: 
     """
     FloatingTools.Dashboard.startServer(url='settings')

@@ -1,0 +1,557 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Application Wrappers &#8212; FloatingTools v0.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'v0.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Service Handlers" href="handlers.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="handlers.html" title="Service Handlers"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">FloatingTools v0.6.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="application-wrappers">
+<h1>Application Wrappers<a class="headerlink" href="#application-wrappers" title="Permalink to this headline">¶</a></h1>
+<p>Application wrappers abstract away any kind of application specific code which allows FloatingTools to be future ready.
+Meaning when a new application comes out that you want to use, just create a new wrapper and FloatingTools will work
+exactly the same as it would in any other application.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Wrappers are not meant to be interacted with directly. They are loaded at start up and that&#8217;s it.</p>
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="FloatingTools.wrapper">
+<code class="descclassname">FloatingTools.</code><code class="descname">wrapper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#wrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.wrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper object for the context of the application you are working in.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="FloatingTools.wrapperName">
+<code class="descclassname">FloatingTools.</code><code class="descname">wrapperName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#wrapperName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.wrapperName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of the current wrapper/application you are in. If there is no wrapper loaded, it assumes you are 
+running FloatingTools outside the context of any application and in straight python. If this is the case, it returns
+&#8220;Generic&#8221; signaling you are in the os version of FloatingTools.</p>
+<p>OTHERWISE</p>
+<p>It will return the name of the wrapper application you are in.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="FloatingTools.setWrapper">
+<code class="descclassname">FloatingTools.</code><code class="descname">setWrapper</code><span class="sig-paren">(</span><em>klass</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#setWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.setWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register the Wrapper class for the application you are in.</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param klass:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="abstractapplication">
+<h2>AbstractApplication<a class="headerlink" href="#abstractapplication" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="FloatingTools.AbstractApplication">
+<em class="property">class </em><code class="descclassname">FloatingTools.</code><code class="descname">AbstractApplication</code><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstraction class for wrapping an application so FloatingTools can interact with the application it was loaded in.</p>
+<p>Wrappers have specific class variables that must be set to help define how FloatingTools should handle the application 
+at load up.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AbstractApplication</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="c1"># Default settings</span>
+    <span class="n">FILE_TYPES</span>      <span class="o">=</span> <span class="p">[]</span>        <span class="c1"># The file extensions associated with this application</span>
+    <span class="n">NAME</span>            <span class="o">=</span> <span class="bp">None</span>      <span class="c1"># Name of the application (REQUIRED)</span>
+    <span class="n">APP_ICON</span>        <span class="o">=</span> <span class="bp">None</span>      <span class="c1"># The HTML icon for the application (Just for looks)</span>
+    <span class="n">EXECUTABLE</span>      <span class="o">=</span> <span class="bp">None</span>      <span class="c1"># This is the executable path that the application would use to run its Python Interpreter.</span>
+    <span class="n">ARGS</span>            <span class="o">=</span> <span class="bp">None</span>      <span class="c1"># sometimes you need to pass flags to the executable to execute a Python Script</span>
+    <span class="n">MULTI_THREAD</span>    <span class="o">=</span> <span class="bp">False</span>     <span class="c1"># Set whether the application supports Python multi threading</span>
+</pre></div>
+</td></tr></table></div>
+<p>You can modify all these settings...</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NukeWrapper</span><span class="p">(</span><span class="n">AbstractApplication</span><span class="p">):</span>
+    <span class="c1"># Wrapper settings</span>
+    <span class="n">FILE_TYPES</span>      <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.nk&#39;</span><span class="p">,</span> <span class="s1">&#39;.py&#39;</span><span class="p">,</span> <span class="s1">&#39;.gizmo&#39;</span><span class="p">]</span>
+    <span class="n">NAME</span>            <span class="o">=</span> <span class="s1">&#39;Nuke&#39;</span>
+    <span class="n">APP_ICON</span>        <span class="o">=</span> <span class="s1">&#39;http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg&#39;</span>
+    <span class="n">ARGS</span>            <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-t&#39;</span><span class="p">]</span>
+    <span class="n">MULTI_THREAD</span>    <span class="o">=</span> <span class="bp">True</span>
+</pre></div>
+</td></tr></table></div>
+<dl class="staticmethod">
+<dt id="FloatingTools.AbstractApplication.addMenuEntry">
+<em class="property">static </em><code class="descname">addMenuEntry</code><span class="sig-paren">(</span><em>menuPath</em>, <em>command=None</em>, <em>icon=None</em>, <em>enabled=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.addMenuEntry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.addMenuEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>MUST BE SUB-CLASSED</p>
+<p>Each application requires the certain calls to modify the UI. FloatingTools only targets the top bar of the 
+application you are trying to modify.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NukeWrapper</span><span class="p">(</span><span class="n">AbstractApplication</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">addMenuEntry</span><span class="p">(</span><span class="n">menuPath</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="c1"># from NukeWrapper</span>
+        <span class="n">nuke</span><span class="o">.</span><span class="n">executeInMainThread</span><span class="p">(</span><span class="n">nuke</span><span class="o">.</span><span class="n">menu</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span><span class="o">.</span><span class="n">addCommand</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">menuPath</span><span class="p">,</span> <span class="n">command</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">icon</span><span class="p">})</span>
+</pre></div>
+</td></tr></table></div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If your wrapper supports multi threading, you may need to make sure you execute the application specific command in 
+the main thread. In the example above, you can see I had to use nuke.executeInMainThread. The reason being this is 
+all called from the spawned threads at the load up process.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>enabled</strong> &#8211; bool</li>
+<li><strong>menuPath</strong> &#8211; a string laying out how the menu to the command should be laid out. Example: &#8216;top/sub/command&#8217;</li>
+<li><strong>command</strong> &#8211; a callable to be executed</li>
+<li><strong>icon</strong> &#8211; optional</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="FloatingTools.AbstractApplication.addMenuSeparator">
+<em class="property">static </em><code class="descname">addMenuSeparator</code><span class="sig-paren">(</span><em>menuPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.addMenuSeparator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.addMenuSeparator" title="Permalink to this definition">¶</a></dt>
+<dd><p>If your application allows for UI separators, define the behavior here.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>menuPath</strong> &#8211; Path to add the separator to</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="FloatingTools.AbstractApplication.appTest">
+<em class="property">static </em><code class="descname">appTest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.appTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.appTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>This should ideally return True if this is the wrapper for the app you&#8217;re in. If you don&#8217;t do this, FloatingTools wraps 
+the function and if it fails, assumes this is not the wrapper for the application it is in.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NukeWrapper</span><span class="p">(</span><span class="n">AbstractApplication</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">appTest</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">nuke</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+    
+    <span class="c1"># --- OR --- #</span>
+    
+    <span class="k">def</span> <span class="nf">appTest</span><span class="p">():</span>
+        <span class="kn">import</span> <span class="nn">nuke</span>
+</pre></div>
+</td></tr></table></div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="FloatingTools.AbstractApplication.fileTypes">
+<em class="property">classmethod </em><code class="descname">fileTypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.fileTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.fileTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the file types associated with this application.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="FloatingTools.AbstractApplication.loadFile">
+<em class="property">static </em><code class="descname">loadFile</code><span class="sig-paren">(</span><em>filePath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.loadFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.loadFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Each application has a special way of importing data. For example, in nuke you can take the file path and paste
+it into the the node graph. You would define that behavior here.</p>
+<p>The file path is passed to you from the loader in FloatingTools. All you need to do is handle it how you&#8217;d like.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filePath</span><span class="p">):</span>
+    <span class="c1"># from NukeWrapper</span>
+    <span class="n">basename</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
+
+    <span class="c1"># nk handler</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.nk&#39;</span><span class="p">,</span> <span class="s1">&#39;.gizmo&#39;</span><span class="p">]:</span>
+    
+        <span class="c1"># create node</span>
+        <span class="n">nuke</span><span class="o">.</span><span class="n">nodePaste</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filePath</strong> &#8211; str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="FloatingTools.AbstractApplication.name">
+<em class="property">classmethod </em><code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of the current application.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="how-to-create-a-wrapper">
+<h2>How to create a wrapper<a class="headerlink" href="#how-to-create-a-wrapper" title="Permalink to this headline">¶</a></h2>
+<p>Now we will show you how to extend FloatingTools by creating a Nuke wrapper.</p>
+<p>Firstly, we need to import FloatingTools and subclass the ApplicationWrapper class and create placeholders for required
+functions that must be defined.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="k">class</span> <span class="nc">NukeWrapper</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">AbstractApplication</span><span class="p">):</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">addMenuSeparator</span><span class="p">(</span><span class="n">menuPath</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">appTest</span><span class="p">():</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">addMenuEntry</span><span class="p">(</span><span class="n">menuPath</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="n">filePath</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+</td></tr></table></div>
+<p>We now need to set up the class variables that are needed for FloatingTools to be able to profile and load the wrapper.
+Nuke supports multi-threading in python so we can set that to True. We should also associate .nk, .py and .gizmo files
+through the FILE_TYPES variable. Just for looks we can add an HTML icon and we will also name the wrapper Nuke with the
+NAME variable.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NukeWrapper</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">AbstractApplication</span><span class="p">):</span>
+
+    <span class="c1"># Wrapper settings</span>
+    <span class="n">FILE_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.nk&#39;</span><span class="p">,</span> <span class="s1">&#39;.py&#39;</span><span class="p">,</span> <span class="s1">&#39;.gizmo&#39;</span><span class="p">]</span>
+    <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Nuke&#39;</span>
+    <span class="n">APP_ICON</span> <span class="o">=</span> <span class="s1">&#39;http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg&#39;</span>
+    <span class="n">ARGS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-t&#39;</span><span class="p">]</span>
+    <span class="n">MULTI_THREAD</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="o">...</span>
+</pre></div>
+</td></tr></table></div>
+<p>Next we need to put a test in using the appTest function. This test is what should be determining if we are in Nuke or
+not and should either return True or False or just throw an error. We will try to import nuke and return true if it
+works or False if it fails.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="o">...</span>
+
+<span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">appTest</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">nuke</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+<span class="o">...</span>
+</pre></div>
+</td></tr></table></div>
+<p>Now FloatingTools will run this test at start up and will know if its in Nuke or not.</p>
+<p>Next, we define how Nuke will load in the content being passed to it. When the user clicks the tool in the FloatingTools
+menu, a string for the file to load in is passed and that&#8217;s it. So, we need to write the handler function for that.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="o">...</span>
+
+<span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="n">filePath</span><span class="p">):</span>
+    <span class="n">basename</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.nk&#39;</span><span class="p">,</span> <span class="s1">&#39;.gizmo&#39;</span><span class="p">]:</span>
+        <span class="n">nuke</span><span class="o">.</span><span class="n">nodePaste</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
+
+<span class="o">...</span>
+</pre></div>
+</td></tr></table></div>
+<p>Now for the UI functions. We are passed a string in the format of path/to/command. Luckily, Nuke handles this menu
+path syntax out of the box. So, we don&#8217;t need to recursively build the nested menus.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In applications that do not support single string menu pathing, you will need to write your own recursive menu
+creator. Sorry, I know that sucks.</p>
+</div>
+<p>We also need to keep in mind that since this is a multi threaded wrapper, we need to make all UI modification through
+the main thread. Nuke has nuke.executeInMainThread for this. You should make sure the application you are writing for
+has something similar.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="o">...</span>
+
+<span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">addMenuEntry</span><span class="p">(</span><span class="n">menuPath</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="n">nuke</span><span class="o">.</span><span class="n">executeInMainThread</span><span class="p">(</span><span class="n">nuke</span><span class="o">.</span><span class="n">menu</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span><span class="o">.</span><span class="n">addCommand</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">menuPath</span><span class="p">,</span> <span class="n">command</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">icon</span><span class="p">})</span>
+
+<span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">addMenuSeparator</span><span class="p">(</span><span class="n">menuPath</span><span class="p">):</span>
+    <span class="n">nuke</span><span class="o">.</span><span class="n">executeInMainThread</span><span class="p">(</span><span class="n">nuke</span><span class="o">.</span><span class="n">menu</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span><span class="o">.</span><span class="n">findItem</span><span class="p">(</span><span class="n">menuPath</span><span class="p">)</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">)</span>
+
+<span class="o">...</span>
+</pre></div>
+</td></tr></table></div>
+<p>Now you&#8217;re wrapper is ready! Save this to a module in the FloatingTools/Wrapper directory and it will automatically load
+your wrapper.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">FloatingTools automatically loads wrappers from the FloatingTools/Wrapper directory.</p>
+</div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NukeWrapper</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">AbstractApplication</span><span class="p">):</span>
+
+    <span class="c1"># Wrapper settings</span>
+    <span class="n">FILE_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.nk&#39;</span><span class="p">,</span> <span class="s1">&#39;.py&#39;</span><span class="p">,</span> <span class="s1">&#39;.gizmo&#39;</span><span class="p">]</span>
+    <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Nuke&#39;</span>
+    <span class="n">APP_ICON</span> <span class="o">=</span> <span class="s1">&#39;http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg&#39;</span>
+    <span class="n">ARGS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-t&#39;</span><span class="p">]</span>
+    <span class="n">MULTI_THREAD</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">appTest</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">nuke</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="n">filePath</span><span class="p">):</span>
+        <span class="n">basename</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.nk&#39;</span><span class="p">,</span> <span class="s1">&#39;.gizmo&#39;</span><span class="p">]:</span>
+            <span class="n">nuke</span><span class="o">.</span><span class="n">nodePaste</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">addMenuEntry</span><span class="p">(</span><span class="n">menuPath</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="n">nuke</span><span class="o">.</span><span class="n">executeInMainThread</span><span class="p">(</span><span class="n">nuke</span><span class="o">.</span><span class="n">menu</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span><span class="o">.</span><span class="n">addCommand</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">menuPath</span><span class="p">,</span> <span class="n">command</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">icon</span><span class="p">})</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">addMenuSeparator</span><span class="p">(</span><span class="n">menuPath</span><span class="p">):</span>
+        <span class="n">nuke</span><span class="o">.</span><span class="n">executeInMainThread</span><span class="p">(</span><span class="n">nuke</span><span class="o">.</span><span class="n">menu</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span><span class="o">.</span><span class="n">findItem</span><span class="p">(</span><span class="n">menuPath</span><span class="p">)</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Application Wrappers</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#abstractapplication">AbstractApplication</a></li>
+<li><a class="reference internal" href="#how-to-create-a-wrapper">How to create a wrapper</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="handlers.html"
+                        title="previous chapter">Service Handlers</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/wrappers.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="handlers.html" title="Service Handlers"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">FloatingTools v0.6.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Alex Hatfield.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FloatingTools.Dashboard.toolbox &#8212; FloatingTools v0.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     'v0.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for FloatingTools.Dashboard.toolbox</h1><div class="highlight"><pre>
+<span></span><span class="c1"># FloatingTools imports</span>
+<span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="c1"># flask imports</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span>
+
+<span class="c1"># github imports</span>
+<span class="kn">from</span> <span class="nn">github</span> <span class="k">import</span> <span class="n">UnknownObjectException</span><span class="p">,</span> <span class="n">GithubException</span>
+
+<span class="c1"># package imports</span>
+<span class="kn">from</span> <span class="nn">utilities</span> <span class="k">import</span> <span class="n">SERVER</span>
+
+<span class="c1"># python imports</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+
+<span class="c1"># private globals</span>
+<span class="n">_BENCHMARK_DATA</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">directories</span><span class="o">=</span><span class="p">[],</span> <span class="n">files</span><span class="o">=</span><span class="p">[],</span> <span class="n">applications</span><span class="o">=</span><span class="p">{},</span> <span class="n">paths</span><span class="o">=</span><span class="p">{})</span>
+
+
+<div class="viewcode-block" id="toolbox"><a class="viewcode-back" href="../../../api.html#FloatingTools.Dashboard.toolbox">[docs]</a><span class="k">def</span> <span class="nf">toolbox</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Launch toolbox page to configure Floating Tools</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">startServer</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s1">&#39;toolbox&#39;</span><span class="p">)</span></div>
+
+
+<span class="nd">@SERVER</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/toolbox&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">renderToolbox</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Render tool shed page to configure Floating Tools</span>
+<span class="sd">    :return: </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># handle local toolbox</span>
+    <span class="n">localToolbox</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;toolbox&quot;</span><span class="p">)</span>
+
+    <span class="n">localRepos</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">gitHubConnect</span><span class="p">()</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">get_repos</span><span class="p">():</span>
+        <span class="n">localRepos</span><span class="p">[</span><span class="n">repo</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">repo</span>
+
+    <span class="c1"># check if the user has any repositories set up.</span>
+    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;has_repo&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">localRepos</span><span class="p">:</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;has_repo&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">localToolbox</span><span class="p">:</span>
+            <span class="n">localToolbox</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">localRepos</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># register toolbox</span>
+    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;toolbox&#39;</span><span class="p">,</span> <span class="n">localToolbox</span><span class="p">)</span>
+
+    <span class="c1"># get the user repositories and add to the dashboard env</span>
+    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">gitHubConnect</span><span class="p">()</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">login</span><span class="p">)</span>
+    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;user_repos&#39;</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">localRepos</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+    <span class="c1"># pull the data for the repo</span>
+    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;toolbox_data&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;has_lic&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;has_readme&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">repo</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">gitHubConnect</span><span class="p">()</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="n">localToolbox</span><span class="p">)</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">get_file_contents</span><span class="p">(</span><span class="s1">&#39;/LICENSE&#39;</span><span class="p">)</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;has_lic&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">GithubException</span><span class="p">,</span> <span class="n">UnknownObjectException</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">repo</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">gitHubConnect</span><span class="p">()</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="n">localToolbox</span><span class="p">)</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">get_file_contents</span><span class="p">(</span><span class="s1">&#39;/README.md&#39;</span><span class="p">)</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;has_readme&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">GithubException</span><span class="p">,</span> <span class="n">UnknownObjectException</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">repo</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">gitHubConnect</span><span class="p">()</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="n">localToolbox</span><span class="p">)</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;toolbox_data&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">get_file_contents</span><span class="p">(</span><span class="s1">&#39;/toolbox.json&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decoded_content</span>
+        <span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">GithubException</span><span class="p">,</span> <span class="n">UnknownObjectException</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;Toolbox.html&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">())</span>
+
+
+<span class="nd">@SERVER</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/toolbox/_createToolbox&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">createToolbox</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    --private--</span>
+<span class="sd">    :return: </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pull request data</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+
+    <span class="c1"># do nothing if name is blank</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/toolbox&#39;</span><span class="p">)</span>
+
+    <span class="c1"># set env var for the toolbox in question</span>
+    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;toolbox&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># pull users env</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">gitHubConnect</span><span class="p">()</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span>
+
+    <span class="c1"># create the repository if it doesnt exist</span>
+    <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">user</span><span class="o">.</span><span class="n">get_repos</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/toolbox?toolbox=&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># create toolbox repository</span>
+    <span class="n">user</span><span class="o">.</span><span class="n">create_repo</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">_setUpToolbox</span><span class="p">()</span>
+
+    <span class="c1"># redirect</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/toolbox?toolbox=&#39;</span> <span class="o">+</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">()[</span><span class="s1">&#39;toolbox&#39;</span><span class="p">])</span>
+
+
+<span class="nd">@SERVER</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/toolbox/_setup&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">setUpToolbox</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    --private--</span>
+<span class="sd">    :return: </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_setUpToolbox</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/toolbox?toolbox=&#39;</span> <span class="o">+</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">()[</span><span class="s1">&#39;toolbox&#39;</span><span class="p">])</span>
+
+
+<span class="nd">@SERVER</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/toolbox/_addPath&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">addToolboxPath</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    --private--</span>
+<span class="sd">    :return: </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">toolbox</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">()[</span><span class="s1">&#39;toolbox&#39;</span><span class="p">]</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
+
+    <span class="n">toolboxRepo</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">gitHubConnect</span><span class="p">()</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="n">toolbox</span><span class="p">)</span>
+    <span class="n">contentFile</span> <span class="o">=</span> <span class="n">toolboxRepo</span><span class="o">.</span><span class="n">get_file_contents</span><span class="p">(</span><span class="s1">&#39;toolbox.json&#39;</span><span class="p">)</span>
+    <span class="n">toolboxMap</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">contentFile</span><span class="o">.</span><span class="n">decoded_content</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">toolboxMap</span><span class="p">[</span><span class="s1">&#39;paths&#39;</span><span class="p">]:</span>
+        <span class="n">toolboxMap</span><span class="p">[</span><span class="s1">&#39;paths&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="n">toolboxRepo</span><span class="o">.</span><span class="n">update_file</span><span class="p">(</span>
+        <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/toolbox.json&#39;</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Adding </span><span class="si">%s</span><span class="s1"> to toolbox.&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">,</span>
+        <span class="n">content</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">toolboxMap</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">sha</span><span class="o">=</span><span class="n">contentFile</span><span class="o">.</span><span class="n">sha</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/toolbox?toolbox=&#39;</span> <span class="o">+</span> <span class="n">toolbox</span><span class="p">)</span>
+
+
+<span class="nd">@SERVER</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/toolbox/_removePath&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">removeToolboxPath</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    --private--</span>
+<span class="sd">    :return: </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">toolbox</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">()[</span><span class="s1">&#39;toolbox&#39;</span><span class="p">]</span>
+
+    <span class="n">toolboxRepo</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">gitHubConnect</span><span class="p">()</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="n">toolbox</span><span class="p">)</span>
+    <span class="n">contentFile</span> <span class="o">=</span> <span class="n">toolboxRepo</span><span class="o">.</span><span class="n">get_file_contents</span><span class="p">(</span><span class="s1">&#39;toolbox.json&#39;</span><span class="p">)</span>
+    <span class="n">toolboxMap</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">contentFile</span><span class="o">.</span><span class="n">decoded_content</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">toolboxMap</span><span class="p">[</span><span class="s1">&#39;paths&#39;</span><span class="p">]:</span>
+            <span class="n">toolboxMap</span><span class="p">[</span><span class="s1">&#39;paths&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="n">toolboxRepo</span><span class="o">.</span><span class="n">update_file</span><span class="p">(</span>
+        <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/toolbox.json&#39;</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Removing </span><span class="si">%s</span><span class="s1"> from toolbox.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">([</span><span class="n">path</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">]),</span>
+        <span class="n">content</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">toolboxMap</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">sha</span><span class="o">=</span><span class="n">contentFile</span><span class="o">.</span><span class="n">sha</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/toolbox?toolbox=&#39;</span> <span class="o">+</span> <span class="n">toolbox</span><span class="p">)</span>
+
+
+<span class="nd">@SERVER</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/toolbox_paths&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">toolboxPaths</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;ToolboxPaths.html&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_setUpToolbox</span><span class="p">():</span>
+    <span class="n">toolbox</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">()[</span><span class="s1">&#39;toolbox&#39;</span><span class="p">]</span>
+    <span class="n">toolboxRepo</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">gitHubConnect</span><span class="p">()</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="n">toolbox</span><span class="p">)</span>
+
+    <span class="n">toolboxRepo</span><span class="o">.</span><span class="n">create_file</span><span class="p">(</span>
+        <span class="s1">&#39;/toolbox.json&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Setting up as FloatingTools Toolbox!&#39;</span><span class="p">,</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">paths</span><span class="o">=</span><span class="p">[]),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Alex Hatfield.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.2.
+    </div>
+  </body>
+</html>

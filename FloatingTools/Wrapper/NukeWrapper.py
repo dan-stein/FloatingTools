@@ -1,11 +1,9 @@
 # python imports
 import os
-import tempfile
 from sys import platform
 
 # FloatingTools imports
-import FloatingTools
-from AbstractApp import AbstractApplication, setWrapper
+from AbstractApp import AbstractApplication
 
 nuke = None
 MENUS = ['Nuke', 'Node Graph', 'Nodes']

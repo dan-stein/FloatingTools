@@ -30,9 +30,9 @@ ADDRESS = 'http://%(HOST)s:%(PORT)s/' % locals()
 
 def startServer(url=None):
     """
-    Launch the server instance
-    :type url: 
-    :return: 
+    Launch the server instance.
+    
+    :parameter url: 
     """
     # start the server
     t = Thread(name='FloatingTools Web-Service', target=SERVER.run, args=(HOST, PORT))

@@ -20,6 +20,5 @@ def renderApplications():
 def applications():
     """
     Launch applications page
-    :return: 
     """
     FloatingTools.Dashboard.startServer(url='applications')

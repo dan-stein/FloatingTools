@@ -115,6 +115,5 @@ def _removeToolbox():
 def toolShed():
     """
     Launch tool shed page to configure Floating Tools
-    :return: 
     """
     FloatingTools.Dashboard.startServer(url='tool_shed')

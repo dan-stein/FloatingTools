@@ -1,18 +1,18 @@
 FloatingTools Documentation
 ===========================
 
-Contents:
+License and Information
+-----------------------
+
+.. automodule:: FloatingTools
+    :members:
+
+Contents
+++++++++
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   examples
-   tutorials
-   api
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+    api
+    handlers
+    wrappers

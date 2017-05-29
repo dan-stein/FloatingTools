@@ -1,0 +1,221 @@
+Service Handlers
+================
+Internally, FloatingTools looks at a collection of tools as a toolbox. But due to the vast number of possible sources,
+each source type needs a Handler. We call these Service Handlers. Service Handlers allow for future development of new
+storage systems in the cloud or locally.
+
+The idea is if a new service, like AWS or google Drive, has a large repository of tools and you would like to source it
+with FloatingTools; you can create a new Handler class. A handler basic handler class will have an install() function
+and a loadSource() function.
+
+So really, a Handler is just a toolbox but it abstracts away all the service specific code which allows for tools from
+GitHub or a URL to be treated exactly the same as tools being loaded locally.
+
+Functions
+---------
+
+.. autofunction:: FloatingTools.toolboxes
+.. autofunction:: FloatingTools.getToolbox
+.. autofunction:: FloatingTools.getHandler
+.. autofunction:: FloatingTools.createToolbox
+
+Handler
+-------
+As mentioned above, the main functions here to keep in mind of are loadSource() and install()
+
+.. autoclass:: FloatingTools.Handler
+    :members:
+
+How to create a Handler
+-----------------------
+Now we will show you how to extend FloatingTools by creating a URL Handler Service.
+
+
+Firstly, we need to import FloatingTools and subclass the Handler class and create placeholders for required
+functions that must be defined.
+
+.. code-block:: python
+    :linenos:
+
+    import FloatingTools
+
+    class URLHandler(Handler):
+        def loadSource(self, source):
+            pass
+
+        def install(self):
+            pass
+
+Next, we want to think about what information need to download the tools. All we need is a Source Field that the user
+can enter the URL they want to download the tool from. Lets call our Source Field 'URL'.
+
+.. code-block:: python
+    :linenos:
+
+    import FloatingTools
+
+    class URLHandler(Handler):
+        def loadSource(self, source):
+            pass
+
+        def install(self):
+            pass
+
+    # add fields
+    URLHandler.addSourceField('URL')
+
+Now, when the user clicks the add new toolbox button for your handler, it will drop down a string field that they can
+paste the URL string into. Now we need to load that url and prepare the Handler to download and install the toolbox. To
+do this we define the loadSource() function.
+
+The source variable that is passed into loadSource is a dictionary with your Source Fields names as the key and the
+values the user passed as the value. In this case, we defined 'URL' as a field so the resulting dictionary will be as
+follows.
+
+.. code-block:: python
+    :linenos:
+
+    source = {'URL': 'www.whatever.com/tool.zip'} # the user pasted www.whatever.com/tool.zip
+
+Now we can unpack the source and handle the information that was passed.
+
+.. note::
+    DO NOT DOWNLOAD ANYTHING IN LOADSOURCE! All downloading should be done in install().
+
+We want to make sure we pull the website url so we can credit the creator and also set the sourcePath as the original
+path the tools are coming from. We also MUST set the name of this handler since now we are representing a toolbox.
+Usually the website plus the toolboxes source is a good name so the name also lets you know where it came from.
+
+To create a menu item that will show up in both the application wrapper and the toolShed, we are going to addMenuItem
+and link to the creator site.
+
+.. code-block:: python
+    :linenos:
+
+    ...
+
+    def loadSource(self, source):
+        # pull data
+        website = source['URL'].split('.com')[0] + '.com'
+
+        self.setSourcePath(source['URL'])
+        self.setName(('www.' + website.split('www.')[1]) + '/' + repository)
+
+        self.addMenuItem('/Open Home', partial(webbrowser.open, website), html=website)
+
+    ...
+
+Now we can move on to the install process. All downloading and installing of files should be done here. The reason being
+that FloatingTools sometimes loads the source data but doesn't need to install anything. It does this to reduce overhead
+and also isolate the install call for possible need to call a reinstall.
+
+In the case of this handler, we may want to have this remove the older version and install the latest every time it is
+run. You don't have to do this, but in this example we will. Handlers automatically assign an installDirectory in
+FloatingTools/cache. So we are going to leverage this by using the default install path and save us the trouble of
+building paths. We are also going to use downloadSource(). This call is a wrapped function that has a timeout built in
+of 5 seconds. So if the source is slow and you don't want FloatingTools to hang, you can drop the timeout down.
+
+The Handler also comes with installZip as a helper function. So we are going to check if its a zip and then use that
+instead of needing to manually unpacking the zip ourselves.
+
+.. code-block:: python
+    :linenos:
+
+    ...
+
+    def install(self):
+        # pull install path
+        basename = os.path.basename(self.sourcePath())
+        repository, ext = os.path.splitext(basename)
+
+        # set up download path for repo
+        if os.path.exists(self.installDirectory()):
+            shutil.rmtree(self.installDirectory())
+        os.makedirs(self.installDirectory())
+
+        # download data
+        local = os.path.join(self.installDirectory(), basename)
+        if not self.downloadSource(self.sourcePath(), local):
+            return
+
+        # determine how to handle source.
+        if ext == '.zip':
+            self.installZip(local)
+
+    ...
+
+Now our Handler will take a url from the user, download the content and install it to the default cache directoy. If the
+content is a zip, it will automatically unpack it and prepare it for use.
+
+Lastly we need to register our handler and you're done!
+
+.. code-block:: python
+    :linenos:
+
+    import FloatingTools
+
+    class URLHandler(Handler):
+        def loadSource(self, source):
+            # pull data
+            website = source['URL'].split('.com')[0] + '.com'
+
+            self.setSourcePath(source['URL'])
+            self.setName(('www.' + website.split('www.')[1]) + '/' + repository)
+
+            self.addMenuItem('/Open Home', partial(webbrowser.open, website), html=website)
+
+        def install(self):
+            # pull install path
+            basename = os.path.basename(self.sourcePath())
+            repository, ext = os.path.splitext(basename)
+
+            # set up download path for repo
+            if os.path.exists(self.installDirectory()):
+                shutil.rmtree(self.installDirectory())
+            os.makedirs(self.installDirectory())
+
+            # download data
+            local = os.path.join(self.installDirectory(), basename)
+            if not self.downloadSource(self.sourcePath(), local):
+                return
+
+            # determine how to handle source.
+            if ext == '.zip':
+                self.installZip(local)
+
+    # add fields
+    URLHandler.addSourceField('URL')
+
+    # register handler
+    URLHandler.registerHandler('URL')
+
+
+Pointer Handlers
+----------------
+Here is a simple example of a pointer handler. They are very simple to create and are meant to just point to a location
+on disk. The thing to note is that the load up location is set not with setSource, but with setInstallLocation. Also,
+make sure you set the Handler as a pointer. If you don't, when you remove it from the toolShed it will delete the whole
+directory and there is no warning.
+
+.. warning::
+    Make sure you set the Handler as a pointer. If you don't, when you remove it from the toolShed it will delete the
+    whole directory and there is no warning.
+
+.. code-block:: python
+    :linenos:
+
+    class LocalHandler(Handler):
+        def loadSource(self, source):
+            # define as pointer
+            self.setIsPointer(True)
+
+            # set vars
+            self.setName(os.path.basename(source['Path']))
+            self.setInstallLocation(source['Path'])
+
+
+    # add fields
+    LocalHandler.addSourceField('Path')
+
+    # register handler
+    LocalHandler.registerHandler('Local')

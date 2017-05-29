@@ -75,7 +75,7 @@ Creates a toolbox with the handler type passed using the source data.
 # main abstract class
 class Handler(object):
     """
-    Represents a FloatingTools compatible toolbox service
+Represents a FloatingTools compatible toolbox service
     """
     # reserved
     _TYPE_ = None
