@@ -120,22 +120,23 @@ def loadTools():
     # set up dashboard in the application wrapper if there is one loaded.
     if FloatingTools.wrapper():
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Toolbox',
-                                             FloatingTools.Dashboard.toolbox)
+                                             partial(FloatingTools.Dashboard.toolbox))
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Tool Shed',
-                                             FloatingTools.Dashboard.toolShed)
+                                             partial(FloatingTools.Dashboard.toolShed))
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Applications',
-                                             FloatingTools.Dashboard.applications)
+                                             partial(FloatingTools.Dashboard.applications))
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
-                                             FloatingTools.Dashboard.settings)
+                                             partial(FloatingTools.Dashboard.settings))
         FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__ + '/Dashboard')
         FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Support/HatfieldFX',
-                                             lambda: webbrowser.open("http://www.hatfieldfx.com/floating-tools"))
+                                             partial(webbrowser.open, ("http://www.hatfieldfx.com/floating-tools")))
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Support/Repository',
-                                             lambda: webbrowser.open("https://github.com/aldmbmtl/FloatingTools"))
+                                             partial(webbrowser.open, ("https://github.com/aldmbmtl/FloatingTools")))
 
         FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
-        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Toolboxes', FloatingTools.Dashboard.toolShed)
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Toolboxes',
+                                             partial(FloatingTools.Dashboard.toolShed))
 
     # pull source data
     sourceData = FloatingTools.sourceData()

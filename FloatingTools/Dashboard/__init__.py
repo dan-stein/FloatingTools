@@ -8,6 +8,7 @@ from login import login
 from applications import applications
 from toolshed import toolShed
 from toolbox import toolbox
+import news
 
 # website environment
 SITE_ENV = {}

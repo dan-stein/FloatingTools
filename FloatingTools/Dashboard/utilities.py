@@ -40,7 +40,10 @@ def startServer(url=None):
 
     # open the url that is passed
     if url:
-        webbrowser.open(ADDRESS + url)
+        if url == '/':
+            webbrowser.open(ADDRESS)
+        else:
+            webbrowser.open(ADDRESS + url)
 
 
 @SERVER.route('/shutdown', methods=['GET', 'POST'])

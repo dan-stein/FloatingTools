@@ -44,13 +44,15 @@ class URLHandler(Handler):
         :return: 
         """
         # pull data
-        website = source['URL'].split('.com')[0] + '.com'
+        header, sitePath = source['URL'].split('//', 1)
+        name = sitePath.split('/', 1)[0]
+        website = header + '//' + name
         toolLink = os.path.dirname(source['URL']).rstrip('/')
 
         # set handler variables
         self.setSourcePath(source['URL'])
         repository, ext = os.path.splitext(os.path.basename(self.sourcePath()))
-        self.setName(('www.' + website.split('www.')[1]) + '/' + repository)
+        self.setName(name + '/' + repository)
 
         # menu items
         self.addMenuItem('/Open Home', partial(webbrowser.open, website), html=website)
