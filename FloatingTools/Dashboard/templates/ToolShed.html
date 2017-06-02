@@ -130,70 +130,77 @@
                             <div id="repo-{{ toolbox._id }}" class="collapse">
                                 <br>
                                 <span class="glyphicon glyphicon-cog"></span> Technical Information
-                                <ul>
-                                    <li>
-                                        <span class="glyphicon glyphicon-time"></span>
-                                        Load Time
-                                        <ul>
+                                <br>
+                                <a href="#load-times-{{ toolbox._id }}" data-toggle="collapse"> <span class="glyphicon glyphicon-time"></span> Load Times</a>
+                                <div id="load-times-{{ toolbox._id }}" class="collapse">
+                                    <table class="table">
+                                        <tr>
+                                            <th><center>App</center></th>
+                                            <th><center>Time</center></th>
+                                        </tr>
                                         {% for app in settings["loadTimes"] %}
-
                                             {% if app == "Generic" %}
                                                 {% if app == open_app %}
-                                                    <li>
-                                                        <font color="green"><img src="https://www.python.org/static/opengraph-icon-200x200.png" width="30"><strong>{{ app }}:</strong></font> {{ settings["loadTimes"][app] }} seconds
-                                                    </li>
+                                                    <tr>
+                                                        <td><font color="green"><img src="https://www.python.org/static/opengraph-icon-200x200.png" width="30"><strong>{{ app }}</strong></font></td>
+                                                        <td>{{ settings["loadTimes"][app] }} seconds</td>
+                                                    </tr>
                                                 {% else %}
-                                                    <li>
-                                                        <img src="https://www.python.org/static/opengraph-icon-200x200.png" width="30"><strong>{{ app }}:</strong> {{ settings["loadTimes"][app] }} seconds
-                                                    </li>
+                                                    <tr>
+                                                        <td><img src="https://www.python.org/static/opengraph-icon-200x200.png" width="30"><strong>{{ app }}</strong></td>
+                                                        <td>{{ settings["loadTimes"][app] }} seconds</td>
+                                                    </tr>
                                                 {% endif %}
-
                                             {% else %}
-
                                                 {% for wrapper in wrappers %}
                                                     {% if wrapper.NAME == app %}
                                                         {% if wrapper.APP_ICON != None %}
                                                             {% if app == open_app %}
-                                                                <li>
-                                                                    <font color="green"><img src="{{ wrapper.APP_ICON }}" width="30" class="img-circle" alt="Cinque Terre"><strong> {{ app }}:</strong></font> {{ settings["loadTimes"][app] }} seconds
-                                                                </li>
+                                                                <tr>
+                                                                    <td><font color="green"><img src="{{ wrapper.APP_ICON }}" width="30"><strong> {{ app }}</strong></font></td>
+                                                                    <td>{{ settings["loadTimes"][app] }} seconds</td>
+                                                                </tr>
                                                             {% else %}
-                                                                <li>
-                                                                    <img src="{{ wrapper.APP_ICON }}" width="30" class="img-circle" alt="Cinque Terre"><strong> {{ app }}:</strong> {{ settings["loadTimes"][app] }} seconds
-                                                                </li>
+                                                                <tr>
+                                                                    <td><img src="{{ wrapper.APP_ICON }}" width="30"><strong> {{ app }}</strong></td>
+                                                                    <td>{{ settings["loadTimes"][app] }} seconds</td>
+                                                                </tr>
                                                             {% endif %}
                                                         {% else %}
                                                             {% if app == open_app %}
-                                                                <li>
-                                                                    <font color="green"><strong>{{ app }}:</strong></font> {{ settings["loadTimes"][app] }} seconds
-                                                                </li>
+                                                                <tr>
+                                                                    <td><font color="green"><strong>{{ app }}</strong></font></td>
+                                                                    <td>{{ settings["loadTimes"][app] }} seconds</td>
+                                                                </tr>
                                                             {% else %}
-                                                                <li>
-                                                                    <strong>{{ app }}:</strong> {{ settings["loadTimes"][app] }} seconds
-                                                                </li>
+                                                                <tr>
+                                                                    <td><strong>{{ app }}</strong></td>
+                                                                    <td>{{ settings["loadTimes"][app] }} seconds</td>
+                                                                </tr>
                                                             {% endif %}
                                                         {% endif %}
                                                     {% endif %}
                                                 {% endfor %}
-
                                             {% endif %}
-
                                         {% endfor %}
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <span class="glyphicon glyphicon-save"></span>
-                                        Source
-                                        <ul>
+                                    </table>
+                                </div>
+                                <br>
+                                <a href="#source-{{ toolbox._id }}" data-toggle="collapse"> <span class="glyphicon glyphicon-save"></span> Source</a>
+                                <div id="source-{{ toolbox._id }}" class="collapse">
+                                    <table class="table">
+                                        <tr>
+                                            <th><center>Field</center></th>
+                                            <th><center>Value</center></th>
+                                        </tr>
                                         {% for field, value in settings["source"].iteritems() %}
-                                            <li>
-                                                {{ field }}: {{ value }}
-                                            </li>
+                                            <tr>
+                                                <td><strong>{{ field }}</strong></td>
+                                                <td>{{ value }}</td>
+                                            </tr>
                                         {% endfor %}
-                                        </ul>
-                                    </li>
-
-                                </ul>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-6">
