@@ -57,6 +57,65 @@
   <div class="section" id="floatingtools-api">
 <h1>FloatingTools API<a class="headerlink" href="#floatingtools-api" title="Permalink to this headline">¶</a></h1>
 <p>FloatingTools provides a simple API for extending the capabilities as you see fit.</p>
+<div class="section" id="handling-dependencies">
+<h2>Handling Dependencies<a class="headerlink" href="#handling-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>If your toolbox depends on another toolbox, you can load a dependency link that will download and install the other
+toolbox using loadDependency().</p>
+<p>Lets say I am writing a module in my toolbox called foo.py inside my toolbox called &#8220;aldmbmtl/newToolbox&#8221;. I want to use
+the hfx2 module from the &#8220;aldmbmtl/HatfieldFX&#8221; toolbox on GitHub. To load &#8220;aldmbmtl/HatfieldFX&#8221;, I call the
+loadDependency() as an import.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="c1"># need hfx2 from the HatfieldFX repository on github</span>
+<span class="n">FloatingTools</span><span class="o">.</span><span class="n">loadDependency</span><span class="p">(</span><span class="s1">&#39;GitHub&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Username&#39;</span><span class="p">:</span> <span class="s1">&#39;aldmbmtl&#39;</span><span class="p">,</span> <span class="s1">&#39;Repository&#39;</span><span class="p">:</span> <span class="s1">&#39;HatfieldFX&#39;</span><span class="p">})</span>
+
+<span class="c1"># now hfx2 is loaded for your toolbox to use.</span>
+<span class="kn">import</span> <span class="nn">hfx2</span>
+</pre></div>
+</td></tr></table></div>
+<p>This is true with any toolbox that can be loaded.</p>
+<dl class="function">
+<dt id="FloatingTools.loadDependency">
+<code class="descclassname">FloatingTools.</code><code class="descname">loadDependency</code><span class="sig-paren">(</span><em>handlerType</em>, <em>source</em>, <em>paths='/'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/load.html#loadDependency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.loadDependency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a dependency on a toolbox. This is meant for use in toolbox development. If you have toolbox A that is dependent on
+a tool in toolbox B, you can load toolbox B with this call from A.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="c1"># need hfx2 from the HatfieldFX repository on github</span>
+<span class="n">FloatingTools</span><span class="o">.</span><span class="n">loadDependency</span><span class="p">(</span><span class="s1">&#39;GitHub&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Username&#39;</span><span class="p">:</span> <span class="s1">&#39;aldmbmtl&#39;</span><span class="p">,</span> <span class="s1">&#39;Repository&#39;</span><span class="p">:</span> <span class="s1">&#39;HatfieldFX&#39;</span><span class="p">})</span>
+
+<span class="c1"># now hfx2 is loaded for your toolbox to use.</span>
+<span class="kn">import</span> <span class="nn">hfx2</span>
+</pre></div>
+</td></tr></table></div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>handlerType</strong> &#8211; Must be a string in the handler types</li>
+<li><strong>source</strong> &#8211; dict with the fields and values for the target toolbox</li>
+<li><strong>paths</strong> &#8211; iterable of paths in the toolbox that you are looking to load</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="dashboard">
 <h2>Dashboard<a class="headerlink" href="#dashboard" title="Permalink to this headline">¶</a></h2>
 <p>Dashboard is the web front end for FloatingTools. Direct modification is not allowed, but you can make calls to launch
@@ -145,6 +204,7 @@ interaction with FloatingTools.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">FloatingTools API</a><ul>
+<li><a class="reference internal" href="#handling-dependencies">Handling Dependencies</a></li>
 <li><a class="reference internal" href="#dashboard">Dashboard</a></li>
 <li><a class="reference internal" href="#settings">Settings</a></li>
 </ul>

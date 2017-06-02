@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FloatingTools.load &#8212; FloatingTools v0.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'v0.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for FloatingTools.load</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Handles all loading operations</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;loadDependency&#39;</span>
+<span class="p">]</span>
+
+<span class="c1"># python imports</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">imp</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">webbrowser</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+
+<span class="c1"># FloatingTools imports</span>
+<span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+
+<span class="c1"># Globals</span>
+<span class="n">WILDCARDS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">Applications</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">APP_WRAPPER</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="k">if</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">APP_WRAPPER</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;Generic&#39;</span><span class="p">,</span>
+        <span class="n">doc</span><span class="o">=</span><span class="s1">&#39;Represents the current application.&#39;</span><span class="p">),</span>
+    <span class="n">OS</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">doc</span><span class="o">=</span><span class="s1">&#39;The operating systems python name.&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">PYTHON_MODULES</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_LOCK</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+<span class="c1"># add to dashboard</span>
+<span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;wildcards&#39;</span><span class="p">,</span> <span class="n">WILDCARDS</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="loadDependency"><a class="viewcode-back" href="../../api.html#FloatingTools.loadDependency">[docs]</a><span class="k">def</span> <span class="nf">loadDependency</span><span class="p">(</span><span class="n">handlerType</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">paths</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Load a dependency on a toolbox. This is meant for use in toolbox development. If you have toolbox A that is dependent on</span>
+<span class="sd">a tool in toolbox B, you can load toolbox B with this call from A.</span>
+
+<span class="sd">.. code-block:: python</span>
+<span class="sd">    :linenos:</span>
+<span class="sd">    </span>
+<span class="sd">    import FloatingTools</span>
+<span class="sd">    </span>
+<span class="sd">    # need hfx2 from the HatfieldFX repository on github</span>
+<span class="sd">    FloatingTools.loadDependency(&#39;GitHub&#39;, source={&#39;Username&#39;: &#39;aldmbmtl&#39;, &#39;Repository&#39;: &#39;HatfieldFX&#39;})</span>
+<span class="sd">    </span>
+<span class="sd">    # now hfx2 is loaded for your toolbox to use.</span>
+<span class="sd">    import hfx2</span>
+
+<span class="sd">:param handlerType: Must be a string in the handler types</span>
+<span class="sd">:param source: dict with the fields and values for the target toolbox</span>
+<span class="sd">:param paths: iterable of paths in the toolbox that you are looking to load</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pull the toolbox</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">createToolbox</span><span class="p">(</span><span class="n">handlerType</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+
+    <span class="c1"># loop over the paths passed</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+        <span class="n">loadToolbox</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">loadToolbox</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">threaded</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    --private--</span>
+<span class="sd">    :return: </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">global</span> <span class="n">PYTHON_MODULES</span>
+
+    <span class="c1"># add this repo to the registered python modules</span>
+    <span class="k">if</span> <span class="n">handler</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PYTHON_MODULES</span><span class="p">:</span>
+        <span class="n">PYTHON_MODULES</span><span class="p">[</span><span class="n">handler</span><span class="o">.</span><span class="n">name</span><span class="p">()]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># compile search path</span>
+    <span class="n">searchPath</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">installDirectory</span><span class="p">()</span> <span class="o">+</span> <span class="n">path</span>
+
+    <span class="c1"># start timer for heavy processing functions</span>
+    <span class="n">startTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">searchPath</span><span class="p">):</span>
+
+        <span class="c1"># py detection</span>
+        <span class="n">isPackage</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">hasPython</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">fo</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">isPackage</span> <span class="ow">and</span> <span class="n">hasPython</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">fo</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">):</span>
+                <span class="n">hasPython</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">fo</span> <span class="o">==</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">:</span>
+                <span class="n">isPackage</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># handle python files</span>
+        <span class="k">if</span> <span class="n">hasPython</span><span class="p">:</span>
+            <span class="n">pyPath</span> <span class="o">=</span> <span class="n">root</span>
+            <span class="k">if</span> <span class="n">isPackage</span><span class="p">:</span>
+                <span class="n">pyPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">pyPath</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">pyPath</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PYTHON_MODULES</span><span class="p">[</span><span class="n">handler</span><span class="o">.</span><span class="n">name</span><span class="p">()]:</span>
+                    <span class="n">PYTHON_MODULES</span><span class="p">[</span><span class="n">handler</span><span class="o">.</span><span class="n">name</span><span class="p">()]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pyPath</span><span class="p">)</span>
+
+            <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pyPath</span><span class="p">)</span>
+
+        <span class="c1"># loop over contents</span>
+        <span class="k">for</span> <span class="n">fo</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fo</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fo</span> <span class="o">!=</span> <span class="s1">&#39;__init__.py&#39;</span><span class="p">:</span>
+                <span class="n">PYTHON_MODULES</span><span class="p">[</span><span class="n">handler</span><span class="o">.</span><span class="n">name</span><span class="p">()]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">fo</span><span class="p">))</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">():</span>
+                <span class="c1"># filter out files that do not pertain to this application</span>
+                <span class="n">basename</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fo</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">fileTypes</span><span class="p">():</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># register tool with the application</span>
+                <span class="n">toolboxPath</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">handler</span><span class="o">.</span><span class="n">name</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+                <span class="n">menuPath</span> <span class="o">=</span> <span class="p">(</span><span class="n">toolboxPath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">root</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">searchPath</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">fo</span><span class="p">)</span>
+                <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuEntry</span><span class="p">(</span>
+                    <span class="n">menuPath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;//&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">),</span>
+                    <span class="n">partial</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">loadFile</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">fo</span><span class="p">))</span>
+                <span class="p">)</span>
+
+    <span class="c1"># end time and log execution time</span>
+    <span class="n">endTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># log the data and update</span>
+    <span class="k">if</span> <span class="n">threaded</span><span class="p">:</span>
+        <span class="n">_LOCK</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+    <span class="n">sourceData</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">sourceData</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sourceData</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">handler</span><span class="o">.</span><span class="n">name</span><span class="p">():</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># log load time for the current app</span>
+        <span class="n">source</span><span class="p">[</span><span class="s1">&#39;loadTimes&#39;</span><span class="p">][</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapperName</span><span class="p">()]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:.6f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">endTime</span> <span class="o">-</span> <span class="n">startTime</span><span class="p">)</span>
+        <span class="k">break</span>
+
+    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">updateSources</span><span class="p">(</span><span class="n">sourceData</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">threaded</span><span class="p">:</span>
+        <span class="n">_LOCK</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">loadTools</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main tool loading function.</span>
+<span class="sd">    :return: </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># set up dashboard in the application wrapper if there is one loaded.</span>
+    <span class="k">if</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">():</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuEntry</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;/Dashboard/Toolbox&#39;</span><span class="p">,</span>
+                                             <span class="n">partial</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">toolbox</span><span class="p">))</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuEntry</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;/Dashboard/Tool Shed&#39;</span><span class="p">,</span>
+                                             <span class="n">partial</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">toolShed</span><span class="p">))</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuEntry</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;/Dashboard/Applications&#39;</span><span class="p">,</span>
+                                             <span class="n">partial</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">applications</span><span class="p">))</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuEntry</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;/Dashboard/Settings&#39;</span><span class="p">,</span>
+                                             <span class="n">partial</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">settings</span><span class="p">))</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuSeparator</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;/Dashboard&#39;</span><span class="p">)</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuSeparator</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuEntry</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;/Dashboard/Support/HatfieldFX&#39;</span><span class="p">,</span>
+                                             <span class="n">partial</span><span class="p">(</span><span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;http://www.hatfieldfx.com/floating-tools&quot;</span><span class="p">)))</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuEntry</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;/Dashboard/Support/Repository&#39;</span><span class="p">,</span>
+                                             <span class="n">partial</span><span class="p">(</span><span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;https://github.com/aldmbmtl/FloatingTools&quot;</span><span class="p">)))</span>
+
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuSeparator</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuEntry</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;/Toolboxes&#39;</span><span class="p">,</span>
+                                             <span class="n">partial</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">toolShed</span><span class="p">))</span>
+
+    <span class="c1"># pull source data</span>
+    <span class="n">sourceData</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">sourceData</span><span class="p">()</span>
+
+    <span class="c1"># log threads</span>
+    <span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># begin repo loop.</span>
+    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sourceData</span><span class="p">:</span>
+
+        <span class="c1"># skip installing and loading if the toolbox isn&#39;t requested, but load the toolbox reference for potential</span>
+        <span class="c1"># later use.</span>
+        <span class="n">_LOCK</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;load&#39;</span><span class="p">]:</span>
+            <span class="n">FloatingTools</span><span class="o">.</span><span class="n">createToolbox</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="n">install</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># get handler data</span>
+        <span class="n">toolbox</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">createToolbox</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">])</span>
+        <span class="n">_LOCK</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+        <span class="c1"># connect to the repository</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">FT_LOOGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Loading </span><span class="si">%s</span><span class="s1"> with the </span><span class="si">%s</span><span class="s1"> handler...&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]))</span>
+
+        <span class="c1"># make tool box information menus</span>
+        <span class="k">if</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">():</span>
+            <span class="n">toolboxPath</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">toolbox</span><span class="o">.</span><span class="n">name</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">menuItem</span> <span class="ow">in</span> <span class="n">toolbox</span><span class="o">.</span><span class="n">_toolbox_menu_order</span><span class="p">:</span>
+                <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuEntry</span><span class="p">(</span><span class="n">toolboxPath</span> <span class="o">+</span> <span class="n">menuItem</span><span class="p">,</span> <span class="n">toolbox</span><span class="o">.</span><span class="n">_toolbox_menu_content</span><span class="p">[</span><span class="n">menuItem</span><span class="p">])</span>
+            <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">addMenuSeparator</span><span class="p">(</span><span class="n">toolboxPath</span><span class="p">)</span>
+
+        <span class="c1"># loop over the toolbox path</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">toolbox</span><span class="o">.</span><span class="n">toolboxPaths</span><span class="p">():</span>
+
+            <span class="c1"># handle wildcard logic</span>
+            <span class="k">for</span> <span class="n">card</span> <span class="ow">in</span> <span class="n">WILDCARDS</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{</span><span class="si">%s</span><span class="s1">}&#39;</span> <span class="o">%</span> <span class="n">card</span><span class="p">,</span> <span class="n">WILDCARDS</span><span class="p">[</span><span class="n">card</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+            <span class="c1"># spawn thread if it is a thread supporting application</span>
+            <span class="k">if</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">MULTI_THREAD</span><span class="p">:</span>
+                <span class="n">loadToolbox</span><span class="p">(</span><span class="n">toolbox</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">toolbox</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">target</span><span class="o">=</span><span class="n">loadToolbox</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">toolbox</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">setDaemon</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="c1"># hold the main thread till load up is complete.</span>
+    <span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="c1"># load auto load modules</span>
+    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">FT_LOOGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Starting Auto-Imports...&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sourceData</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;load&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapperName</span><span class="p">()</span> <span class="ow">in</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;apps&#39;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">mod</span><span class="p">,</span> <span class="n">load</span> <span class="ow">in</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;apps&#39;</span><span class="p">][</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">wrapperName</span><span class="p">()]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">load</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">FT_LOOGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Auto-Importing: &#39;</span> <span class="o">+</span> <span class="n">mod</span><span class="p">)</span>
+                        <span class="n">imp</span><span class="o">.</span><span class="n">load_source</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="n">mod</span><span class="p">)</span>
+                        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">FT_LOOGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">Complete&#39;</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">FT_LOOGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">Failed&#39;</span><span class="p">)</span>
+                        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">FT_LOOGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">FT_LOOGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># set virtual system variables</span>
+<span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;python_cloud&#39;</span><span class="p">,</span> <span class="n">PYTHON_MODULES</span><span class="p">)</span>
+
+<span class="c1"># execute tool load call</span>
+<span class="n">loadTools</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Alex Hatfield.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.2.
+    </div>
+  </body>
+</html>

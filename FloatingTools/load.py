@@ -2,7 +2,7 @@
 Handles all loading operations
 """
 __all__ = [
-    'loadTools'
+    'loadDependency'
 ]
 
 # python imports
@@ -35,11 +35,43 @@ _LOCK = threading.Lock()
 FloatingTools.Dashboard.setDashboardVariable('wildcards', WILDCARDS)
 
 
-def loadToolbox(handler, path):
+def loadDependency(handlerType, source, paths='/'):
+    """
+Load a dependency on a toolbox. This is meant for use in toolbox development. If you have toolbox A that is dependent on
+a tool in toolbox B, you can load toolbox B with this call from A.
+
+.. code-block:: python
+    :linenos:
+    
+    import FloatingTools
+    
+    # need hfx2 from the HatfieldFX repository on github
+    FloatingTools.loadDependency('GitHub', source={'Username': 'aldmbmtl', 'Repository': 'HatfieldFX'})
+    
+    # now hfx2 is loaded for your toolbox to use.
+    import hfx2
+
+:param handlerType: Must be a string in the handler types
+:param source: dict with the fields and values for the target toolbox
+:param paths: iterable of paths in the toolbox that you are looking to load
+    """
+    # pull the toolbox
+    box = FloatingTools.createToolbox(handlerType, source)
+
+    # loop over the paths passed
+
+    if isinstance(paths, basestring):
+        paths = list(paths)
+
+    for path in paths:
+        loadToolbox(box, path)
+
+def loadToolbox(handler, path, threaded=False):
     """
     --private--
     :return: 
     """
+
     global PYTHON_MODULES
 
     # add this repo to the registered python modules
@@ -98,7 +130,8 @@ def loadToolbox(handler, path):
     endTime = time.time()
 
     # log the data and update
-    _LOCK.acquire()
+    if threaded:
+        _LOCK.acquire()
     sourceData = FloatingTools.sourceData()
     for source in sourceData:
         if source['name'] != handler.name():
@@ -109,7 +142,8 @@ def loadToolbox(handler, path):
         break
 
     FloatingTools.updateSources(sourceData)
-    _LOCK.release()
+    if threaded:
+        _LOCK.release()
 
 
 def loadTools():
@@ -179,7 +213,7 @@ def loadTools():
             if FloatingTools.wrapper() and not FloatingTools.wrapper().MULTI_THREAD:
                 loadToolbox(toolbox, path)
             else:
-                t = threading.Thread(name=toolbox.name(), target=loadToolbox, args=(toolbox, path))
+                t = threading.Thread(name=toolbox.name(), target=loadToolbox, args=(toolbox, path, True))
                 t.setDaemon(True)
                 threads.append(t)
                 t.start()
@@ -207,3 +241,6 @@ def loadTools():
 
 # set virtual system variables
 FloatingTools.Dashboard.setDashboardVariable('python_cloud', PYTHON_MODULES)
+
+# execute tool load call
+loadTools()

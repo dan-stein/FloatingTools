@@ -75,7 +75,6 @@ try:
     # post install imports
     from connect import *
     from Services import *
-    from load import *
 
     # verify the login data.
     if verifyLogin() is False:
@@ -85,7 +84,7 @@ try:
     install.loadVersion()
 
     # load tool call
-    loadTools()
+    from load import *
 
 except socket.gaierror:
     FT_LOOGER.error('No connection to Github could be established. Check your internet connection.')

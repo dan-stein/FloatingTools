@@ -3,6 +3,30 @@ FloatingTools API
 
 FloatingTools provides a simple API for extending the capabilities as you see fit.
 
+Handling Dependencies
+---------------------
+If your toolbox depends on another toolbox, you can load a dependency link that will download and install the other
+toolbox using loadDependency().
+
+Lets say I am writing a module in my toolbox called foo.py inside my toolbox called "aldmbmtl/newToolbox". I want to use
+the hfx2 module from the "aldmbmtl/HatfieldFX" toolbox on GitHub. To load "aldmbmtl/HatfieldFX", I call the
+loadDependency() as an import.
+
+.. code-block:: python
+    :linenos:
+
+    import FloatingTools
+
+    # need hfx2 from the HatfieldFX repository on github
+    FloatingTools.loadDependency('GitHub', source={'Username': 'aldmbmtl', 'Repository': 'HatfieldFX'})
+
+    # now hfx2 is loaded for your toolbox to use.
+    import hfx2
+
+This is true with any toolbox that can be loaded.
+
+.. autofunction:: FloatingTools.loadDependency
+
 Dashboard
 ---------
 Dashboard is the web front end for FloatingTools. Direct modification is not allowed, but you can make calls to launch

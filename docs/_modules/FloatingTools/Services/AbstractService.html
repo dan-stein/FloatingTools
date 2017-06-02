@@ -283,6 +283,9 @@
         <span class="c1"># delete directory</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">installDirectory</span><span class="p">(),</span> <span class="n">root</span><span class="p">))</span>
 
+        <span class="c1"># close the zipfile</span>
+        <span class="n">zipRef</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
         <span class="c1"># remove old zip</span>
         <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">zipPath</span><span class="p">)</span></div>
 
