@@ -136,15 +136,48 @@
                                         Load Time
                                         <ul>
                                         {% for app in settings["loadTimes"] %}
-                                            {% if app == open_app %}
-                                                <li>
-                                                    <font color="green"><strong>{{ app }}:</strong></font> {{ settings["loadTimes"][app] }} seconds
-                                                </li>
+
+                                            {% if app == "Generic" %}
+                                                {% if app == open_app %}
+                                                    <li>
+                                                        <font color="green"><img src="https://www.python.org/static/opengraph-icon-200x200.png" width="30"><strong>{{ app }}:</strong></font> {{ settings["loadTimes"][app] }} seconds
+                                                    </li>
+                                                {% else %}
+                                                    <li>
+                                                        <img src="https://www.python.org/static/opengraph-icon-200x200.png" width="30"><strong>{{ app }}:</strong> {{ settings["loadTimes"][app] }} seconds
+                                                    </li>
+                                                {% endif %}
+
                                             {% else %}
-                                                <li>
-                                                    <strong>{{ app }}:</strong> {{ settings["loadTimes"][app] }} seconds
-                                                </li>
+
+                                                {% for wrapper in wrappers %}
+                                                    {% if wrapper.NAME == app %}
+                                                        {% if wrapper.APP_ICON != None %}
+                                                            {% if app == open_app %}
+                                                                <li>
+                                                                    <font color="green"><img src="{{ wrapper.APP_ICON }}" width="30" class="img-circle" alt="Cinque Terre"><strong> {{ app }}:</strong></font> {{ settings["loadTimes"][app] }} seconds
+                                                                </li>
+                                                            {% else %}
+                                                                <li>
+                                                                    <img src="{{ wrapper.APP_ICON }}" width="30" class="img-circle" alt="Cinque Terre"><strong> {{ app }}:</strong> {{ settings["loadTimes"][app] }} seconds
+                                                                </li>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {% if app == open_app %}
+                                                                <li>
+                                                                    <font color="green"><strong>{{ app }}:</strong></font> {{ settings["loadTimes"][app] }} seconds
+                                                                </li>
+                                                            {% else %}
+                                                                <li>
+                                                                    <strong>{{ app }}:</strong> {{ settings["loadTimes"][app] }} seconds
+                                                                </li>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+
                                             {% endif %}
+
                                         {% endfor %}
                                         </ul>
                                     </li>

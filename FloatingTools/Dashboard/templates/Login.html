@@ -1,60 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Floating Tools - Login</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-</head>
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
 
-<body>
-
+{% block body %}
 <div class="container">
     <div class="well well-sm">
-
-        <h2>Floating Tools</h2>
-
-        <span class="help-block">Login to
-            <img src="https://assets-cdn.github.com/images/modules/logos_page/GitHub-Logo.png" width="50">
-        </span>
-
-        <hr>
+        <center><h2>Floating Tools</h2></center>
+        <center><span class="help-block">Login with your GitHub account information</span></center>
 
         {% if loggedIn == True %}
-        <form action="/shutdown">
-            <div class="alert alert-success">
-                <strong>Logged in!</strong> Click the Back to App button and close this tab to continue.
-            </div>
-            <input type="submit" name="back-to-app" value="Back to App">
-        </form>
+            <form action="/shutdown">
+                    <div class="form-group row">
+                        <div class="col-xs-4">
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="alert alert-success">
+                                <center><strong>Logged in!</strong> Click the continue button and close this tab.</center>
+                            </div>
+                            <center><input type="submit" name="continue" value="Continue" class="btn btn-success"></center>
+                        </div>
+                        <div class="col-xs-4">
+                        </div>
+                    </div>
+            </form>
         {% else %}
-        <form action="/checkLogin">
+            <form action="/checkLogin">
+                {% if invalidLogin == False %}
 
-            {% if invalidLogin == False %}
-            <div class="alert alert-danger">
-                Username: <input type="text" name="username" class="form-control">
-                Password: <input type="password" name="password" class="form-control">
+                    <div class="form-group row">
+                        <div class="col-xs-4">
+                        </div>
+                        <div class="col-xs-4">
+                            <center><a data-toggle="collapse" data-target="#login_info">Invalid Log In</a></center>
+                            <center><div id="login_info" class="collapse">This should be the login for your GitHub account.</div></center>
+                        </div>
+                        <div class="col-xs-4">
+                        </div>
+                    </div>
 
-                <button type="button" data-toggle="collapse" data-target="#login_info" name="Invalid Login">Invalid
-                    Login
-                </button>
-                <div id="login_info" class="collapse">
-                    This should be the login for your GitHub account.
-                </div>
-            </div>
+                    <div class="form-group row">
+                        <div class="col-xs-4">
+                        </div>
+                        <div class="col-xs-4">
+                            <input type="text" class="form-control" name="username" placeholder="Username">
+                        </div>
+                        <div class="col-xs-4">
+                        </div>
+                    </div>
 
-            {% else %}
-            Username: <input type="text" name="username" class="form-control">
-            Password: <input type="password" name="password" class="form-control">
-            {% endif %}
-            <hr>
-            <input type="submit" name="login" value="Login">
-        </form>
+                    <div class="form-group row">
+                        <div class="col-xs-4">
+                        </div>
+                        <div class="col-xs-4">
+                            <input type="password" class="form-control" name="password" placeholder="Password">
+                        </div>
+                        <div class="col-xs-4">
+                        </div>
+                    </div>
+
+                {% else %}
+
+                    <div class="form-group row">
+                        <div class="col-xs-4">
+                        </div>
+                        <div class="col-xs-4">
+                            <input type="text" class="form-control" name="username" placeholder="Username">
+                        </div>
+                        <div class="col-xs-4">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-xs-4">
+                        </div>
+                        <div class="col-xs-4">
+                            <input type="password" class="form-control" name="password" placeholder="Password">
+                        </div>
+                        <div class="col-xs-4">
+                        </div>
+                    </div>
+
+                {% endif %}
+                    <center><input type="submit" name="login" value="Login" class="btn btn-success"></center>
+            </form>
         {% endif %}
     </div>
 </div>
-
-</body>
-</html>
+{% endblock %}

@@ -12,7 +12,7 @@ class NukeWrapper(AbstractApplication):
     # Wrapper settings
     FILE_TYPES = ['.nk', '.py', '.gizmo']
     NAME = 'Nuke'
-    APP_ICON = 'http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg'
+    APP_ICON = 'https://s3.amazonaws.com/fxhome-static/images/product/ignite-pro-2017/foundry-nuke.png'
     ARGS = ['-t']
     MULTI_THREAD = True
 

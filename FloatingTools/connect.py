@@ -31,11 +31,14 @@ def verifyLogin():
 
     loginInfo = FloatingTools.userData()['Login']
     if loginInfo['username'] is None or loginInfo['password'] is None:
+        FloatingTools.Dashboard.setDashboardVariable('logged_in', False)
         return False
     try:
         HUB = Github(loginInfo['username'], loginInfo['password'])
         for repo in HUB.get_user().get_repos():
             break
+        FloatingTools.Dashboard.setDashboardVariable('logged_in', True)
         return True
     except BadCredentialsException:
+        FloatingTools.Dashboard.setDashboardVariable('logged_in', False)
         return False

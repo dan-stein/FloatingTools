@@ -14,7 +14,7 @@ cmds = None
 class MayaWrapper(AbstractApplication):
     FILE_TYPES = ['.ma', '.mb', '.py']
     NAME = 'Maya'
-    APP_ICON = 'http://area.autodesk.com/area_v2/assets/img/product/autodesk-maya.png'
+    APP_ICON = 'http://infocenter.com.qa/images/Autodesk-Maya-logo-256x256.png'
     ARGS = ['-script']
 
     MENUS = {}

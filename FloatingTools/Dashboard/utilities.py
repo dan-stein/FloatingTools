@@ -8,12 +8,11 @@ import FloatingTools
 import webbrowser
 
 # flask imports
-from flask import request, Flask, redirect
+from flask import request, Flask
 
 # python imports
 import os
 from threading import Thread
-import subprocess
 
 # -- directories
 DASHBOARD_DIRECTORY_ROOT = os.path.dirname(__file__).replace('\\', '/')

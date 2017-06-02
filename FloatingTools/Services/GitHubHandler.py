@@ -5,7 +5,6 @@ Github handler class
 import os
 import json
 import shutil
-import zipfile
 import webbrowser
 from functools import partial
 
