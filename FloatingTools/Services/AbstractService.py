@@ -233,6 +233,9 @@ Represents a FloatingTools compatible toolbox service
         # delete directory
         shutil.rmtree(os.path.join(self.installDirectory(), root))
 
+        # close the zipfile
+        zipRef.close()
+
         # remove old zip
         os.unlink(zipPath)
 
