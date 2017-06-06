@@ -40,11 +40,11 @@
                         <h4 class="modal-title">Add {{ service }} Toolbox</h4>
                     </div>
                     <div class="modal-body">
-                        <input type="text" name="service" value="{{ service }}" id="{{ service }}" hidden>
+                        <input name="service" value="{{ service }}" id="{{ service }}" hidden>
                         {% for field in handler.SOURCE_FIELDS_ORDER[handler.__name__] %}
                             <label for="{{ field }}">{{ field }}:</label>
                             <br>
-                            <input type="text" id="{{ field }}" name="{{ field }}">
+                            <input id="{{ field }}" name="{{ field }}">
                             <br>
                         {% endfor %}
                     </div>

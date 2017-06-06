@@ -3,8 +3,60 @@ FloatingTools API
 
 FloatingTools provides a simple API for extending the capabilities as you see fit.
 
+Set up
+------
+
+Like everything in FloatingTools, setting up your extensions is meant to be as easy as possible. First will will go over
+the load up order so we further understand where in time your extensions will be loaded. The following list is the order
+in which FloatingTools initializes.
+
+ - Dashboard and the Dashboard.ui api
+ - Wrapper, Wrapper defaults, and its api
+ - Services, Services defaults, and its api
+ - saved settings (if there are none, it will create a default set)
+ - load the connection api in preparation for calling to GitHub
+ - verify the log in information (if there is no valid log in, it will ask you to log in here)
+ - validate the currently running install of FloatingTools and download/install any version differences
+ - LOAD ALL 3RD PARTY EXTENSIONS
+ - load tools from the saved source information
+
+As you can see, the extensions are meant for adding only functionality to the loading of tools. Adding Services,
+Wrappers, and custom Dashboard plugins all should be written here.
+
+.. note::
+    Keep in mind, the tools are loaded *after* the extensions are loaded. So, an extension can not use a library being
+    loaded from FloatingTools.
+
+Extension Paths
+^^^^^^^^^^^^^^^
+
+By default, FloatingTools will look in 1 of 2 places for any file named ft_init.py. The ft_init.py will be automatically
+imported. The first place it will look will be for an environment variable called FT_PATH. This should be a path on dist
+that contains your first ft_init.py. If this is not in your environment, it will create a directory on the users disk in
+the user directory called .ft. This is where you can add your first ft_init.py.
+
+.. note::
+     - FT_PATH variable in the environment
+     - .ft folder in the home directory
+
+Once you have created your ft_init.py, you may want to start pointing to other places on disk for more extensions. We
+provide the addExtensionPath function.
+
+.. autofunction:: FloatingTools.addExtensionPath
+
+.. code-block:: python
+    :linenos:
+
+    # ft_init.py
+    import FloatingTools
+
+    FloatingTools.addExtensionPath('some/place/with/ft_init.py')
+
+Now you're ready to start extending FloatingTools using these files!
+
 Handling Dependencies
----------------------
+^^^^^^^^^^^^^^^^^^^^^
+
 If your toolbox depends on another toolbox, you can load a dependency link that will download and install the other
 toolbox using loadDependency().
 

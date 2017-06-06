@@ -1,3 +1,5 @@
+import FloatingTools
+
 # flask imports
 from flask import render_template
 
@@ -11,4 +13,4 @@ def renderHome():
     Render home page
     :return: 
     """
-    return render_template('Home.html')
+    return render_template('Home.html', **FloatingTools.Dashboard.dashboardEnv())

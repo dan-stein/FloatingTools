@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FloatingTools.Wrappers.AbstractApp &#8212; FloatingTools v0.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     'v0.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for FloatingTools.Wrappers.AbstractApp</h1><div class="highlight"><pre>
+<span></span><span class="c1"># FloatingTools imports</span>
+<span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+
+<div class="viewcode-block" id="wrapper"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.wrapper">[docs]</a><span class="k">def</span> <span class="nf">wrapper</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Wrapper object for the context of the application you are working in. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">WRAPPER</span></div>
+
+
+<div class="viewcode-block" id="wrapperName"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.wrapperName">[docs]</a><span class="k">def</span> <span class="nf">wrapperName</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Get the name of the current wrapper/application you are in. If there is no wrapper loaded, it assumes you are </span>
+<span class="sd">running FloatingTools outside the context of any application and in straight python. If this is the case, it returns</span>
+<span class="sd">&quot;Generic&quot; signaling you are in the os version of FloatingTools. </span>
+
+<span class="sd">OTHERWISE</span>
+
+<span class="sd">It will return the name of the wrapper application you are in.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39;Generic&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">wrapper</span><span class="p">()</span> <span class="k">else</span> <span class="n">wrapper</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="setWrapper"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.setWrapper">[docs]</a><span class="k">def</span> <span class="nf">setWrapper</span><span class="p">(</span><span class="n">klass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Register the Wrapper class for the application you are in.</span>
+<span class="sd">    </span>
+<span class="sd">    :param klass:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">WRAPPER</span> <span class="o">=</span> <span class="n">klass</span></div>
+
+
+<div class="viewcode-block" id="AbstractApplication"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication">[docs]</a><span class="k">class</span> <span class="nc">AbstractApplication</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Abstraction class for wrapping an application so FloatingTools can interact with the application it was loaded in.</span>
+
+<span class="sd">Wrappers have specific class variables that must be set to help define how FloatingTools should handle the application </span>
+<span class="sd">at load up. </span>
+
+
+<span class="sd">.. code-block:: python</span>
+<span class="sd">    :linenos:</span>
+<span class="sd">    </span>
+<span class="sd">    class AbstractApplication(object):</span>
+<span class="sd">        # Default settings</span>
+<span class="sd">        FILE_TYPES      = []        # The file extensions associated with this application</span>
+<span class="sd">        NAME            = None      # Name of the application (REQUIRED)</span>
+<span class="sd">        APP_ICON        = None      # The HTML icon for the application (Just for looks)</span>
+<span class="sd">        EXECUTABLE      = None      # This is the executable path that the application would use to run its Python Interpreter.</span>
+<span class="sd">        ARGS            = None      # sometimes you need to pass flags to the executable to execute a Python Script</span>
+<span class="sd">        MULTI_THREAD    = False     # Set whether the application supports Python multi threading</span>
+
+<span class="sd">You can modify all these settings...</span>
+
+<span class="sd">.. code-block:: python</span>
+<span class="sd">    :linenos:</span>
+<span class="sd">    </span>
+<span class="sd">    class NukeWrapper(AbstractApplication):</span>
+<span class="sd">        # Wrapper settings</span>
+<span class="sd">        FILE_TYPES      = [&#39;.nk&#39;, &#39;.py&#39;, &#39;.gizmo&#39;]</span>
+<span class="sd">        NAME            = &#39;Nuke&#39;</span>
+<span class="sd">        APP_ICON        = &#39;http://www.vfxhive.com/images/products_img/FOUNDRYNUKE.jpg&#39;</span>
+<span class="sd">        ARGS            = [&#39;-t&#39;]</span>
+<span class="sd">        MULTI_THREAD    = True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FILE_TYPES</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">NAME</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">APP_ICON</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">EXECUTABLE</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ARGS</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">MULTI_THREAD</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">appTest</span><span class="p">()</span>
+        <span class="n">setWrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="AbstractApplication.appTest"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication.appTest">[docs]</a>    <span class="k">def</span> <span class="nf">appTest</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This should ideally return True if this is the wrapper for the app you&#39;re in. If you don&#39;t do this, FloatingTools wraps </span>
+<span class="sd">the function and if it fails, assumes this is not the wrapper for the application it is in.</span>
+<span class="sd">        </span>
+<span class="sd">.. code-block:: python</span>
+<span class="sd">    :linenos:</span>
+
+<span class="sd">    class NukeWrapper(AbstractApplication):</span>
+<span class="sd">        def appTest():</span>
+<span class="sd">            try:</span>
+<span class="sd">                import nuke</span>
+<span class="sd">                return True</span>
+<span class="sd">            except ImportError:</span>
+<span class="sd">                return False</span>
+<span class="sd">        </span>
+<span class="sd">        # --- OR --- #</span>
+<span class="sd">        </span>
+<span class="sd">        def appTest():</span>
+<span class="sd">            import nuke</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="AbstractApplication.addMenuSeparator"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication.addMenuSeparator">[docs]</a>    <span class="k">def</span> <span class="nf">addMenuSeparator</span><span class="p">(</span><span class="n">menuPath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">If your application allows for UI separators, define the behavior here.</span>
+
+<span class="sd">:param menuPath: Path to add the separator to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="AbstractApplication.addMenuEntry"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication.addMenuEntry">[docs]</a>    <span class="k">def</span> <span class="nf">addMenuEntry</span><span class="p">(</span><span class="n">menuPath</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">MUST BE SUB-CLASSED</span>
+
+<span class="sd">Each application requires the certain calls to modify the UI. FloatingTools only targets the top bar of the </span>
+<span class="sd">application you are trying to modify.</span>
+<span class="sd">        </span>
+<span class="sd">.. code-block:: python</span>
+<span class="sd">    :linenos:</span>
+
+<span class="sd">    class NukeWrapper(AbstractApplication):</span>
+
+<span class="sd">        def addMenuEntry(menuPath, command=None, icon=None, enabled=True):</span>
+<span class="sd">            # from NukeWrapper</span>
+<span class="sd">            nuke.executeInMainThread(nuke.menu(menu).addCommand, args=(menuPath, command), kwargs={&#39;icon&#39;: icon})</span>
+
+<span class="sd">.. warning::</span>
+<span class="sd">    </span>
+<span class="sd">    If your wrapper supports multi threading, you may need to make sure you execute the application specific command in </span>
+<span class="sd">    the main thread. In the example above, you can see I had to use nuke.executeInMainThread. The reason being this is </span>
+<span class="sd">    all called from the spawned threads at the load up process.</span>
+
+<span class="sd">:param enabled: bool</span>
+<span class="sd">:param menuPath: a string laying out how the menu to the command should be laid out. Example: &#39;top/sub/command&#39;</span>
+<span class="sd">:param command: a callable to be executed</span>
+<span class="sd">:param icon: optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="AbstractApplication.loadFile"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication.loadFile">[docs]</a>    <span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="n">filePath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Each application has a special way of importing data. For example, in nuke you can take the file path and paste</span>
+<span class="sd">it into the the node graph. You would define that behavior here.</span>
+
+<span class="sd">The file path is passed to you from the loader in FloatingTools. All you need to do is handle it how you&#39;d like.</span>
+<span class="sd">        </span>
+<span class="sd">.. code-block:: python</span>
+<span class="sd">    :linenos:</span>
+<span class="sd">    </span>
+<span class="sd">    def loadFile(self, filePath):</span>
+<span class="sd">        # from NukeWrapper</span>
+<span class="sd">        basename, ext = os.path.splitext(filePath)</span>
+<span class="sd">    </span>
+<span class="sd">        # nk handler</span>
+<span class="sd">        if ext in [&#39;.nk&#39;, &#39;.gizmo&#39;]:</span>
+<span class="sd">        </span>
+<span class="sd">            # create node</span>
+<span class="sd">            nuke.nodePaste(filePath)</span>
+<span class="sd">        </span>
+<span class="sd">:param filePath: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="AbstractApplication.fileTypes"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication.fileTypes">[docs]</a>    <span class="k">def</span> <span class="nf">fileTypes</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Return the file types associated with this application.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FILE_TYPES</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="AbstractApplication.name"><a class="viewcode-back" href="../../../wrappers.html#FloatingTools.AbstractApplication.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Get the name of the current application.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NAME</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Alex Hatfield.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.2.
+    </div>
+  </body>
+</html>

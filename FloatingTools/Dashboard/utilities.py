@@ -12,6 +12,7 @@ from flask import request, Flask
 
 # python imports
 import os
+from getpass import getuser
 from threading import Thread
 
 # -- directories
@@ -22,7 +23,7 @@ DASHBOARD_TEMPLATES = DASHBOARD_DIRECTORY_ROOT + '/templates'
 SERVER = Flask('Floating Tools Dashboard', template_folder=DASHBOARD_TEMPLATES)
 
 # -- variables
-HOST = '127.0.0.1'
+HOST = '0.0.0.0'
 PORT = 5000
 ADDRESS = 'http://%(HOST)s:%(PORT)s/' % locals()
 

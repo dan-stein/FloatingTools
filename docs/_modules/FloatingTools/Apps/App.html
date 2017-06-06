@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FloatingTools.Apps.App &#8212; FloatingTools v0.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     'v0.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for FloatingTools.Apps.App</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Base App class for FloatingTools Apps that interact with Dashboard by piggy backing on the networking provided by</span>
+<span class="sd">FloatingTools.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># FT imports</span>
+<span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="c1"># flask imports</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">render_template_string</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">redirect</span>
+
+
+<span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;app_plugins&#39;</span><span class="p">,</span> <span class="p">[])</span>
+
+<div class="viewcode-block" id="App"><a class="viewcode-back" href="../../../apps.html#FloatingTools.App">[docs]</a><span class="k">class</span> <span class="nc">App</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Apps are written to interact directly with FloatingTools through the Dashboard web interface.</span>
+
+<span class="sd">You must register your app by instantiating an instance of it. This instance is the object Dashboard will handle. The</span>
+<span class="sd">name of your app will be shown in the app list in Dashboard.</span>
+
+<span class="sd">.. code-block:: python</span>
+<span class="sd">    :linenos:</span>
+
+<span class="sd">    import FloatingTools</span>
+
+<span class="sd">    class MyApp(FloatingTools.App):</span>
+<span class="sd">        pass</span>
+
+<span class="sd">    MyApp(&#39;MyApp&#39;)</span>
+
+<span class="sd">UIs must be built in the App.BuildUI function via redefine. Doing this in the __init__ will not work unless the UI is</span>
+<span class="sd">static.</span>
+
+<span class="sd">.. code-block:: python</span>
+<span class="sd">    :linenos:</span>
+
+<span class="sd">    import FloatingTools</span>
+
+<span class="sd">    class MyApp(FloatingTools.App):</span>
+<span class="sd">        def buildUI(self):</span>
+<span class="sd">            ui code here...</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># class variables</span>
+    <span class="n">APPS</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># templates</span>
+    <span class="n">HOME_PAGE_TEMPLATE</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">@FloatingTools.Dashboard.SERVER.route(&#39;/</span><span class="si">%(name)s</span><span class="s1">&#39;)</span>
+<span class="s1">def </span><span class="si">%(name)s</span><span class="s1">_home():</span>
+<span class="s1">    return render_template_string(FloatingTools.App.APPS[&#39;</span><span class="si">%(name)s</span><span class="s1">&#39;].page().render(), **FloatingTools.Dashboard.dashboardEnv())</span>
+<span class="s1">    &#39;&#39;&#39;</span>
+
+    <span class="n">FUNCTION_PAGE_TEMPLATE</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">@FloatingTools.Dashboard.SERVER.route(&#39;/</span><span class="si">%(name)s</span><span class="s1">/</span><span class="si">%(function)s</span><span class="s1">&#39;)</span>
+<span class="s1">def </span><span class="si">%(name)s%(function)s</span><span class="s1">():</span>
+<span class="s1">    result = FloatingTools.App.APPS[&#39;</span><span class="si">%(name)s</span><span class="s1">&#39;].</span><span class="si">%(function)s</span><span class="s1">()</span>
+<span class="s1">    if not result:</span>
+<span class="s1">        return render_template_string(FloatingTools.App.APPS[&#39;</span><span class="si">%(name)s</span><span class="s1">&#39;].page().render(), **FloatingTools.Dashboard.dashboardEnv())</span>
+<span class="s1">    else:</span>
+<span class="s1">        return render_template_string(result, **FloatingTools.Dashboard.dashboardEnv())</span>
+<span class="s1">        &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:param name: str for the name of your application</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># instance variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">Page</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="c1"># build ui</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buildUI</span><span class="p">()</span>
+
+        <span class="c1"># register the app</span>
+        <span class="n">added</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">()[</span><span class="s1">&#39;app_plugins&#39;</span><span class="p">]</span>
+        <span class="n">added</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;app_plugins&#39;</span><span class="p">,</span> <span class="n">added</span><span class="p">)</span>
+
+        <span class="c1"># register page with the Dashboard server.</span>
+        <span class="n">exec</span> <span class="bp">self</span><span class="o">.</span><span class="n">HOME_PAGE_TEMPLATE</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+
+        <span class="c1"># register app</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">APPS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="App.refresh"><a class="viewcode-back" href="../../../apps.html#FloatingTools.App.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Refreshing the page will remove the previous Page element and redraw the ui on a fresh page as to eliminate UI</span>
+<span class="sd">repeating.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">Page</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buildUI</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="App.redirect"><a class="viewcode-back" href="../../../apps.html#FloatingTools.App.redirect">[docs]</a>    <span class="k">def</span> <span class="nf">redirect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">redirect to a different page</span>
+
+<span class="sd">:param path:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="App.passVariables"><a class="viewcode-back" href="../../../apps.html#FloatingTools.App.passVariables">[docs]</a>    <span class="k">def</span> <span class="nf">passVariables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">In order to pass variables to a function that gets called through a URL, you must use this function.</span>
+
+<span class="sd">.. code-block:: python</span>
+<span class="sd">    :linenos:</span>
+
+<span class="sd">    import FloatingTools</span>
+
+<span class="sd">    class MyApp(FloatingTools.App):</span>
+<span class="sd">        def buildUI(self):</span>
+<span class="sd">            FloatingTools.Link(&#39;print the &quot;var&quot; variable&#39;, &#39;/url/printFunction&#39; + self.passVariables(var=&#39;foo&#39;))</span>
+
+<span class="sd">        def printFunction(self):</span>
+<span class="sd">            print self.arguments()[&#39;var&#39;]</span>
+
+<span class="sd">:param **kwargs: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">var</span><span class="p">])</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="s1">&#39;?&#39;</span> <span class="o">+</span> <span class="s1">&#39;&amp;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="App.arguments"><a class="viewcode-back" href="../../../apps.html#FloatingTools.App.arguments">[docs]</a>    <span class="k">def</span> <span class="nf">arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Arguments passed from the website</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">dic</span> <span class="ow">in</span> <span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">dic</span><span class="p">:</span>
+                    <span class="n">value</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">dic</span><span class="p">[</span><span class="n">val</span><span class="p">]</span>
+
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span></div>
+
+<div class="viewcode-block" id="App.name"><a class="viewcode-back" href="../../../apps.html#FloatingTools.App.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Get the name of the app</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span></div>
+
+<div class="viewcode-block" id="App.page"><a class="viewcode-back" href="../../../apps.html#FloatingTools.App.page">[docs]</a>    <span class="k">def</span> <span class="nf">page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Get the page object that represents the Dashboard.Page associated with the application.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_page</span></div>
+
+<div class="viewcode-block" id="App.buildUI"><a class="viewcode-back" href="../../../apps.html#FloatingTools.App.buildUI">[docs]</a>    <span class="k">def</span> <span class="nf">buildUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Must subclass in order to build the web front end.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="App.registerFunction"><a class="viewcode-back" href="../../../apps.html#FloatingTools.App.registerFunction">[docs]</a>    <span class="k">def</span> <span class="nf">registerFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Register a function as a url</span>
+
+<span class="sd">:param function:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">exec</span> <span class="bp">self</span><span class="o">.</span><span class="n">FUNCTION_PAGE_TEMPLATE</span> <span class="o">%</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">:</span> <span class="n">function</span><span class="o">.</span><span class="vm">__name__</span><span class="p">}</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="App.connectToFunction"><a class="viewcode-back" href="../../../apps.html#FloatingTools.App.connectToFunction">[docs]</a>    <span class="k">def</span> <span class="nf">connectToFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This will create a function with pre-baked arguments in the url. Very useful for passing variables.</span>
+
+<span class="sd">.. code-block:: python</span>
+<span class="sd">    :linenos:</span>
+
+<span class="sd">    import FloatingTools</span>
+
+<span class="sd">    class MyApp(FloatingTools.App):</span>
+<span class="sd">        def buildUI(self):</span>
+<span class="sd">            FloatingTools.Link(&#39;print the &quot;var&quot; variable&#39;, self.connectToFunction(self.printFunction, var=&#39;foo&#39;))</span>
+
+<span class="sd">        def printFunction(self):</span>
+<span class="sd">            print self.arguments()[&#39;var&#39;]</span>
+
+<span class="sd">:param function:</span>
+<span class="sd">:param kwargs:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerFunction</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">function</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">passVariables</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="App.connectToElement"><a class="viewcode-back" href="../../../apps.html#FloatingTools.App.connectToElement">[docs]</a>    <span class="k">def</span> <span class="nf">connectToElement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="s1">&#39;onclick&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Connect an element through a passed flag to a callable.</span>
+
+<span class="sd">:param element: FloatingTools.Dashboard.Element</span>
+<span class="sd">:param function: callable</span>
+<span class="sd">:param flag: str this should be a type of signal like &#39;onclick&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">Element</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Must be an instance of FloatingTools.Dashboard.Element!&#39;</span><span class="p">)</span>
+
+        <span class="n">element</span><span class="o">.</span><span class="n">setAttributes</span><span class="p">({</span><span class="n">flag</span><span class="p">:</span> <span class="s2">&quot;location.href=&#39;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">function</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">passVariables</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))}</span>
+                              <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerFunction</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">element</span></div></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Alex Hatfield.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+Apps
+====
+Finally, we get to the subject of creating your own Apps inside of the FloatingTools Dashboard. The awesome thing about
+this is the capability to write UIs and networking tools easily and efficiently with as little code as possible.
+
+UI's that last
+^^^^^^^^^^^^^^
+Industries using FloatingTools are usually heavily dependant on custom UI tools. These tools are usually dependant on
+libraries that are tethered to the application you are developing in. At the time this is being written, we are all
+ready starting to see the transition from a popular library, PySide, to now PySide2. This is requiring studios to write
+wrappers and make a number of work around's just to try to salvage as much work as possible.
+
+FT Apps are removed from this issue because all of the UI is managed and generated in HTML, which lasts much longer and
+is less likely to change anytime soon in a major way. We also can use browsers that are natively cross-platform which in
+turn lowers the risk of dependency issues. The down side is you are a little more limited with how interactive your UIs
+can be. But in the case of what you will probably be wanting to do in your App, you wont need too much UI interaction.
+
+Immediate benefits:
+ * Networking on your LAN is built-in
+ * Directly linked to your currently running application
+ * Cross-platform UI
+ * Your App can be accessed by other devices like tablets, phones, etc.
+ * Powered by Twitter Bootstrap
+
+Security:
+ * Your Dashboard host is *NOT* broadcast to the web. It is only accessible by your LAN
+ * Requests to Dashboard are directly handed to a handler that *YOU* write. You have full control of the data you share.
+
+Concepts
+^^^^^^^^
+The key to understand is *integration*. Because Dashboard acts similarly to a peer to peer system, you can afford to do
+more with your integration. For example; in many project management systems, you get an email with a note of something
+that needs to be done. The way you get this note is usually via email, checking the software's homepage or in some cases
+they have integrated UI's right in the application the work is being done in. This is all great, but what if we want a
+user to be able to simply click the thing that is broke in application A and send the issue through FT directly to the
+upstream user in application B and it will not only tell them the problem, but open up the source of the problem in
+application B. This is all possible using the power of Dashboard, Application Wrappers and Apps.
+
+App
+^^^
+.. autoclass:: FloatingTools.App
+    :members:

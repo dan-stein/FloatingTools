@@ -2,7 +2,8 @@
 Dashboard handles the web interface
 """
 # dashboard imports
-from utilities import startServer, setDashboardVariable, dashboardEnv
+from ui import *
+from utilities import startServer, setDashboardVariable, dashboardEnv, SERVER
 from settings import settings
 from login import login
 from applications import applications

@@ -36,8 +36,7 @@ __all__ = [
     'PACKAGES',
     'PYTHON_EXECUTABLE',
     'DATA',
-    'Dashboard',
-    'Wrapper'
+    'Dashboard'
 ]
 
 # Global variables
@@ -67,14 +66,15 @@ try:
     Dashboard.setDashboardVariable('python_location', PYTHON_EXECUTABLE)
 
     # import wrappers and services
-    from Wrapper import *
+    from Wrappers import *
+    from Services import *
+    from Apps import App
 
     # imports
     from settings import *
 
     # post install imports
     from connect import *
-    from Services import *
 
     # verify the login data.
     if verifyLogin() is False:

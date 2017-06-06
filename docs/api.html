@@ -57,8 +57,73 @@
   <div class="section" id="floatingtools-api">
 <h1>FloatingTools API<a class="headerlink" href="#floatingtools-api" title="Permalink to this headline">¶</a></h1>
 <p>FloatingTools provides a simple API for extending the capabilities as you see fit.</p>
+<div class="section" id="set-up">
+<h2>Set up<a class="headerlink" href="#set-up" title="Permalink to this headline">¶</a></h2>
+<p>Like everything in FloatingTools, setting up your extensions is meant to be as easy as possible. First will will go over
+the load up order so we further understand where in time your extensions will be loaded. The following list is the order
+in which FloatingTools initializes.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Dashboard and the Dashboard.ui api</li>
+<li>Wrapper, Wrapper defaults, and its api</li>
+<li>Services, Services defaults, and its api</li>
+<li>saved settings (if there are none, it will create a default set)</li>
+<li>load the connection api in preparation for calling to GitHub</li>
+<li>verify the log in information (if there is no valid log in, it will ask you to log in here)</li>
+<li>validate the currently running install of FloatingTools and download/install any version differences</li>
+<li>LOAD ALL 3RD PARTY EXTENSIONS</li>
+<li>load tools from the saved source information</li>
+</ul>
+</div></blockquote>
+<p>As you can see, the extensions are meant for adding only functionality to the loading of tools. Adding Services,
+Wrappers, and custom Dashboard plugins all should be written here.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Keep in mind, the tools are loaded <em>after</em> the extensions are loaded. So, an extension can not use a library being
+loaded from FloatingTools.</p>
+</div>
+<div class="section" id="extension-paths">
+<h3>Extension Paths<a class="headerlink" href="#extension-paths" title="Permalink to this headline">¶</a></h3>
+<p>By default, FloatingTools will look in 1 of 2 places for any file named ft_init.py. The ft_init.py will be automatically
+imported. The first place it will look will be for an environment variable called FT_PATH. This should be a path on dist
+that contains your first ft_init.py. If this is not in your environment, it will create a directory on the users disk in
+the user directory called .ft. This is where you can add your first ft_init.py.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>FT_PATH variable in the environment</li>
+<li>.ft folder in the home directory</li>
+</ul>
+</div>
+<p>Once you have created your ft_init.py, you may want to start pointing to other places on disk for more extensions. We
+provide the addExtensionPath function.</p>
+<dl class="function">
+<dt id="FloatingTools.addExtensionPath">
+<code class="descclassname">FloatingTools.</code><code class="descname">addExtensionPath</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/load.html#addExtensionPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.addExtensionPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a custom extensions path for your scripts and modifications to FloatingTools.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> &#8211; str to a place on disk.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># ft_init.py</span>
+<span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="n">FloatingTools</span><span class="o">.</span><span class="n">addExtensionPath</span><span class="p">(</span><span class="s1">&#39;some/place/with/ft_init.py&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Now you&#8217;re ready to start extending FloatingTools using these files!</p>
+</div>
 <div class="section" id="handling-dependencies">
-<h2>Handling Dependencies<a class="headerlink" href="#handling-dependencies" title="Permalink to this headline">¶</a></h2>
+<h3>Handling Dependencies<a class="headerlink" href="#handling-dependencies" title="Permalink to this headline">¶</a></h3>
 <p>If your toolbox depends on another toolbox, you can load a dependency link that will download and install the other
 toolbox using loadDependency().</p>
 <p>Lets say I am writing a module in my toolbox called foo.py inside my toolbox called &#8220;aldmbmtl/newToolbox&#8221;. I want to use
@@ -115,6 +180,7 @@ a tool in toolbox B, you can load toolbox B with this call from A.</p>
 </table>
 </dd></dl>
 
+</div>
 </div>
 <div class="section" id="dashboard">
 <h2>Dashboard<a class="headerlink" href="#dashboard" title="Permalink to this headline">¶</a></h2>
@@ -204,7 +270,11 @@ interaction with FloatingTools.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">FloatingTools API</a><ul>
+<li><a class="reference internal" href="#set-up">Set up</a><ul>
+<li><a class="reference internal" href="#extension-paths">Extension Paths</a></li>
 <li><a class="reference internal" href="#handling-dependencies">Handling Dependencies</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#dashboard">Dashboard</a></li>
 <li><a class="reference internal" href="#settings">Settings</a></li>
 </ul>

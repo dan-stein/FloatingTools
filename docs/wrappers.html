@@ -63,13 +63,13 @@ exactly the same as it would in any other application.</p>
 <h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="FloatingTools.wrapper">
-<code class="descclassname">FloatingTools.</code><code class="descname">wrapper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#wrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.wrapper" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FloatingTools.</code><code class="descname">wrapper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrappers/AbstractApp.html#wrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.wrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper object for the context of the application you are working in.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="FloatingTools.wrapperName">
-<code class="descclassname">FloatingTools.</code><code class="descname">wrapperName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#wrapperName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.wrapperName" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FloatingTools.</code><code class="descname">wrapperName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrappers/AbstractApp.html#wrapperName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.wrapperName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the name of the current wrapper/application you are in. If there is no wrapper loaded, it assumes you are 
 running FloatingTools outside the context of any application and in straight python. If this is the case, it returns
 &#8220;Generic&#8221; signaling you are in the os version of FloatingTools.</p>
@@ -79,7 +79,7 @@ running FloatingTools outside the context of any application and in straight pyt
 
 <dl class="function">
 <dt id="FloatingTools.setWrapper">
-<code class="descclassname">FloatingTools.</code><code class="descname">setWrapper</code><span class="sig-paren">(</span><em>klass</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#setWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.setWrapper" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FloatingTools.</code><code class="descname">setWrapper</code><span class="sig-paren">(</span><em>klass</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrappers/AbstractApp.html#setWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.setWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register the Wrapper class for the application you are in.</p>
 <blockquote>
 <div><table class="docutils field-list" frame="void" rules="none">
@@ -98,7 +98,7 @@ running FloatingTools outside the context of any application and in straight pyt
 <h2>AbstractApplication<a class="headerlink" href="#abstractapplication" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="FloatingTools.AbstractApplication">
-<em class="property">class </em><code class="descclassname">FloatingTools.</code><code class="descname">AbstractApplication</code><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">FloatingTools.</code><code class="descname">AbstractApplication</code><a class="reference internal" href="_modules/FloatingTools/Wrappers/AbstractApp.html#AbstractApplication"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstraction class for wrapping an application so FloatingTools can interact with the application it was loaded in.</p>
 <p>Wrappers have specific class variables that must be set to help define how FloatingTools should handle the application 
 at load up.</p>
@@ -137,7 +137,7 @@ at load up.</p>
 </td></tr></table></div>
 <dl class="staticmethod">
 <dt id="FloatingTools.AbstractApplication.addMenuEntry">
-<em class="property">static </em><code class="descname">addMenuEntry</code><span class="sig-paren">(</span><em>menuPath</em>, <em>command=None</em>, <em>icon=None</em>, <em>enabled=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.addMenuEntry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.addMenuEntry" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">addMenuEntry</code><span class="sig-paren">(</span><em>menuPath</em>, <em>command=None</em>, <em>icon=None</em>, <em>enabled=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrappers/AbstractApp.html#AbstractApplication.addMenuEntry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.addMenuEntry" title="Permalink to this definition">¶</a></dt>
 <dd><p>MUST BE SUB-CLASSED</p>
 <p>Each application requires the certain calls to modify the UI. FloatingTools only targets the top bar of the 
 application you are trying to modify.</p>
@@ -176,7 +176,7 @@ all called from the spawned threads at the load up process.</p>
 
 <dl class="staticmethod">
 <dt id="FloatingTools.AbstractApplication.addMenuSeparator">
-<em class="property">static </em><code class="descname">addMenuSeparator</code><span class="sig-paren">(</span><em>menuPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.addMenuSeparator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.addMenuSeparator" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">addMenuSeparator</code><span class="sig-paren">(</span><em>menuPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrappers/AbstractApp.html#AbstractApplication.addMenuSeparator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.addMenuSeparator" title="Permalink to this definition">¶</a></dt>
 <dd><p>If your application allows for UI separators, define the behavior here.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -190,7 +190,7 @@ all called from the spawned threads at the load up process.</p>
 
 <dl class="staticmethod">
 <dt id="FloatingTools.AbstractApplication.appTest">
-<em class="property">static </em><code class="descname">appTest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.appTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.appTest" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">appTest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrappers/AbstractApp.html#AbstractApplication.appTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.appTest" title="Permalink to this definition">¶</a></dt>
 <dd><p>This should ideally return True if this is the wrapper for the app you&#8217;re in. If you don&#8217;t do this, FloatingTools wraps 
 the function and if it fails, assumes this is not the wrapper for the application it is in.</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
@@ -222,13 +222,13 @@ the function and if it fails, assumes this is not the wrapper for the applicatio
 
 <dl class="classmethod">
 <dt id="FloatingTools.AbstractApplication.fileTypes">
-<em class="property">classmethod </em><code class="descname">fileTypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.fileTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.fileTypes" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">fileTypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrappers/AbstractApp.html#AbstractApplication.fileTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.fileTypes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the file types associated with this application.</p>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="FloatingTools.AbstractApplication.loadFile">
-<em class="property">static </em><code class="descname">loadFile</code><span class="sig-paren">(</span><em>filePath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.loadFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.loadFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">loadFile</code><span class="sig-paren">(</span><em>filePath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrappers/AbstractApp.html#AbstractApplication.loadFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.loadFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Each application has a special way of importing data. For example, in nuke you can take the file path and paste
 it into the the node graph. You would define that behavior here.</p>
 <p>The file path is passed to you from the loader in FloatingTools. All you need to do is handle it how you&#8217;d like.</p>
@@ -263,7 +263,7 @@ it into the the node graph. You would define that behavior here.</p>
 
 <dl class="classmethod">
 <dt id="FloatingTools.AbstractApplication.name">
-<em class="property">classmethod </em><code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrapper/AbstractApp.html#AbstractApplication.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.name" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Wrappers/AbstractApp.html#AbstractApplication.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.AbstractApplication.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the name of the current application.</p>
 </dd></dl>
 

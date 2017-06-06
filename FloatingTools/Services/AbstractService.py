@@ -72,6 +72,13 @@ Creates a toolbox with the handler type passed using the source data.
     return getHandler(_type)(install=install, **source)
 
 
+def services():
+    """
+    Get all the currently loaded services
+    """
+    return SERVICES
+
+
 # main abstract class
 class Handler(object):
     """

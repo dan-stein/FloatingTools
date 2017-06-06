@@ -1,0 +1,339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Apps &#8212; FloatingTools v0.6.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'v0.6.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Application Wrappers" href="wrappers.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="wrappers.html" title="Application Wrappers"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">FloatingTools v0.6.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="apps">
+<h1>Apps<a class="headerlink" href="#apps" title="Permalink to this headline">¶</a></h1>
+<p>Finally, we get to the subject of creating your own Apps inside of the FloatingTools Dashboard. The awesome thing about
+this is the capability to write UIs and networking tools easily and efficiently with as little code as possible.</p>
+<div class="section" id="ui-s-that-last">
+<h2>UI&#8217;s that last<a class="headerlink" href="#ui-s-that-last" title="Permalink to this headline">¶</a></h2>
+<p>Industries using FloatingTools are usually heavily dependant on custom UI tools. These tools are usually dependant on
+libraries that are tethered to the application you are developing in. At the time this is being written, we are all
+ready starting to see the transition from a popular library, PySide, to now PySide2. This is requiring studios to write
+wrappers and make a number of work around&#8217;s just to try to salvage as much work as possible.</p>
+<p>FT Apps are removed from this issue because all of the UI is managed and generated in HTML, which lasts much longer and
+is less likely to change anytime soon in a major way. We also can use browsers that are natively cross-platform which in
+turn lowers the risk of dependency issues. The down side is you are a little more limited with how interactive your UIs
+can be. But in the case of what you will probably be wanting to do in your App, you wont need too much UI interaction.</p>
+<dl class="docutils">
+<dt>Immediate benefits:</dt>
+<dd><ul class="first last simple">
+<li>Networking on your LAN is built-in</li>
+<li>Directly linked to your currently running application</li>
+<li>Cross-platform UI</li>
+<li>Your App can be accessed by other devices like tablets, phones, etc.</li>
+<li>Powered by Twitter Bootstrap</li>
+</ul>
+</dd>
+<dt>Security:</dt>
+<dd><ul class="first last simple">
+<li>Your Dashboard host is <em>NOT</em> broadcast to the web. It is only accessible by your LAN</li>
+<li>Requests to Dashboard are directly handed to a handler that <em>YOU</em> write. You have full control of the data you share.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="concepts">
+<h2>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h2>
+<p>The key to understand is <em>integration</em>. Because Dashboard acts similarly to a peer to peer system, you can afford to do
+more with your integration. For example; in many project management systems, you get an email with a note of something
+that needs to be done. The way you get this note is usually via email, checking the software&#8217;s homepage or in some cases
+they have integrated UI&#8217;s right in the application the work is being done in. This is all great, but what if we want a
+user to be able to simply click the thing that is broke in application A and send the issue through FT directly to the
+upstream user in application B and it will not only tell them the problem, but open up the source of the problem in
+application B. This is all possible using the power of Dashboard, Application Wrappers and Apps.</p>
+</div>
+<div class="section" id="app">
+<h2>App<a class="headerlink" href="#app" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="FloatingTools.App">
+<em class="property">class </em><code class="descclassname">FloatingTools.</code><code class="descname">App</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Apps/App.html#App"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.App" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apps are written to interact directly with FloatingTools through the Dashboard web interface.</p>
+<p>You must register your app by instantiating an instance of it. This instance is the object Dashboard will handle. The
+name of your app will be shown in the app list in Dashboard.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">App</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">MyApp</span><span class="p">(</span><span class="s1">&#39;MyApp&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>UIs must be built in the App.BuildUI function via redefine. Doing this in the __init__ will not work unless the UI is
+static.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">App</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">buildUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ui</span> <span class="n">code</span> <span class="n">here</span><span class="o">...</span>
+</pre></div>
+</td></tr></table></div>
+<dl class="method">
+<dt id="FloatingTools.App.arguments">
+<code class="descname">arguments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Apps/App.html#App.arguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.App.arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Arguments passed from the website</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.App.buildUI">
+<code class="descname">buildUI</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Apps/App.html#App.buildUI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.App.buildUI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Must subclass in order to build the web front end.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.App.connectToElement">
+<code class="descname">connectToElement</code><span class="sig-paren">(</span><em>element</em>, <em>function</em>, <em>flag='onclick'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Apps/App.html#App.connectToElement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.App.connectToElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect an element through a passed flag to a callable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>element</strong> &#8211; FloatingTools.Dashboard.Element</li>
+<li><strong>function</strong> &#8211; callable</li>
+<li><strong>flag</strong> &#8211; str this should be a type of signal like &#8216;onclick&#8217;</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.App.connectToFunction">
+<code class="descname">connectToFunction</code><span class="sig-paren">(</span><em>function</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Apps/App.html#App.connectToFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.App.connectToFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will create a function with pre-baked arguments in the url. Very useful for passing variables.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">App</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">buildUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Link</span><span class="p">(</span><span class="s1">&#39;print the &quot;var&quot; variable&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connectToFunction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">printFunction</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">printFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">()[</span><span class="s1">&#39;var&#39;</span><span class="p">]</span>
+</pre></div>
+</td></tr></table></div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>function</strong> &#8211; </li>
+<li><strong>kwargs</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.App.name">
+<code class="descname">name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Apps/App.html#App.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.App.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of the app</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.App.page">
+<code class="descname">page</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Apps/App.html#App.page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.App.page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the page object that represents the Dashboard.Page associated with the application.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.App.passVariables">
+<code class="descname">passVariables</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Apps/App.html#App.passVariables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.App.passVariables" title="Permalink to this definition">¶</a></dt>
+<dd><p>In order to pass variables to a function that gets called through a URL, you must use this function.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">FloatingTools</span>
+
+<span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">App</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">buildUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Link</span><span class="p">(</span><span class="s1">&#39;print the &quot;var&quot; variable&#39;</span><span class="p">,</span> <span class="s1">&#39;/url/printFunction&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">passVariables</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">printFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">()[</span><span class="s1">&#39;var&#39;</span><span class="p">]</span>
+</pre></div>
+</td></tr></table></div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>**kwargs</strong> &#8211; <p>dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.App.redirect">
+<code class="descname">redirect</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Apps/App.html#App.redirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.App.redirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>redirect to a different page</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.App.refresh">
+<code class="descname">refresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Apps/App.html#App.refresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.App.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refreshing the page will remove the previous Page element and redraw the ui on a fresh page as to eliminate UI
+repeating.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.App.registerFunction">
+<code class="descname">registerFunction</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Apps/App.html#App.registerFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.App.registerFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a function as a url</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>function</strong> &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Apps</a><ul>
+<li><a class="reference internal" href="#ui-s-that-last">UI&#8217;s that last</a></li>
+<li><a class="reference internal" href="#concepts">Concepts</a></li>
+<li><a class="reference internal" href="#app">App</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="wrappers.html"
+                        title="previous chapter">Application Wrappers</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/apps.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="wrappers.html" title="Application Wrappers"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">FloatingTools v0.6.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Alex Hatfield.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.2.
+    </div>
+  </body>
+</html>

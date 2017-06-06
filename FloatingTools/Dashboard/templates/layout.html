@@ -22,6 +22,13 @@ textarea {
     color: rgb(157, 157, 157);
     border: 0;
 }
+
+textarea:disabled {
+    background-color: rgb(39, 39, 39);
+    color: rgb(157, 157, 157);
+    border: 0;
+}
+
 hr {
     border-color: rgb(70, 70, 100);
 }
@@ -85,69 +92,98 @@ td, th {
                 {% if logged_in == True %}
                     <nav class="navbar navbar-inverse">
                         <div class="container-fluid">
-                            <div class="navbar-header">
-                                <a class="navbar-brand" href="/home">Floating Tools</a>
-                            </div>
-                            <ul class="nav navbar-nav">
-                                <li><a href="/toolbox"><span class="glyphicon glyphicon-briefcase"></span> Toolbox</a></li>
-                                <li><a href="/tool_shed"><span class="glyphicon glyphicon-cloud"></span> Tool Shed</a></li>
-                                <li><a href="/applications"><span class="glyphicon glyphicon-list-alt"></span> Applications</a>
-                                </li>
-                                <li><a href="/settings"><span class="glyphicon glyphicon-wrench"></span> Settings</a></li>
-                                <li class="dropdown">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Support
-                                        <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a href="http://www.hatfieldfx.com/" style="color: rgb(157, 157, 157);">
-                                                <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
-                                                     height="30"> HatfieldFX
+                            <div class="row">
+                                <div class="col-sm-10">
+                                    <div class="navbar-header">
+                                        <a class="navbar-brand" href="/home">Floating Tools</a>
+                                    </div>
+                                    <ul class="nav navbar-nav">
+                                        <li><a href="/toolbox"><span class="glyphicon glyphicon-briefcase"></span> Toolbox</a></li>
+                                        <li><a href="/tool_shed"><span class="glyphicon glyphicon-cloud"></span> Tool Shed</a></li>
+                                        <li><a href="/applications"><span class="glyphicon glyphicon-list-alt"></span> Applications</a>
+                                        </li>
+                                        <li><a href="/settings"><span class="glyphicon glyphicon-wrench"></span> Settings</a></li>
+                                        <li class="dropdown">
+                                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                                <span class="glyphicon glyphicon-globe"></span>
+                                                Support
+                                                <span class="caret"></span>
                                             </a>
-                                        </li>
-                                        <li>
-                                            <a href="http://www.hatfieldfx.com/floating-tools"
-                                               style="color: rgb(157, 157, 157);">
-                                                <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
-                                                     height="30"> FloatingTools
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <center><span class="help-block">Resources</span></center>
-                                        </li>
-                                        <li>
-                                            <a href="https://www.jetbrains.com/pycharm/" style="color: rgb(157, 157, 157);">
-                                                <img src="https://d3nmt5vlzunoa1.cloudfront.net/pycharm/files/2015/12/PyCharm_400x400_Twitter_logo_white.png"
-                                                     height="30"> PyCharm
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="https://github.com/aldmbmtl/FloatingTools"
-                                               style="color: rgb(157, 157, 157);">
-                                                <img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"
-                                                     height="30"> Repository
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="https://github.com/aldmbmtl/FloatingTools/blob/master/README.md"
-                                               style="color: rgb(157, 157, 157);">
-                                                <img src="http://markdown-here.com/img/logo-2015/austin.png" height="30">
-                                                Repository
-                                                Markdown
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <center><span class="help-block">API Documentation</span></center>
-                                        </li>
-                                        <li>
-                                            <a href="https://aldmbmtl.github.io/FloatingTools/index.html"
-                                               style="color: rgb(157, 157, 157);">
-                                                <img src="https://www.python.org/static/opengraph-icon-200x200.png" height="30">
-                                                Python API
-                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a href="http://www.hatfieldfx.com/" style="color: rgb(157, 157, 157);">
+                                                        <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
+                                                             height="30"> HatfieldFX
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="http://www.hatfieldfx.com/floating-tools"
+                                                       style="color: rgb(157, 157, 157);">
+                                                        <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
+                                                             height="30"> FloatingTools
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <center><span class="help-block">Resources</span></center>
+                                                </li>
+                                                <li>
+                                                    <a href="https://www.jetbrains.com/pycharm/" style="color: rgb(157, 157, 157);">
+                                                        <img src="https://d3nmt5vlzunoa1.cloudfront.net/pycharm/files/2015/12/PyCharm_400x400_Twitter_logo_white.png"
+                                                             height="30"> PyCharm
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://github.com/aldmbmtl/FloatingTools"
+                                                       style="color: rgb(157, 157, 157);">
+                                                        <img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"
+                                                             height="30"> Repository
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://github.com/aldmbmtl/FloatingTools/blob/master/README.md"
+                                                       style="color: rgb(157, 157, 157);">
+                                                        <img src="http://markdown-here.com/img/logo-2015/austin.png" height="30">
+                                                        Repository
+                                                        Markdown
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <center><span class="help-block">API Documentation</span></center>
+                                                </li>
+                                                <li>
+                                                    <a href="https://aldmbmtl.github.io/FloatingTools/index.html"
+                                                       style="color: rgb(157, 157, 157);">
+                                                        <img src="https://www.python.org/static/opengraph-icon-200x200.png" height="30">
+                                                        Python API
+                                                    </a>
+                                                </li>
+                                            </ul>
                                         </li>
                                     </ul>
-                            </ul>
+                                </div>
+                                <div class="col-sm-2">
+                                    <ul class="nav navbar-nav">
+                                        {% if app_plugins != [] %}
+                                        <li class="dropdown">
+                                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                                <span class="glyphicon glyphicon-tasks"></span>
+                                                Apps
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                {% for app in app_plugins %}
+                                                <li>
+                                                    <a href="/{{ app.name() }}" style="color: rgb(157, 157, 157);">
+                                                        <center><strong>{{ app.name() }}</strong></center>
+                                                    </a>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </nav>
                 {% endif %}

@@ -2,7 +2,7 @@
 import FloatingTools
 
 # flask imports
-from flask import request, render_template
+from flask import render_template
 
 # package imports
 from utilities import SERVER

@@ -52,7 +52,8 @@
 <span class="sd">Handles all loading operations</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;loadDependency&#39;</span>
+    <span class="s1">&#39;loadDependency&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;addExtensionPath&#39;</span>
 <span class="p">]</span>
 
 <span class="c1"># python imports</span>
@@ -109,11 +110,11 @@
     <span class="n">box</span> <span class="o">=</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">createToolbox</span><span class="p">(</span><span class="n">handlerType</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
 
     <span class="c1"># loop over the paths passed</span>
-
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
         <span class="n">paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">FT_LOOGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Loading dependency: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">box</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
         <span class="n">loadToolbox</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></div>
 
 <span class="k">def</span> <span class="nf">loadToolbox</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">threaded</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -195,7 +196,6 @@
     <span class="k">if</span> <span class="n">threaded</span><span class="p">:</span>
         <span class="n">_LOCK</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
 
-
 <span class="k">def</span> <span class="nf">loadTools</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Main tool loading function.</span>
@@ -236,6 +236,7 @@
         <span class="n">_LOCK</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;load&#39;</span><span class="p">]:</span>
             <span class="n">FloatingTools</span><span class="o">.</span><span class="n">createToolbox</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="n">install</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">_LOCK</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
             <span class="k">continue</span>
 
         <span class="c1"># get handler data</span>
@@ -288,11 +289,38 @@
                         <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
                         <span class="n">FloatingTools</span><span class="o">.</span><span class="n">FT_LOOGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
+<div class="viewcode-block" id="addExtensionPath"><a class="viewcode-back" href="../../api.html#FloatingTools.addExtensionPath">[docs]</a><span class="k">def</span> <span class="nf">addExtensionPath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Add a custom extensions path for your scripts and modifications to FloatingTools.</span>
+
+<span class="sd">:param path: str to a place on disk.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">FT_LOOGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Extension path passed does not exist: &#39;</span> <span class="o">+</span> <span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">f</span> <span class="o">==</span> <span class="s1">&#39;ft_init.py&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">imp</span><span class="o">.</span><span class="n">load_source</span><span class="p">(</span><span class="s1">&#39;ft_init&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
+
+<span class="k">def</span> <span class="nf">loadExtensions</span><span class="p">():</span>
+    <span class="k">if</span> <span class="s1">&#39;FT_PATH&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;FT_PATH&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># generate home path</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">),</span> <span class="s1">&#39;.ft&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="n">addExtensionPath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
 <span class="c1"># set virtual system variables</span>
 <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="s1">&#39;python_cloud&#39;</span><span class="p">,</span> <span class="n">PYTHON_MODULES</span><span class="p">)</span>
 
-<span class="c1"># execute tool load call</span>
+<span class="n">loadExtensions</span><span class="p">()</span>
 <span class="n">loadTools</span><span class="p">()</span>
 </pre></div>
 
