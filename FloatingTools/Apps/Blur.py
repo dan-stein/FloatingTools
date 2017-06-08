@@ -6,10 +6,21 @@ from FloatingTools import Dashboard
 from App import App
 
 # python imports
+import gc
 import inspect
+import traceback
 
 
 class Blur(App):
+    # class vars
+    redefined = {}
+
+    def __init__(self):
+        super(Blur, self).__init__('Blur')
+
+        # instance variables
+        self._instances = []
+
     def buildUI(self):
         # create layout
         row = Dashboard.Row()
@@ -44,7 +55,20 @@ class Blur(App):
 
         instance = getattr(__import__(self.arguments()['search']), self.arguments()['target'])
 
-        code = inspect.getsource(instance)
+        self._instances = []
+
+        for obj in gc.get_objects():
+            try:
+                if isinstance(obj, instance) or issubclass(obj, instance):
+                    if not inspect.isclass(obj):
+                        self._instances.append(obj)
+            except (TypeError, ImportError):
+                pass
+
+        try:
+            code = inspect.getsource(instance)
+        except (TypeError, IOError):
+            return ''
 
         replacementCode = Dashboard.Element('textarea', Class="form-control", rows=100,
                                             placeholder="Replacement code...", name="replace"
@@ -108,7 +132,17 @@ class Blur(App):
         self.refresh()
 
     def redefine(self):
-        exec self.arguments()['replace'] in __import__(self.arguments()['search']).__dict__
-        self.refresh()
 
-Blur('Blur')
+        self.redefined[self.arguments()['search']] = self.arguments()['replace']
+
+        try:
+            print 'Redefining %s...' % str(self.arguments()['search'])
+            mod = __import__(self.arguments()['search']).__dict__
+            exec self.arguments()['replace'] in mod
+            print 'Redefining complete...'
+        except:
+            traceback.print_exc()
+
+        self.redirect('/Blur')
+
+Blur()

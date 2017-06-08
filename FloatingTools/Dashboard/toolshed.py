@@ -2,10 +2,10 @@
 import FloatingTools
 
 # flask imports
-from flask import request, render_template, redirect
+from flask import request, render_template, redirect, render_template_string
 
 # package imports
-from utilities import SERVER
+from utilities import SERVER, ErrorPage
 
 # python imports
 import os
@@ -76,10 +76,11 @@ def pyImport():
         reload(mod)
         FloatingTools.FT_LOOGER.info('Module Imported/Reloaded: %s' % mod)
     except Exception, e:
-        return render_template('Error.html',
-                               error_type=e,
-                               error=traceback.format_exc()
-                               )
+        return render_template_string(
+            ErrorPage(errorType=e, traceback='\n' + traceback.format_exc()),
+            **FloatingTools.Dashboard.dashboardEnv()
+        )
+
     return redirect('/tool_shed')
 
 

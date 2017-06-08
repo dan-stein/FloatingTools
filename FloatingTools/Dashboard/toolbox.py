@@ -13,7 +13,6 @@ from utilities import SERVER
 # python imports
 import json
 
-
 # private globals
 _BENCHMARK_DATA = dict(directories=[], files=[], applications={}, paths={})
 
@@ -79,7 +78,7 @@ def renderToolbox():
     except (GithubException, UnknownObjectException):
         pass
 
-    return render_template('Toolbox.html', **FloatingTools.Dashboard.dashboardEnv())
+    return render_template('toolbox.html', **FloatingTools.Dashboard.dashboardEnv())
 
 
 @SERVER.route('/toolbox/_createToolbox')

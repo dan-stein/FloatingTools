@@ -87,6 +87,8 @@ td, th {
     <div class="row">
         <div class="well">
             <div class="col-sm-2">
+                <br>
+                {% block help_video %}{% endblock %}
             </div>
             <div class="col-sm-8">
                 {% if logged_in == True %}
@@ -192,8 +194,7 @@ td, th {
             </div>
             <div class="col-sm-2">
                 <br>
-                <br>
-                {% block help_video %}{% endblock %}
+                {% block app_sidebar %}{% endblock %}
             </div>
         </div>
     </div>

@@ -21,14 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-# python imports
-import os
-import sys
-import socket
-import logging
-
-logging.basicConfig(level=logging.INFO)
-
 # namespace
 __all__ = [
     'FLOATING_TOOLS_ROOT',
@@ -38,6 +30,14 @@ __all__ = [
     'DATA',
     'Dashboard'
 ]
+
+# python imports
+import os
+import sys
+import socket
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 # Global variables
 FT_LOOGER = logging.getLogger('FloatingTools')

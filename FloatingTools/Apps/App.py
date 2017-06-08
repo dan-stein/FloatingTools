@@ -189,7 +189,7 @@ This will create a function with pre-baked arguments in the url. Very useful for
 :param kwargs:
         """
         self.registerFunction(function)
-        return '%s/%s%s' % (self.name(), function.__name__, self.passVariables(**kwargs))
+        return '/%s/%s%s' % (self.name(), function.__name__, self.passVariables(**kwargs))
 
     def connectToElement(self, element, function, flag='onclick', **kwargs):
         """

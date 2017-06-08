@@ -12,7 +12,7 @@ from flask import request, Flask
 
 # python imports
 import os
-from getpass import getuser
+from ui import *
 from threading import Thread
 
 # -- directories
@@ -26,6 +26,16 @@ SERVER = Flask('Floating Tools Dashboard', template_folder=DASHBOARD_TEMPLATES)
 HOST = '0.0.0.0'
 PORT = 5000
 ADDRESS = 'http://%(HOST)s:%(PORT)s/' % locals()
+
+
+class ErrorPage(Page):
+    def __init__(self, errorType, traceback):
+        super(ErrorPage, self).__init__(errorType)
+
+        panel = Panel()
+        panel.addToHeader(Header(size=4, value=Element('strong', Font(errorType, color='red'))))
+        panel.addTobody(Element('textarea', 'disabled', wrap='soft', rows=15, cols=150, value=traceback))
+        self.add(panel)
 
 
 def startServer(url=None):

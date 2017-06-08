@@ -38,6 +38,7 @@ Base element for all python->html elements. Each Element has a tag, attributes t
     def setAttributes(self, attributes):
         """
         Set attributes for this element.
+
         :param attributes: dict
         """
         for key in attributes:
@@ -49,17 +50,31 @@ Base element for all python->html elements. Each Element has a tag, attributes t
     def addFlag(self, flag):
         """
         Add a flag to this element. This could be like setting an option to selected.
-        :param flag:
+
+        :param flag: str
         """
         self._flags.append(flag)
 
     def addValue(self, value):
         """
         This will be rendered in the value section between the 2 tags.
+
         :param value: str or Element
         """
         self._values.append(value)
         return value
+
+    def addBreak(self):
+        """
+        Adds a line break to the element.
+        """
+        self.addValue(Element('br'))
+
+    def addDivider(self):
+        """
+        Adds a divider to the element.
+        """
+        self.addValue(Element('hr'))
 
     def html(self, indent=''):
         """
@@ -79,7 +94,7 @@ Base element for all python->html elements. Each Element has a tag, attributes t
         template = "\n%(indent)s<%(head)s%(attributes)s%(flags)s>"
 
         # if more than 1 value has been, make it a multi line html render.
-        if valueCount > 0 or head == 'div':
+        if valueCount > 0 or head in ['div', 'iframe']:
             template = "\n%(indent)s<%(head)s%(attributes)s%(flags)s>\n%(indent)s%(values)s\n%(indent)s</%(tail)s>"
 
         # build attributes

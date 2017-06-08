@@ -1,6 +1,12 @@
 """
 Validate the dependencies are installed.
 """
+
+__all__ = [
+    'releases',
+    'branches'
+]
+
 # python imports
 import os
 import sys
@@ -79,32 +85,37 @@ pip.main(['install', '--upgrade', 'pip'])
 if 'setuptools' not in ft_packages:
     pip.main(['install', '-U', 'pip', 'setuptools', '-t', FloatingTools.PACKAGES])
 
-# due to the nature of the pip install process, we want to set the PYTHONPATH environment variable pointed to the
-# FT/packages directory so that setuptools is in sync with the version of pip installed.
-PYTHONPATH = os.environ["PYTHONPATH"] if "PYTHONPATH" in os.environ else None
-os.environ['PYTHONPATH'] = FloatingTools.PACKAGES
+def pipInstallPackage(package, pipName=None):
+    """
+Install packages into FT from pip.
 
-# Verify the github lib exists
-try:
-    import github
-except ImportError:
-    pip.main(['install', 'PyGithub', '-t', FloatingTools.PACKAGES])
+:param package: the name to import the package
+:param pipName: in-case the pip install name is different from the module name.
+    """
+    # due to the nature of the pip install process, we want to set the PYTHONPATH environment variable pointed to the
+    # FT/packages directory so that setuptools is in sync with the version of pip installed.
+    PYTHONPATH = os.environ["PYTHONPATH"] if "PYTHONPATH" in os.environ else None
+    os.environ['PYTHONPATH'] = FloatingTools.PACKAGES
 
-    # verify install
-    import github
+    # Verify the github lib exists
+    try:
+        __import__(package)
+    except ImportError:
+        if not pipName:
+            pipName = package
 
-# Verify the flask lib exists
-try:
-    import flask
-except ImportError:
-    pip.main(['install', 'Flask', '-t', FloatingTools.PACKAGES])
+        pip.main(['install', pipName, '-t', FloatingTools.PACKAGES])
 
-    # verify install
-    import flask
+        # verify install
+        __import__(package)
 
-# flush env
-if PYTHONPATH:
-    os.environ['PYTHONPATH'] = PYTHONPATH
+    # flush env
+    if PYTHONPATH:
+        os.environ['PYTHONPATH'] = PYTHONPATH
+
+for package in [('github', 'PyGithub'), ('flask', 'Flask')]:
+    pipInstallPackage(*package)
+
 
 def downloadBuild(repository, sha, path=None):
     """
