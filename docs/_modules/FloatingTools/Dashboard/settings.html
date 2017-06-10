@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>FloatingTools.Dashboard.settings &#8212; FloatingTools v0.6.0 documentation</title>
+    <title>FloatingTools.Dashboard.settings &#8212; FloatingTools v0.7.x alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     'v0.6.0',
+        VERSION:     'v0.7.x alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.7.x alpha documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -52,11 +52,129 @@
 <span class="kn">import</span> <span class="nn">FloatingTools</span>
 
 <span class="c1"># flask imports</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render_template_string</span>
 
 <span class="c1"># package imports</span>
+<span class="kn">from</span> <span class="nn">ui</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">utilities</span> <span class="k">import</span> <span class="n">SERVER</span>
 
+
+<span class="k">class</span> <span class="nc">SettingsPage</span><span class="p">(</span><span class="n">Page</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SettingsPage</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;Settings&#39;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;build&#39;</span><span class="p">:</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">buildData</span><span class="p">,</span>
+            <span class="s1">&#39;sources&#39;</span><span class="p">:</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">sourceData</span>
+        <span class="p">}</span>
+
+        <span class="c1"># update dashboards env with the latest data.</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">entry</span><span class="p">]())</span>
+
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">branches</span><span class="p">()</span>
+        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">releases</span><span class="p">()</span>
+
+        <span class="c1"># build UI</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;Current Install&#39;</span><span class="p">))</span>
+        <span class="n">header</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">()[</span><span class="s1">&#39;current_release&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Link</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="s1">&#39;Release Information&#39;</span><span class="p">,</span>
+            <span class="n">link</span><span class="o">=</span><span class="s2">&quot;https://github.com/aldmbmtl/FloatingTools/releases/tag/&quot;</span> <span class="o">+</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">()[</span><span class="s1">&#39;current_release&#39;</span><span class="p">]</span>
+        <span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Br</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Br</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;Install Location&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Br</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">()[</span><span class="s1">&#39;python_location&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Hr</span><span class="p">())</span>
+
+        <span class="c1"># build form information</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">Form</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;/settings/_save&#39;</span><span class="p">)</span>
+
+        <span class="c1"># release section</span>
+        <span class="n">releaseSection</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;Change Release: (requires relaunch)&#39;</span><span class="p">)</span>
+        <span class="n">selector</span> <span class="o">=</span> <span class="n">Select</span><span class="p">(</span><span class="s1">&#39;release&#39;</span><span class="p">)</span>
+        <span class="n">selector</span><span class="o">.</span><span class="n">addOption</span><span class="p">(</span><span class="s1">&#39;latest&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Latest&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">addFlag</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">release</span> <span class="ow">in</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">()[</span><span class="s1">&#39;releases&#39;</span><span class="p">]:</span>
+            <span class="n">option</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">addOption</span><span class="p">(</span><span class="n">release</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">release</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">release</span> <span class="o">==</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">buildData</span><span class="p">()[</span><span class="s1">&#39;release&#39;</span><span class="p">]:</span>
+                <span class="n">option</span><span class="o">.</span><span class="n">addFlag</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">)</span>
+
+        <span class="n">releaseSection</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span>
+
+        <span class="n">row</span> <span class="o">=</span> <span class="n">Row</span><span class="p">()</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">addColumn</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">addToColumn</span><span class="p">(</span><span class="n">releaseSection</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">addToColumn</span><span class="p">(</span><span class="n">Br</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">addToColumn</span><span class="p">(</span>
+            <span class="n">Element</span><span class="p">(</span>
+                <span class="s1">&#39;span&#39;</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="s1">&#39;&quot;Freeze&quot; your install to a specific version or set it to &quot;Latest&quot; to auto-download latest release.&#39;</span>
+            <span class="p">),</span>
+            <span class="mi">0</span>
+        <span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">addColumn</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">addToColumn</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s1">&#39;Save&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;submit&#39;</span><span class="p">},</span> <span class="n">Class</span><span class="o">=</span><span class="s1">&#39;form-control&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">form</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">Br</span><span class="p">())</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">Br</span><span class="p">())</span>
+
+        <span class="c1"># dev tools section</span>
+        <span class="n">devPanel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">()</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">devPanel</span><span class="p">)</span>
+
+        <span class="n">devPanel</span><span class="o">.</span><span class="n">addToHeader</span><span class="p">(</span><span class="n">Header</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;Development Tools&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">devPanel</span><span class="o">.</span><span class="n">addTobody</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;Branch: &#39;</span><span class="p">))</span>
+
+        <span class="n">branchSelect</span> <span class="o">=</span> <span class="n">Select</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;dev-branch&#39;</span><span class="p">)</span>
+        <span class="n">branchSelect</span><span class="o">.</span><span class="n">addOption</span><span class="p">(</span><span class="s1">&#39;disable&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Disable&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">addFlag</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">()[</span><span class="s1">&#39;branches&#39;</span><span class="p">]:</span>
+            <span class="n">opt</span> <span class="o">=</span> <span class="n">branchSelect</span><span class="o">.</span><span class="n">addOption</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">branch</span> <span class="o">==</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">buildData</span><span class="p">()[</span><span class="s1">&#39;devBranch&#39;</span><span class="p">]:</span>
+                <span class="n">opt</span><span class="o">.</span><span class="n">addFlag</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">)</span>
+
+
+        <span class="n">label</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">branchSelect</span><span class="p">)</span>
+        <span class="n">devPanel</span><span class="o">.</span><span class="n">addTobody</span><span class="p">(</span><span class="n">Br</span><span class="p">())</span>
+        <span class="n">devPanel</span><span class="o">.</span><span class="n">addTobody</span><span class="p">(</span>
+            <span class="n">Element</span><span class="p">(</span>
+                <span class="s1">&#39;span&#39;</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="s1">&#39;Selecting a branch from the FloatingTools repository will pull the build from the development &#39;</span>
+                      <span class="s1">&#39;branch you select. &lt;strong&gt;This will disable the Release System and overwrite the local &#39;</span>
+                      <span class="s1">&#39;FloatingTools build.&lt;/strong&gt; You can disable this and it will revert to the release system.&#39;</span><span class="p">,</span>
+                <span class="n">Class</span><span class="o">=</span><span class="s2">&quot;help-block&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">devPanel</span><span class="o">.</span><span class="n">addTobody</span><span class="p">(</span><span class="n">Hr</span><span class="p">())</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">devPanel</span><span class="o">.</span><span class="n">addTobody</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;Collaborator: &#39;</span><span class="p">))</span>
+
+        <span class="n">branchSelect</span> <span class="o">=</span> <span class="n">Select</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;collaborator&#39;</span><span class="p">)</span>
+        <span class="n">off</span> <span class="o">=</span> <span class="n">branchSelect</span><span class="o">.</span><span class="n">addOption</span><span class="p">(</span><span class="s1">&#39;false&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Disable&#39;</span><span class="p">)</span>
+        <span class="n">on</span> <span class="o">=</span> <span class="n">branchSelect</span><span class="o">.</span><span class="n">addOption</span><span class="p">(</span><span class="s1">&#39;true&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Enable&#39;</span><span class="p">)</span>
+
+        <span class="n">off</span><span class="o">.</span><span class="n">addFlag</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">buildData</span><span class="p">()[</span><span class="s1">&#39;collaborator&#39;</span><span class="p">]:</span>
+            <span class="n">on</span><span class="o">.</span><span class="n">addFlag</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">)</span>
+
+        <span class="n">label</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">branchSelect</span><span class="p">)</span>
+        <span class="n">devPanel</span><span class="o">.</span><span class="n">addTobody</span><span class="p">(</span><span class="n">Br</span><span class="p">())</span>
+
+        <span class="n">devPanel</span><span class="o">.</span><span class="n">addTobody</span><span class="p">(</span>
+            <span class="n">Element</span><span class="p">(</span>
+                <span class="s1">&#39;span&#39;</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="s1">&#39;This allows you to modify your local FloatingTools install.&lt;strong&gt;This overrides the Branch and&#39;</span>
+                      <span class="s1">&#39; Release Systems.&lt;/strong&gt;&#39;</span><span class="p">,</span>
+                <span class="n">Class</span><span class="o">=</span><span class="s2">&quot;help-block&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
 
 <span class="nd">@SERVER</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/settings&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">renderSettings</span><span class="p">():</span>
@@ -64,19 +182,7 @@
 <span class="sd">    Render settings page to configure Floating Tools</span>
 <span class="sd">    :return: </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;build&#39;</span><span class="p">:</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">buildData</span><span class="p">,</span>
-        <span class="s1">&#39;sources&#39;</span><span class="p">:</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">sourceData</span>
-    <span class="p">}</span>
-
-    <span class="c1"># update dashboards env with the latest data.</span>
-    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-        <span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">setDashboardVariable</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">entry</span><span class="p">]())</span>
-
-    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">branches</span><span class="p">()</span>
-    <span class="n">FloatingTools</span><span class="o">.</span><span class="n">releases</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;Settings.html&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">render_template_string</span><span class="p">(</span><span class="n">SettingsPage</span><span class="p">()</span><span class="o">.</span><span class="n">render</span><span class="p">(),</span> <span class="o">**</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">())</span>
 
 
 <span class="nd">@SERVER</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/settings/_save&#39;</span><span class="p">)</span>
@@ -137,7 +243,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.7.x alpha documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

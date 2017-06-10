@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Apps &#8212; FloatingTools v0.6.0 documentation</title>
+    <title>Apps &#8212; FloatingTools v0.7.x alpha documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     'v0.6.0',
+        VERSION:     'v0.7.x alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="wrappers.html" title="Application Wrappers"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">FloatingTools v0.6.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">FloatingTools v0.7.x alpha documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -91,6 +91,290 @@ they have integrated UI&#8217;s right in the application the work is being done 
 user to be able to simply click the thing that is broke in application A and send the issue through FT directly to the
 upstream user in application B and it will not only tell them the problem, but open up the source of the problem in
 application B. This is all possible using the power of Dashboard, Application Wrappers and Apps.</p>
+</div>
+<div class="section" id="dashboard-ui">
+<h2>Dashboard.ui<a class="headerlink" href="#dashboard-ui" title="Permalink to this headline">¶</a></h2>
+<p>All of these are html wrapped in python so you dont need to create html files. The html syntax is handled by the Element
+base class.</p>
+<dl class="class">
+<dt id="FloatingTools.Dashboard.ui.Element">
+<em class="property">class </em><code class="descclassname">FloatingTools.Dashboard.ui.</code><code class="descname">Element</code><span class="sig-paren">(</span><em>tag</em>, <em>value=None</em>, <em>attributes=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/element.html#Element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base element for all python-&gt;html elements. Each Element has a tag, attributes that can be set, and value.</p>
+<p>&lt;&#8221;tag&#8221; &#8220;attributes&#8221;&gt;&#8221;value&#8221;&lt;/&#8221;tag&#8221;&gt;</p>
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Element.addBreak">
+<code class="descname">addBreak</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/element.html#Element.addBreak"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Element.addBreak" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a line break to the element.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Element.addDivider">
+<code class="descname">addDivider</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/element.html#Element.addDivider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Element.addDivider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a divider to the element.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Element.addFlag">
+<code class="descname">addFlag</code><span class="sig-paren">(</span><em>flag</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/element.html#Element.addFlag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Element.addFlag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a flag to this element. This could be like setting an option to selected.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>flag</strong> &#8211; str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Element.addValue">
+<code class="descname">addValue</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/element.html#Element.addValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Element.addValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will be rendered in the value section between the 2 tags.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> &#8211; str or Element</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Element.html">
+<code class="descname">html</code><span class="sig-paren">(</span><em>indent=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/element.html#Element.html"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Element.html" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the rendered html code for this element.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Element.setAttributes">
+<code class="descname">setAttributes</code><span class="sig-paren">(</span><em>attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/element.html#Element.setAttributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Element.setAttributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set attributes for this element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attributes</strong> &#8211; dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="FloatingTools.Dashboard.ui.Row">
+<em class="property">class </em><code class="descclassname">FloatingTools.Dashboard.ui.</code><code class="descname">Row</code><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Row" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Row.addColumn">
+<code class="descname">addColumn</code><span class="sig-paren">(</span><em>width</em>, <em>size='sm'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Row.addColumn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Row.addColumn" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>size</strong> &#8211; Row.SIZES (Row.SMALL, Row.MEDIUM, Row.LARGE, Row.XLARGE)</li>
+<li><strong>width</strong> &#8211; int. Keep in mind, this is a Bootstrap row and all rows can add up to no more than 12.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Row.addToColumn">
+<code class="descname">addToColumn</code><span class="sig-paren">(</span><em>value</em>, <em>column</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Row.addToColumn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Row.addToColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a value/element to a column owned by the row.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>value</strong> &#8211; str or element</li>
+<li><strong>column</strong> &#8211; index of the column to add the value to</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="FloatingTools.Dashboard.ui.Panel">
+<em class="property">class </em><code class="descclassname">FloatingTools.Dashboard.ui.</code><code class="descname">Panel</code><span class="sig-paren">(</span><em>type='panel-default'</em>, <em>collapsible=False</em>, <em>collapseShown=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Panel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Panel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Panels have a header, body, and footer. Python equivalent to bootstrap panels.</p>
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Panel.addToFooter">
+<code class="descname">addToFooter</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Panel.addToFooter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Panel.addToFooter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an element to the footer portion of the panel</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> &#8211; Element or str</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">value</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Panel.addToHeader">
+<code class="descname">addToHeader</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Panel.addToHeader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Panel.addToHeader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an element to the header portion of the panel</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> &#8211; Element or str</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">value</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Panel.addTobody">
+<code class="descname">addTobody</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Panel.addTobody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Panel.addTobody" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an element to the body portion of the panel</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> &#8211; Element or str</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">value</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Panel.collapseLink">
+<code class="descname">collapseLink</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Panel.collapseLink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Panel.collapseLink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the link to the collapse</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="FloatingTools.Dashboard.ui.List">
+<em class="property">class </em><code class="descclassname">FloatingTools.Dashboard.ui.</code><code class="descname">List</code><span class="sig-paren">(</span><em>numbered=False</em>, <em>bootstrap=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.List" title="Permalink to this definition">¶</a></dt>
+<dd><p>Python equivalent to ul/ol lists in html.</p>
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.List.addItem">
+<code class="descname">addItem</code><span class="sig-paren">(</span><em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#List.addItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.List.addItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an item and add it to the list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> &#8211; the value for the item</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The created element item</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="FloatingTools.Dashboard.ui.Table">
+<em class="property">class </em><code class="descclassname">FloatingTools.Dashboard.ui.</code><code class="descname">Table</code><span class="sig-paren">(</span><em>headers</em>, <em>bootstrap=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Table" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Table.addRow">
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>*values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Table.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Table.addRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add values to define a row.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="FloatingTools.Dashboard.ui.Link">
+<em class="property">class </em><code class="descclassname">FloatingTools.Dashboard.ui.</code><code class="descname">Link</code><span class="sig-paren">(</span><em>value</em>, <em>link</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Link"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Python equivalent to &#8216;a&#8217; in html.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="FloatingTools.Dashboard.ui.Font">
+<em class="property">class </em><code class="descclassname">FloatingTools.Dashboard.ui.</code><code class="descname">Font</code><span class="sig-paren">(</span><em>text</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Font" title="Permalink to this definition">¶</a></dt>
+<dd><p>Python equivalent to font in html.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="FloatingTools.Dashboard.ui.Page">
+<em class="property">class </em><code class="descclassname">FloatingTools.Dashboard.ui.</code><code class="descname">Page</code><span class="sig-paren">(</span><em>title</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pages are where you build your content. Add your root element(s) to the page and they will be automatically rendered for
+you.</p>
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Page.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Page.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Page.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an element to this page.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>element</strong> &#8211; str or Element</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Page.addBreak">
+<code class="descname">addBreak</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Page.addBreak"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Page.addBreak" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a break on the page</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Page.addDivider">
+<code class="descname">addDivider</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Page.addDivider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Page.addDivider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a divider on the page</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Page.addToHelp">
+<code class="descname">addToHelp</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Page.addToHelp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Page.addToHelp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an element to the help center</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>element</strong> &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="FloatingTools.Dashboard.ui.Page.addToSideBar">
+<code class="descname">addToSideBar</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FloatingTools/Dashboard/ui/predefined.html#Page.addToSideBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FloatingTools.Dashboard.ui.Page.addToSideBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an element as a side bar</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>element</strong> &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="app">
 <h2>App<a class="headerlink" href="#app" title="Permalink to this headline">¶</a></h2>
@@ -287,6 +571,7 @@ repeating.</p>
 <li><a class="reference internal" href="#">Apps</a><ul>
 <li><a class="reference internal" href="#ui-s-that-last">UI&#8217;s that last</a></li>
 <li><a class="reference internal" href="#concepts">Concepts</a></li>
+<li><a class="reference internal" href="#dashboard-ui">Dashboard.ui</a></li>
 <li><a class="reference internal" href="#app">App</a></li>
 </ul>
 </li>
@@ -328,7 +613,7 @@ repeating.</p>
         <li class="right" >
           <a href="wrappers.html" title="Application Wrappers"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">FloatingTools v0.6.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">FloatingTools v0.7.x alpha documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

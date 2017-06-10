@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>FloatingTools.Dashboard.toolshed &#8212; FloatingTools v0.6.0 documentation</title>
+    <title>FloatingTools.Dashboard.toolshed &#8212; FloatingTools v0.7.x alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     'v0.6.0',
+        VERSION:     'v0.7.x alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.7.x alpha documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -52,10 +52,10 @@
 <span class="kn">import</span> <span class="nn">FloatingTools</span>
 
 <span class="c1"># flask imports</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render_template_string</span>
 
 <span class="c1"># package imports</span>
-<span class="kn">from</span> <span class="nn">utilities</span> <span class="k">import</span> <span class="n">SERVER</span>
+<span class="kn">from</span> <span class="nn">utilities</span> <span class="k">import</span> <span class="n">SERVER</span><span class="p">,</span> <span class="n">ErrorPage</span>
 
 <span class="c1"># python imports</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -126,10 +126,11 @@
         <span class="n">reload</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span>
         <span class="n">FloatingTools</span><span class="o">.</span><span class="n">FT_LOOGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Module Imported/Reloaded: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mod</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;Error.html&#39;</span><span class="p">,</span>
-                               <span class="n">error_type</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
-                               <span class="n">error</span><span class="o">=</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
-                               <span class="p">)</span>
+        <span class="k">return</span> <span class="n">render_template_string</span><span class="p">(</span>
+            <span class="n">ErrorPage</span><span class="p">(</span><span class="n">errorType</span><span class="o">=</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">=</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span>
+            <span class="o">**</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">()</span>
+        <span class="p">)</span>
+
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/tool_shed&#39;</span><span class="p">)</span>
 
 
@@ -198,7 +199,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.7.x alpha documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

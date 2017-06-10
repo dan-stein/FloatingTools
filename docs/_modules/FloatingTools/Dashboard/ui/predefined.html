@@ -1,0 +1,470 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FloatingTools.Dashboard.ui.predefined &#8212; FloatingTools v0.7.x alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     'v0.7.x alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">FloatingTools v0.7.x alpha documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for FloatingTools.Dashboard.ui.predefined</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">predefined ui elements for Dashboard development</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">element</span> <span class="k">import</span> <span class="n">Element</span>
+
+
+<span class="k">class</span> <span class="nc">Img</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python equivalent to ul/ol lists in html.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Img</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">src</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Br</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Br</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;br&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Hr</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Hr</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;hr&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="List"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.List">[docs]</a><span class="k">class</span> <span class="nc">List</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python equivalent to ul/ol lists in html.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numbered</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bootstrap</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">List</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;ol&#39;</span> <span class="k">if</span> <span class="n">numbered</span> <span class="k">else</span> <span class="s1">&#39;ul&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bootstrap</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">[</span><span class="s1">&#39;Class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;list-group&quot;</span>
+
+<div class="viewcode-block" id="List.addItem"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.List.addItem">[docs]</a>    <span class="k">def</span> <span class="nf">addItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Create an item and add it to the list</span>
+
+<span class="sd">:param value: the value for the item</span>
+
+<span class="sd">:return: The created element item</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">,</span> <span class="n">Class</span><span class="o">=</span><span class="s2">&quot;list-group-item&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">item</span></div></div>
+
+
+<div class="viewcode-block" id="Table"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Table">[docs]</a><span class="k">class</span> <span class="nc">Table</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">bootstrap</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Table</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bootstrap</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">[</span><span class="s1">&#39;Class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;list-group&quot;</span>
+
+        <span class="c1"># build headers</span>
+        <span class="n">tr</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;tr&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+            <span class="n">tr</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;th&#39;</span><span class="p">,</span> <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">header</span><span class="p">)))</span>
+
+<div class="viewcode-block" id="Table.addRow"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Table.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Add values to define a row.</span>
+
+<span class="sd">:type values: str or Element</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;tr&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">row</span></div></div>
+
+
+<div class="viewcode-block" id="Link"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Link">[docs]</a><span class="k">class</span> <span class="nc">Link</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python equivalent to &#39;a&#39; in html.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">link</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Link</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">href</span><span class="o">=</span><span class="n">link</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">Center</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Center</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">element</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Header</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Header</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;h&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">size</span><span class="p">),</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Font"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Font">[docs]</a><span class="k">class</span> <span class="nc">Font</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python equivalent to font in html.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Font</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">Script</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Script</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Div</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python equivalent to div in html.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Div</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Select</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python equivalent to select in html.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Select</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">Class</span><span class="o">=</span><span class="s2">&quot;form-control&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">addOption</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add an option to the selection box</span>
+
+<span class="sd">        :param value: str</span>
+<span class="sd">        :return: Option element </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">option</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;option&#39;</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+            <span class="n">option</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">option</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Form</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python equivalent to form in html.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Form</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Collapse</span><span class="p">(</span><span class="n">Div</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python equivalent to collapse in html.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">shown</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param id: id for this collapse so it can be referenced later.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Collapse</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="nb">id</span><span class="p">},</span> <span class="n">Class</span><span class="o">=</span><span class="s2">&quot;collapse in&quot;</span> <span class="k">if</span> <span class="n">shown</span> <span class="k">else</span> <span class="s2">&quot;collapse&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># instance variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">=</span> <span class="nb">id</span>
+
+    <span class="k">def</span> <span class="nf">linkTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Will return a dict ready to be used in the attributes of any element that will refer to any collapse object via</span>
+<span class="sd">        the assigned id.</span>
+
+<span class="sd">        :param id: id of the collapse element</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;data-toggle&#39;</span><span class="p">:</span> <span class="s2">&quot;collapse&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;data-target&#39;</span><span class="p">:</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="nb">id</span>
+        <span class="p">}</span> <span class="k">if</span> <span class="nb">id</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="s1">&#39;data-toggle&#39;</span><span class="p">:</span> <span class="s2">&quot;collapse&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;data-target&#39;</span><span class="p">:</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
+        <span class="p">}</span>
+
+
+<div class="viewcode-block" id="Row"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Row">[docs]</a><span class="k">class</span> <span class="nc">Row</span><span class="p">(</span><span class="n">Div</span><span class="p">):</span>
+
+    <span class="c1"># predefined column sizes</span>
+    <span class="n">SMALL</span> <span class="o">=</span> <span class="s1">&#39;sm&#39;</span>
+    <span class="n">MEDIUM</span> <span class="o">=</span> <span class="s1">&#39;md&#39;</span>
+    <span class="n">LARGE</span> <span class="o">=</span> <span class="s1">&#39;lg&#39;</span>
+    <span class="n">XLARGE</span> <span class="o">=</span> <span class="s1">&#39;xl&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Row</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">Class</span><span class="o">=</span><span class="s2">&quot;row&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Row.addColumn"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Row.addColumn">[docs]</a>    <span class="k">def</span> <span class="nf">addColumn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s1">&#39;sm&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param size: Row.SIZES (Row.SMALL, Row.MEDIUM, Row.LARGE, Row.XLARGE)</span>
+<span class="sd">        :param width: int. Keep in mind, this is a Bootstrap row and all rows can add up to no more than 12.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Div</span><span class="p">(</span><span class="n">Class</span><span class="o">=</span><span class="s1">&#39;col-</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">width</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="Row.addToColumn"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Row.addToColumn">[docs]</a>    <span class="k">def</span> <span class="nf">addToColumn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Add a value/element to a column owned by the row.</span>
+
+<span class="sd">:param value: str or element</span>
+<span class="sd">:param column: index of the column to add the value to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Panel"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Panel">[docs]</a><span class="k">class</span> <span class="nc">Panel</span><span class="p">(</span><span class="n">Div</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Panels have a header, body, and footer. Python equivalent to bootstrap panels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">COLLAPSE_ID_SEED</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># TYPES</span>
+    <span class="n">DEFAULT</span> <span class="o">=</span> <span class="s1">&#39;panel-default&#39;</span>
+    <span class="n">PRIMARY</span> <span class="o">=</span> <span class="s1">&#39;panel-primary&#39;</span>
+    <span class="n">SUCCESS</span> <span class="o">=</span> <span class="s1">&#39;panel-success&#39;</span>
+    <span class="n">INFO</span> <span class="o">=</span> <span class="s1">&#39;panel-info&#39;</span>
+    <span class="n">WARNING</span> <span class="o">=</span> <span class="s1">&#39;panel-warning&#39;</span>
+    <span class="n">DANGER</span> <span class="o">=</span> <span class="s1">&#39;panel-danger&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">DEFAULT</span><span class="p">,</span> <span class="n">collapsible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">collapseShown</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param type: the panel class you want to use. https://www.w3schools.com/bootstrap/bootstrap_panels.asp</span>
+<span class="sd">        :param collapsible: bool if you want to panel to be collapsible</span>
+<span class="sd">        :param collapseShown: bool if you want the panel open by default or not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Panel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">Class</span><span class="o">=</span><span class="s1">&#39;panel &#39;</span> <span class="o">+</span> <span class="nb">type</span><span class="p">)</span>
+
+        <span class="c1"># instance vars</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collapseID</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_header</span> <span class="o">=</span> <span class="n">Div</span><span class="p">(</span><span class="n">Class</span><span class="o">=</span><span class="s1">&#39;panel-heading&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_body</span> <span class="o">=</span> <span class="n">Div</span><span class="p">(</span><span class="n">Class</span><span class="o">=</span><span class="s1">&#39;panel-body&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_footer</span> <span class="o">=</span> <span class="n">Div</span><span class="p">(</span><span class="n">Class</span><span class="o">=</span><span class="s1">&#39;panel-footer&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">collapsible</span><span class="p">:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">Collapse</span><span class="p">(</span><span class="s1">&#39;panel-collapse-&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">COLLAPSE_ID_SEED</span><span class="p">),</span> <span class="n">shown</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="n">collapseShown</span> <span class="k">else</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">COLLAPSE_ID_SEED</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">col</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_body</span><span class="p">)</span>
+            <span class="n">col</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_footer</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_collapseID</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">linkTo</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_body</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_footer</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Panel.collapseLink"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Panel.collapseLink">[docs]</a>    <span class="k">def</span> <span class="nf">collapseLink</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Get the link to the collapse</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collapseID</span></div>
+
+<div class="viewcode-block" id="Panel.addToHeader"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Panel.addToHeader">[docs]</a>    <span class="k">def</span> <span class="nf">addToHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add an element to the header portion of the panel</span>
+
+<span class="sd">        :param value: Element or str</span>
+<span class="sd">        :return: value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="Panel.addTobody"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Panel.addTobody">[docs]</a>    <span class="k">def</span> <span class="nf">addTobody</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add an element to the body portion of the panel</span>
+
+<span class="sd">        :param value: Element or str</span>
+<span class="sd">        :return: value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_body</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="Panel.addToFooter"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Panel.addToFooter">[docs]</a>    <span class="k">def</span> <span class="nf">addToFooter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add an element to the footer portion of the panel</span>
+
+<span class="sd">        :param value: Element or str</span>
+<span class="sd">        :return: value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_footer</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+    <span class="k">def</span> <span class="nf">html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">_values</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Panel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">html</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">PanelGroup</span><span class="p">(</span><span class="n">Div</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PanelGroup</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="n">Class</span><span class="o">=</span><span class="s1">&#39;panel-group&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Page"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Page">[docs]</a><span class="k">class</span> <span class="nc">Page</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Pages are where you build your content. Add your root element(s) to the page and they will be automatically rendered for</span>
+<span class="sd">you.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="n">TEMPLATE</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;{</span><span class="si">% e</span><span class="s2">xtends </span><span class="se">\&quot;</span><span class="s2">layout.html</span><span class="se">\&quot;</span><span class="s2"> %}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;{% block title %}</span><span class="si">%(title)s</span><span class="s2">{</span><span class="si">% e</span><span class="s2">ndblock %}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;{% block body %}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;</span><span class="si">%(render)s</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;{</span><span class="si">% e</span><span class="s2">ndblock %}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;{% block help_video %}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;</span><span class="si">%(help_video)s</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;{</span><span class="si">% e</span><span class="s2">ndblock %}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;{% block app_sidebar %}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;</span><span class="si">%(app_sidebar)s</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;{</span><span class="si">% e</span><span class="s2">ndblock %}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sideBar</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_helpCenter</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Page.add"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Page.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Add an element to this page.</span>
+
+<span class="sd">:param element: str or Element</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">element</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Page.addToSideBar"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Page.addToSideBar">[docs]</a>    <span class="k">def</span> <span class="nf">addToSideBar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Add an element as a side bar</span>
+
+<span class="sd">:param element:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sideBar</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">element</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Page.addToHelp"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Page.addToHelp">[docs]</a>    <span class="k">def</span> <span class="nf">addToHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Add an element to the help center</span>
+
+<span class="sd">:param element:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_helpCenter</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">element</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Page.addDivider"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Page.addDivider">[docs]</a>    <span class="k">def</span> <span class="nf">addDivider</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Add a divider on the page</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Hr</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Page.addBreak"><a class="viewcode-back" href="../../../../apps.html#FloatingTools.Dashboard.ui.Page.addBreak">[docs]</a>    <span class="k">def</span> <span class="nf">addBreak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Add a break on the page</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Br</span><span class="p">())</span></div>
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">render</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="o">.</span><span class="n">html</span><span class="p">()</span>
+        <span class="n">app_sidebar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sideBar</span><span class="o">.</span><span class="n">html</span><span class="p">()</span>
+        <span class="n">help_video</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_helpCenter</span><span class="o">.</span><span class="n">html</span><span class="p">()</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span>
+
+        <span class="n">renderSTR</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TEMPLATE</span>
+        <span class="n">substitution</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">substitution</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">renderSTR</span> <span class="o">=</span> <span class="n">renderSTR</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;%(&#39;</span> <span class="o">+</span> <span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;)s&#39;</span><span class="p">,</span> <span class="n">substitution</span><span class="p">[</span><span class="n">var</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">renderSTR</span></div>
+
+
+<span class="k">class</span> <span class="nc">Style</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Style</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">FloatingTools v0.7.x alpha documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Alex Hatfield.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.2.
+    </div>
+  </body>
+</html>

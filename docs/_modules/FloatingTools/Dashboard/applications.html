@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>FloatingTools.Dashboard.applications &#8212; FloatingTools v0.6.0 documentation</title>
+    <title>FloatingTools.Dashboard.applications &#8212; FloatingTools v0.7.x alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     'v0.6.0',
+        VERSION:     'v0.7.x alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.7.x alpha documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -52,10 +52,53 @@
 <span class="kn">import</span> <span class="nn">FloatingTools</span>
 
 <span class="c1"># flask imports</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">render_template</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">render_template_string</span>
 
 <span class="c1"># package imports</span>
+<span class="kn">from</span> <span class="nn">ui</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">utilities</span> <span class="k">import</span> <span class="n">SERVER</span>
+
+
+<span class="k">class</span> <span class="nc">ApplicationsPage</span><span class="p">(</span><span class="n">Page</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applications page</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ApplicationsPage</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;Applications&#39;</span><span class="p">)</span>
+
+        <span class="c1"># build ui</span>
+        <span class="n">appList</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="s1">&#39;File Types&#39;</span><span class="p">,</span> <span class="s1">&#39;Features&#39;</span><span class="p">])</span>
+
+        <span class="c1"># loop over apps</span>
+        <span class="k">for</span> <span class="n">app</span> <span class="ow">in</span> <span class="n">FloatingTools</span><span class="o">.</span><span class="n">APP_WRAPPERS</span><span class="p">:</span>
+
+            <span class="c1"># app info</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">Center</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">APP_ICON</span><span class="p">:</span>
+                <span class="n">info</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span>
+                    <span class="n">Img</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">APP_ICON</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="n">info</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span>
+                <span class="n">Link</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">app</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">link</span><span class="o">=</span><span class="s2">&quot;https://www.google.com/search?q=</span><span class="si">%s</span><span class="s2">+application&quot;</span> <span class="o">%</span> <span class="n">app</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
+            <span class="p">)</span>
+
+            <span class="c1"># associated files</span>
+            <span class="n">types</span> <span class="o">=</span> <span class="n">Center</span><span class="p">()</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+            <span class="k">for</span> <span class="nb">type</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">fileTypes</span><span class="p">()):</span>
+                <span class="n">types</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span>
+                    <span class="n">Link</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span> <span class="n">link</span><span class="o">=</span><span class="s2">&quot;https://www.google.com/search?q=</span><span class="si">%(name)s</span><span class="s2">+</span><span class="si">%(type)s</span><span class="s2">+file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">())</span>
+                <span class="p">)</span>
+
+            <span class="c1"># features</span>
+            <span class="n">featureList</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">headers</span><span class="o">=</span><span class="p">[])</span>
+            <span class="n">featureList</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">Center</span><span class="p">(</span><span class="s1">&#39;Multi-Threaded Load Up&#39;</span><span class="p">),</span> <span class="n">Center</span><span class="p">(</span><span class="s1">&#39;True&#39;</span> <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">MULTI_THREAD</span> <span class="k">else</span> <span class="s1">&#39;False&#39;</span><span class="p">))</span>
+            <span class="n">featureList</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">Center</span><span class="p">(</span><span class="s1">&#39;Python arguments&#39;</span><span class="p">),</span> <span class="n">Center</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">ARGS</span><span class="p">))</span>
+
+            <span class="n">appList</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">featureList</span><span class="p">)</span>
+
+        <span class="c1"># add to page</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">appList</span><span class="p">)</span>
 
 
 <span class="nd">@SERVER</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/applications&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
@@ -64,7 +107,7 @@
 <span class="sd">    Render applications page</span>
 <span class="sd">    :return: </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;Applications.html&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">render_template_string</span><span class="p">(</span><span class="n">ApplicationsPage</span><span class="p">()</span><span class="o">.</span><span class="n">render</span><span class="p">(),</span> <span class="o">**</span><span class="n">FloatingTools</span><span class="o">.</span><span class="n">Dashboard</span><span class="o">.</span><span class="n">dashboardEnv</span><span class="p">())</span>
 
 
 <div class="viewcode-block" id="applications"><a class="viewcode-back" href="../../../api.html#FloatingTools.Dashboard.applications">[docs]</a><span class="k">def</span> <span class="nf">applications</span><span class="p">():</span>
@@ -102,7 +145,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.6.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">FloatingTools v0.7.x alpha documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

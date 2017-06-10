@@ -36,6 +36,35 @@ user to be able to simply click the thing that is broke in application A and sen
 upstream user in application B and it will not only tell them the problem, but open up the source of the problem in
 application B. This is all possible using the power of Dashboard, Application Wrappers and Apps.
 
+Dashboard.ui
+^^^^^^^^^^^^
+All of these are html wrapped in python so you dont need to create html files. The html syntax is handled by the Element
+base class.
+
+.. autoclass:: FloatingTools.Dashboard.ui.Element
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Row
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Panel
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.List
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Table
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Link
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Font
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Page
+    :members:
+
 App
 ^^^
 .. autoclass:: FloatingTools.App
