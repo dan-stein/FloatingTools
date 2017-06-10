@@ -44,6 +44,21 @@ base class.
 .. autoclass:: FloatingTools.Dashboard.ui.Element
     :members:
 
+.. autoclass:: FloatingTools.Dashboard.ui.Img
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Br
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Hr
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Center
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Header
+    :members:
+
 .. autoclass:: FloatingTools.Dashboard.ui.Row
     :members:
 
@@ -60,6 +75,24 @@ base class.
     :members:
 
 .. autoclass:: FloatingTools.Dashboard.ui.Font
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Script
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Div
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Select
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Collapse
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.PanelGroup
+    :members:
+
+.. autoclass:: FloatingTools.Dashboard.ui.Style
     :members:
 
 .. autoclass:: FloatingTools.Dashboard.ui.Page
