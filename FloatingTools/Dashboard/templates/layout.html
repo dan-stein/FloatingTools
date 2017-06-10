@@ -150,7 +150,7 @@ td, th {
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <center><span class="help-block">API Documentation</span></center>
+                                                    <center><span class="help-block">Documentation</span></center>
                                                 </li>
                                                 <li>
                                                     <a href="https://aldmbmtl.github.io/FloatingTools/index.html"
@@ -165,7 +165,6 @@ td, th {
                                 </div>
                                 <div class="col-sm-2">
                                     <ul class="nav navbar-nav">
-                                        {% if app_plugins != [] %}
                                         <li class="dropdown">
                                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                                 <span class="glyphicon glyphicon-tasks"></span>
@@ -180,9 +179,17 @@ td, th {
                                                     </a>
                                                 </li>
                                                 {% endfor %}
+                                                <li>
+                                                    <center><span class="help-block">Documentation</span></center>
+                                                </li>
+                                                <li>
+                                                    <a href="https://aldmbmtl.github.io/FloatingTools/apps.html" style="color: rgb(157, 157, 157);">
+                                                        <img src="https://www.python.org/static/opengraph-icon-200x200.png" height="30">
+                                                        App Development API
+                                                    </a>
+                                                </li>
                                             </ul>
                                         </li>
-                                        {% endif %}
                                     </ul>
                                 </div>
                             </div>
@@ -193,6 +200,34 @@ td, th {
                 {% endblock %}
             </div>
             <div class="col-sm-2">
+                <br>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <center>
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#peerList">
+                                        Network
+                                    </a>
+                                </h4>
+                            </center>
+                        </div>
+                        <div id="peerList" class="panel-collapse collapse">
+                            <div class="well" style="background-color: rgb(25, 25, 25);">
+                                {% if ft_peers != [] %}
+                                    <div class="pre-scrollable">
+                                    {% for peer in ft_peers %}
+                                        <strong><font size="3">{{ ft_peers[peer]["user"] }}</font></strong>
+                                        <br>
+                                        <font size="2">@{{ ft_peers[peer]["host"] }} running {{ ft_peers[peer]["application"] }}</font>
+                                    {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <center><h4>No Peers found</h4></center>
+                                    <center><h6>Refresh page</h6></center>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                 <br>
                 {% block app_sidebar %}{% endblock %}
             </div>

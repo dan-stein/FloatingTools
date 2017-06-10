@@ -77,7 +77,7 @@ def pyImport():
         FloatingTools.FT_LOOGER.info('Module Imported/Reloaded: %s' % mod)
     except Exception, e:
         return render_template_string(
-            ErrorPage(errorType=e, traceback='\n' + traceback.format_exc()),
+            ErrorPage(errorType=e, traceback=traceback.format_exc()),
             **FloatingTools.Dashboard.dashboardEnv()
         )
 

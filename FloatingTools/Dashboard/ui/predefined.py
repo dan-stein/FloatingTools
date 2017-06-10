@@ -304,14 +304,22 @@ you.
 
 
     TEMPLATE = ("{% extends \"layout.html\" %}\n"
-                "{% block title %}%(self._title)s{% endblock %}\n"
+                "{% block title %}%(title)s{% endblock %}\n"
                 "{% block body %}\n"
                 "%(render)s\n"
+                "{% endblock %}\n"
+                "{% block help_video %}\n"
+                "%(help_video)s\n"
+                "{% endblock %}\n"
+                "{% block app_sidebar %}\n"
+                "%(app_sidebar)s\n"
                 "{% endblock %}\n")
 
     def __init__(self, title):
         self._title = title
         self._root = Element('body')
+        self._sideBar = Element('body')
+        self._helpCenter = Element('body')
 
     def add(self, element):
         """
@@ -321,9 +329,50 @@ Add an element to this page.
         """
         self._root.addValue(element)
 
+    def addToSideBar(self, element):
+        """
+Add an element as a side bar
+
+:param element:
+        """
+        self._sideBar.addValue(element)
+
+    def addToHelp(self, element):
+        """
+Add an element to the help center
+
+:param element:
+        """
+        self._helpCenter.addValue(element)
+
+    def addDivider(self):
+        """
+Add a divider on the page
+        """
+        self.add(Hr())
+
+    def addBreak(self):
+        """
+Add a break on the page
+        """
+        self.add(Br())
+
     def render(self):
+
         render = self._root.html()
-        return self.TEMPLATE.replace('%(self._title)s', self._title).replace('%(render)s', render)
+        app_sidebar = self._sideBar.html()
+        help_video = self._helpCenter.html()
+        title = self._title
+
+        renderSTR = self.TEMPLATE
+        substitution = locals()
+        for var in substitution:
+            try:
+                renderSTR = renderSTR.replace('%(' + var + ')s', substitution[var])
+            except TypeError:
+                pass
+
+        return renderSTR
 
 
 class Style(Element):

@@ -8,7 +8,7 @@ import FloatingTools
 import webbrowser
 
 # flask imports
-from flask import request, Flask
+from flask import request, Flask, redirect, jsonify
 
 # python imports
 import os
@@ -34,7 +34,9 @@ class ErrorPage(Page):
 
         panel = Panel()
         panel.addToHeader(Header(size=4, value=Element('strong', Font(errorType, color='red'))))
-        panel.addTobody(Element('textarea', 'disabled', wrap='soft', rows=15, cols=150, value=traceback))
+        textArea = Element('textarea', '\n' + traceback, wrap='soft', rows=15, cols=150)
+        textArea.addFlag('disabled')
+        panel.addTobody(textArea)
         self.add(panel)
 
 

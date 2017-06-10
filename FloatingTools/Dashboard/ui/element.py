@@ -61,7 +61,11 @@ Base element for all python->html elements. Each Element has a tag, attributes t
 
         :param value: str or Element
         """
-        self._values.append(value)
+        if isinstance(value, list):
+            for val in value:
+                self._values.append(val)
+        else:
+            self._values.append(value)
         return value
 
     def addBreak(self):

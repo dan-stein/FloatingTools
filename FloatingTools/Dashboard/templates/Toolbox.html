@@ -114,7 +114,6 @@ function handleToolboxChange(select) {
             </div>
             <div class="col-sm-2">
                 {% if has_repo == True %}
-                    <label>Toolbox: </label>
                     <select class="form-control" name="toolbox" id="toolbox" onchange="handleToolboxChange(this)">
                         {% for repo in user_repos %}
                             {% if toolbox == repo %}

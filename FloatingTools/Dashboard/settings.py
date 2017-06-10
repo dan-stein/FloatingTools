@@ -2,7 +2,7 @@
 import FloatingTools
 
 # flask imports
-from flask import request, render_template, redirect, render_template_string
+from flask import request, redirect, render_template_string
 
 # package imports
 from ui import *
@@ -47,12 +47,12 @@ class SettingsPage(Page):
         # release section
         releaseSection = Element('label', 'Change Release: (requires relaunch)')
         selector = Select('release')
-        selector.addOption('latest', text='Latest')
+        selector.addOption('latest', text='Latest').addFlag('selected')
 
         for release in FloatingTools.Dashboard.dashboardEnv()['releases']:
             option = selector.addOption(release, text=release)
-            if release == FloatingTools.Dashboard.dashboardEnv()['build']:
-                option.setFlag('selected')
+            if release == FloatingTools.buildData()['release']:
+                option.addFlag('selected')
 
         releaseSection.addValue(selector)
 
@@ -82,10 +82,13 @@ class SettingsPage(Page):
         label = devPanel.addTobody(Element('label', 'Branch: '))
 
         branchSelect = Select(name='dev-branch')
-        branchSelect.addOption('disable', text='Disable')
+        branchSelect.addOption('disable', text='Disable').addFlag('selected')
 
         for branch in FloatingTools.Dashboard.dashboardEnv()['branches']:
-            branchSelect.addOption(branch, text=branch)
+            opt = branchSelect.addOption(branch, text=branch)
+            if branch == FloatingTools.buildData()['devBranch']:
+                opt.addFlag('selected')
+
 
         label.addValue(branchSelect)
         devPanel.addTobody(Br())
@@ -105,10 +108,9 @@ class SettingsPage(Page):
         off = branchSelect.addOption('false', text='Disable')
         on = branchSelect.addOption('true', text='Enable')
 
+        off.addFlag('selected')
         if FloatingTools.buildData()['collaborator']:
             on.addFlag('selected')
-        else:
-            off.addFlag('selected')
 
         label.addValue(branchSelect)
         devPanel.addTobody(Br())
