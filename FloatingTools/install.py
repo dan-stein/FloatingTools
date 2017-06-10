@@ -116,6 +116,9 @@ Install packages into FT from pip.
 for package in [('github', 'PyGithub'), ('flask', 'Flask')]:
     pipInstallPackage(*package)
 
+# post pip install imports
+import github
+
 
 def downloadBuild(repository, sha, path=None):
     """
