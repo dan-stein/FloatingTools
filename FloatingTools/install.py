@@ -145,12 +145,27 @@ def downloadBuild(version):
         if not i.filename.startswith(root + '/FloatingTools/'):
             continue
 
-        # extract file contents
-        shutil.move(
-            zipDownload.extract(i, path=FloatingTools.INSTALL_DIRECTORY),
-            os.path.join(FloatingTools.INSTALL_DIRECTORY, *i.filename.replace(root, '').split('/'))
-        )
+        zipDownload.extract(i)
 
+    # back up old ft build
+    shutil.move(
+        os.path.join(FloatingTools.INSTALL_DIRECTORY, 'FloatingTools'),
+        os.path.join(FloatingTools.INSTALL_DIRECTORY, 'FloatingTools_bak')
+    )
+
+    # push download to the install directory
+    shutil.move(
+        os.path.join(FloatingTools.INSTALL_DIRECTORY, root, 'FloatingTools_bak'),
+        os.path.join(FloatingTools.INSTALL_DIRECTORY, 'FloatingTools')
+    )
+
+    # copy the data from old build
+    shutil.copy(
+        os.path.join(FloatingTools.INSTALL_DIRECTORY, root, 'FloatingTools_bak', 'data'),
+        os.path.join(FloatingTools.INSTALL_DIRECTORY, root, 'FloatingTools', 'data')
+    )
+
+    # remove download folder
     shutil.rmtree(os.path.join(FloatingTools.INSTALL_DIRECTORY, root))
 
     # close the zipfile
