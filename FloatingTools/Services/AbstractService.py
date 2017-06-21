@@ -161,9 +161,6 @@ Represents a FloatingTools compatible toolbox service
     def handlerName(cls):
         """
         This handlers name. This will be whatever you named the class.
-        
-        
-        
         """
         return cls.__name__
 
