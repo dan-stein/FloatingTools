@@ -12,6 +12,7 @@ import os
 import re
 import sys
 import urllib
+import shutil
 import zipfile
 import subprocess
 
@@ -145,8 +146,12 @@ def downloadBuild(version):
             continue
 
         # extract file contents
-        # print os.path.join(FloatingTools.INSTALL_DIRECTORY, *i.filename.replace(root, '').split('/'))
-        zipDownload.extract(i, path=FloatingTools.INSTALL_DIRECTORY)
+        shutil.move(
+            zipDownload.extract(i, path=FloatingTools.INSTALL_DIRECTORY),
+            os.path.join(FloatingTools.INSTALL_DIRECTORY, *i.filename.replace(root, '').split('/'))
+        )
+
+    shutil.rmtree(os.path.join(FloatingTools.INSTALL_DIRECTORY, root))
 
     # close the zipfile
     zipDownload.close()
