@@ -142,41 +142,17 @@ def downloadBuild(version):
         if cleanPath == '' or i.filename.startswith('__MACOSX') or os.path.basename(i.filename).startswith('.'):
             continue
 
+        if not i.filename.startswith(root + '/FloatingTools/'):
+            continue
+
         # extract file contents
-        # initialInstall = zipDownload.extract(i)
-        reinstallPath = os.path.join(os.getcwd(), *i.filename.replace(root, '').split('/'))
-        print reinstallPath
-
-        # move
-        # shutil.move(initialInstall, reinstallPath)
-
-    # delete directory
-    print os.path.join(os.getcwd(), root)
-    # shutil.rmtree(os.path.join(os.getcwd(), root))
+        zipDownload.extract(i, path=os.path.join(FloatingTools.INSTALL_DIRECTORY, *i.filename.replace(root, '').split('/')))
 
     # close the zipfile
     zipDownload.close()
 
     # remove old zip
     os.unlink(zipPath)
-
-    # for fo in repository.get_dir_contents(path):
-    #     if fo.type == 'dir':
-    #         downloadBuild(repository, sha, path + fo.name + '/')
-    #         continue
-    #
-    #     # pull server data
-    #     serverPath = fo.path
-    #     localPath = os.path.join(FloatingTools.INSTALL_DIRECTORY, serverPath)
-    #     try:
-    #         fileContent = repository.get_contents(serverPath, ref=sha)
-    #         fileData = base64.b64decode(fileContent.content)
-    #         fileOut = open(localPath, "w")
-    #         fileOut.write(fileData)
-    #         fileOut.close()
-    #         FloatingTools.FT_LOOGER.info('Updated: ' + localPath)
-    #     except (github.GithubException, IOError):
-    #         FloatingTools.FT_LOOGER.error('Failed updating: ' + localPath)
 
 
 def loadVersion():
