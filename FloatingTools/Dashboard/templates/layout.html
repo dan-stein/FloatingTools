@@ -10,78 +10,17 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!--Chart.js imports-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+
+    <!--load ft stylesheet and javascript-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/ft.css')}}">
+    <script src="{{ url_for('static', filename='javascript/ft.js')}}"></script>
 </head>
-
-<style>
-body {
-    background-color: rgb(39, 39, 39);
-    color: rgb(157, 157, 157);
-}
-textarea {
-    background-color: rgb(39, 39, 39);
-    color: rgb(157, 157, 157);
-    border: 0;
-}
-
-textarea:disabled {
-    background-color: rgb(39, 39, 39);
-    color: rgb(157, 157, 157);
-    border: 0;
-}
-
-hr {
-    border-color: rgb(70, 70, 100);
-}
-.list-group-item {
-    background-color: rgb(30, 30, 30);
-    color: rgb(157, 157, 157);
-    border: 2px solid rgb(39, 39, 75);
-}
-.form-control {
-    background-color: rgb(30, 30, 30);
-    color: rgb(157, 157, 157);
-    border: 2px solid rgb(39, 39, 39);
-}
-.dropdown-menu {
-    background-color: rgb(39, 39, 39);
-    color: rgb(157, 157, 157);
-}
-.navbar {
-    background-color: rgb(30, 30, 30);
-    border: 0px;
-}
-.well {
-    background-color: rgb(30, 30, 30);
-    color: rgb(157, 157, 157);
-    border: 0px;
-}
-.panel {
-    background-color: rgb(30, 30, 30);
-    color: rgb(157, 157, 157);
-    border: 2px solid rgb(45, 45, 45);
-}
-.panel .panel-heading{
-    background-color: rgb(39, 39, 45);
-    color: rgb(157, 157, 157);
-    border: 0px;
-}
-.panel .panel-footer{
-    background-color: rgb(33, 33, 33);
-    color: rgb(157, 157, 157);
-    border: 0px;
-}
-table {
-    font-family: arial, sans-serif;
-    width: 100%;
-}
-
-td, th {
-    border-top: 1px solid rgb(70, 70, 100);
-    border-bottom: 1px solid rgb(70, 70, 100);
-    text-align: left;
-    padding: 8px;
-}
-</style>
 
 <body>
     <div class="row">
@@ -100,6 +39,7 @@ td, th {
                                         <a class="navbar-brand" href="/home">Floating Tools</a>
                                     </div>
                                     <ul class="nav navbar-nav">
+                                        {% if is_user == True %}
                                         <li><a href="/toolbox"><span class="glyphicon glyphicon-briefcase"></span> Toolbox</a></li>
                                         <li><a href="/tool_shed"><span class="glyphicon glyphicon-cloud"></span> Tool Shed</a></li>
                                         <li><a href="/applications"><span class="glyphicon glyphicon-list-alt"></span> Applications</a>
@@ -161,6 +101,66 @@ td, th {
                                                 </li>
                                             </ul>
                                         </li>
+                                        {% else %}
+                                        <li><a href="/applications"><span class="glyphicon glyphicon-list-alt"></span> Applications</a>
+                                        </li>
+                                        <li class="dropdown">
+                                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                                <span class="glyphicon glyphicon-globe"></span>
+                                                Support
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a href="http://www.hatfieldfx.com/" style="color: rgb(157, 157, 157);">
+                                                        <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
+                                                             height="30"> HatfieldFX
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="http://www.hatfieldfx.com/floating-tools"
+                                                       style="color: rgb(157, 157, 157);">
+                                                        <img src="http://www.hatfieldfx.com/wp-content/uploads/2016/05/cropped-10845960_316492415220139_5883595009066729011_n.png"
+                                                             height="30"> FloatingTools
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <center><span class="help-block">Resources</span></center>
+                                                </li>
+                                                <li>
+                                                    <a href="https://www.jetbrains.com/pycharm/" style="color: rgb(157, 157, 157);">
+                                                        <img src="https://d3nmt5vlzunoa1.cloudfront.net/pycharm/files/2015/12/PyCharm_400x400_Twitter_logo_white.png"
+                                                             height="30"> PyCharm
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://github.com/aldmbmtl/FloatingTools"
+                                                       style="color: rgb(157, 157, 157);">
+                                                        <img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png"
+                                                             height="30"> Repository
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://github.com/aldmbmtl/FloatingTools/blob/master/README.md"
+                                                       style="color: rgb(157, 157, 157);">
+                                                        <img src="http://markdown-here.com/img/logo-2015/austin.png" height="30">
+                                                        Repository
+                                                        Markdown
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <center><span class="help-block">Documentation</span></center>
+                                                </li>
+                                                <li>
+                                                    <a href="https://aldmbmtl.github.io/FloatingTools/index.html"
+                                                       style="color: rgb(157, 157, 157);">
+                                                        <img src="https://www.python.org/static/opengraph-icon-200x200.png" height="30">
+                                                        Python API
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        {% endif %}
                                     </ul>
                                 </div>
                                 <div class="col-sm-2">
@@ -172,25 +172,39 @@ td, th {
                                                 <span class="caret"></span>
                                             </a>
                                             <ul class="dropdown-menu">
-                                                {% for app in app_plugins %}
                                                 <li>
-                                                    <a href="/{{ app.name() }}" style="color: rgb(157, 157, 157);">
-                                                        <center><strong>{{ app.name() }}</strong></center>
-                                                    </a>
-                                                </li>
-                                                {% endfor %}
-                                                <li>
-                                                    <center><span class="help-block">Documentation</span></center>
+                                                    <center><span class="help-block">Loaded Apps</span></center>
                                                 </li>
                                                 <li>
-                                                    <a href="https://aldmbmtl.github.io/FloatingTools/apps.html" style="color: rgb(157, 157, 157);">
-                                                        <img src="https://www.python.org/static/opengraph-icon-200x200.png" height="30">
-                                                        App Development API
-                                                    </a>
+                                                    <div class="grid">
+                                                        {% for app in app_plugins %}
+                                                            <div class="cell appCell">
+                                                                {% if is_user == True %}
+                                                                    <a href="/{{ app.name() }}">
+                                                                        {% if app.ICON %}
+                                                                            <img src="{{ app.ICON }}" width="35">
+                                                                        {% endif %}
+                                                                        <strong> {{ app.name() }}</strong>
+                                                                    </a>
+                                                                {% else %}
+                                                                    <div class="circle">
+                                                                        <strong>{{ app.name() }}</strong>
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
                                                 </li>
                                             </ul>
                                         </li>
                                     </ul>
+                                    <div align="right">
+                                        <ul class="nav navbar-nav">
+                                            <li >
+                                                <a href="/shutdown"><span class="glyphicon glyphicon-off"></span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -203,24 +217,30 @@ td, th {
                 <br>
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <center>
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" href="#peerList">
+                            <h4 class="panel-title">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#peerList">
                                         Network
-                                    </a>
-                                </h4>
-                            </center>
+                                    </button>
+                                    <button type="button" class="btn btn-success btn-sm" onclick="refreshPeers()">
+                                        <span class="glyphicon glyphicon-refresh"></span>
+                                    </button>
+                                </div>
+                            </h4>
                         </div>
-                        <div id="peerList" class="panel-collapse collapse">
+                        <div id="peerList" class="panel-collapse collapse in">
                             <div class="well" style="background-color: rgb(25, 25, 25);">
                                 {% if ft_peers != [] %}
-                                    <div class="pre-scrollable">
                                     {% for peer in ft_peers %}
                                         <strong><font size="3">{{ ft_peers[peer]["user"] }}</font></strong>
+                                        {% if ft_peers[peer]["hasData"] == True %}
+                                            <a class="btn btn-primary btn-xs" onclick="downloadFromPeer('{{ ft_peers[peer]['host'] }}')">Retrieve</a>
+                                        {% endif %}
                                         <br>
                                         <font size="2">@{{ ft_peers[peer]["host"] }} running {{ ft_peers[peer]["application"] }}</font>
+                                        <br>
+                                        <br>
                                     {% endfor %}
-                                    </div>
                                 {% else %}
                                     <center><h4>No Peers found</h4></center>
                                     <center><h6>Refresh page</h6></center>

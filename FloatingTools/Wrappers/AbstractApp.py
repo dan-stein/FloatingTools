@@ -1,6 +1,10 @@
 # FloatingTools imports
 import FloatingTools
 
+# python imports
+import inspect
+import traceback
+
 
 def wrapper():
     """
@@ -72,12 +76,70 @@ You can modify all these settings...
     ARGS = None
     MULTI_THREAD = False
 
+    # load modules
+    libraries = {}
+
     def __init__(self):
         self.appTest()
         setWrapper(self.__class__)
 
-    @staticmethod
-    def appTest():
+        # set up helper globals for all class functions
+        for funcName in dir(self):
+            try:
+                for name, lib in self.libraries.iteritems():
+                    getattr(self, funcName).__func__.__globals__[name] = lib
+            except AttributeError:
+                pass
+
+    @classmethod
+    def loadAPI(cls, mod):
+        """
+Load the module(s) need for this application to function.
+
+.. code-block:: python
+    :linenos:
+
+     def appTest(cls):
+        import nuke
+        cls.loadModule(nuke)
+
+:param mod:
+        """
+        modName = None
+        for key, value in inspect.stack()[1][0].f_locals.iteritems():
+            if value == mod:
+                modName = key
+                break
+
+        if modName not in cls.libraries:
+            cls.libraries[modName] = mod
+            setattr(cls, modName, mod)
+
+    @classmethod
+    def loadedAPIs(cls):
+        """
+An application should have libraries associated with it. To allow for cleaner code, the modules should be loaded on the
+wrapper object. This will return a list of modules that are loaded on this wrapper.
+
+.. code-block:: python
+    :linenos:
+
+    wrapper = FloatingTools.wrapper()
+
+    if 'nuke' in wrapper.loadedAPIs():
+        wrapper.nuke
+        do nuke stuff...
+
+    if 'maya' in wrapper.loadedAPIs():
+        wrapper.maya
+        do maya stuff...
+
+:return: list of strings for the modules loaded
+        """
+        return cls.libraries
+
+    @classmethod
+    def appTest(cls):
         """
 This should ideally return True if this is the wrapper for the app you're in. If you don't do this, FloatingTools wraps 
 the function and if it fails, assumes this is not the wrapper for the application it is in.

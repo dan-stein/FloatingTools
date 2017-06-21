@@ -1,0 +1,123 @@
+body {
+    background-color: rgb(39, 39, 39);
+    color: rgb(157, 157, 157);
+}
+
+textarea {
+    background-color: rgb(39, 39, 39);
+    color: rgb(157, 157, 157);
+    border: 0;
+}
+
+textarea:disabled {
+    background-color: rgb(39, 39, 39);
+    color: rgb(157, 157, 157);
+    border: 0;
+}
+
+hr {
+    border-color: rgb(70, 70, 100);
+}
+
+.form-control {
+    background-color: rgb(30, 30, 30);
+    color: rgb(157, 157, 157);
+    border: 2px solid rgb(39, 39, 39);
+}
+
+.dropdown-menu {
+    background-color: rgb(39, 39, 39);
+    color: rgb(157, 157, 157);
+}
+
+.navbar {
+    background-color: rgb(30, 30, 30);
+    border: 0;
+}
+
+.well {
+    background-color: rgb(30, 30, 30);
+    color: rgb(157, 157, 157);
+    border: 0;
+}
+
+.panel {
+    background-color: rgb(39, 39, 39);
+    color: rgb(157, 157, 157);
+    border: 1px solid rgb(45, 45, 45);
+}
+
+.panel .panel-heading{
+    background-color: rgb(39, 39, 45);
+    color: rgb(157, 157, 157);
+    border: 0;
+}
+
+.panel .panel-body{
+    background-color: rgb(30, 30, 30);
+    color: rgb(157, 157, 157);
+    border: 0;
+}
+
+.panel .panel-footer{
+    background-color: rgb(33, 33, 33);
+    color: rgb(157, 157, 157);
+    border: 0;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+
+}
+
+.cell .appCell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    width: 60px;
+    padding: 5px 5px 5px 5px;
+}
+
+table {
+    font-family: arial, sans-serif;
+    margin: 15px;
+    border: 1px solid rgb(30, 30, 30);
+}
+
+th {
+    background-color: rgb(30, 30, 30);
+    color: rgb(157, 157, 157);
+    border: 0;
+    padding: 15px;
+    text-align: center;
+}
+
+td {
+    padding: 15px;
+}
+
+tr:nth-child(even) {
+    background-color: rgb(33, 33, 33);
+}
+
+tr:hover {
+    background-color: rgb(33, 33, 35);
+}
+
+.list-group-item:nth-child(even) {
+    background-color: rgb(33, 33, 33);
+    border: 0;
+}
+
+.list-group-item:nth-child(odd) {
+    background-color: rgb(30, 30, 30);
+    border: 0;
+}
+
+.list-group-item:hover {
+    background-color: rgb(33, 33, 35);
+}
+

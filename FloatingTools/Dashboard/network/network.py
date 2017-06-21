@@ -3,18 +3,16 @@ Network class for Dashboard
 """
 # ft imports
 import FloatingTools
-from FloatingTools.Dashboard import SERVER, dashboardEnv, ErrorPage, SITE_ENV
-from FloatingTools.Dashboard.ui import *
+from FloatingTools.Dashboard import SERVER, SITE_ENV, HOST
 
 # package imports
-from flask import request, render_template_string, jsonify
+from flask import request, jsonify, redirect
 
 # python imports
 import re
 import time
 import socket
 import urllib2
-import traceback
 import threading
 from json import loads
 from getpass import getuser
@@ -22,71 +20,91 @@ from subprocess import check_output
 
 
 __all__ = [
-    'refreshPeers'
+    'refreshPeers',
+    'peers',
+    'pingIP',
+    'send'
 ]
 
 # globals
 IP_EXP = re.compile("([0-9]+.[0-9]+.[0-9].[0-9]+)")
 
 # Host ip
-HOST = socket.gethostbyname(socket.gethostname())
 SITE_ENV['ft_peers'] = {}
 
+# Out going data
+OUT_GOING = None
 
-@SERVER.route('/_receiving')
-def receive():
+def send(data, ip):
     """
-    -- private --
+Send data to a peer.
+
+:param data:
+:param ip:
     """
-    try:
-        sender = request.args['from']
-        # handlerType = request.args['type']
-        # handlerName = request.args['handler']
-
-        handlerType = 'App'
-        handlerName = 'Blur'
-
-        data = {}
-
-        for var in request.args:
-            if var not in ['type', 'handler']:
-                data[var] = request.args[var]
-
-        handler = None
-        if handlerType == 'App':
-            handler = FloatingTools.App.APPS[handlerName]
-        if handlerType == 'AbstractApplication':
-            handler = FloatingTools.wrapper()
+    # store data
+    global OUT_GOING
+    OUT_GOING = {ip: data}
 
 
-        p = Page('Receiving Center')
-        p.add(Element('center', value=Element('h2', value='Message received!')))
-        p.addDivider()
-        p.add(Element('center', value='Handler Type: ' + handlerType))
-        p.addBreak()
-        p.add(Element('center', value='Handler: ' + handlerName))
-        p.addBreak()
-        p.add(Element('center', value='Data: ' + str(data)))
+@SERVER.route('/_retrieve')
+def _retrieve():
+    ip = request.args['ip']
+    outBoxData = FloatingTools.Dashboard.pingIP(ip)[u'outBox']
 
-        return render_template_string(p.render(), **dashboardEnv())
+    if 'type' not in outBoxData and 'target' not in outBoxData:
+        FloatingTools.FT_LOOGER.error('Data passed was not valid. Must specify the type of data being passed (App, '
+                                      'Wrapper, etc...) and what the target it is (the name of the type that you are '
+                                      'sending the data to).')
 
-    except Exception, e:
-        return render_template_string(ErrorPage(errorType=e, traceback=traceback.format_exc()).render(), **dashboardEnv())
+    if outBoxData['type'] == 'App':
+        FloatingTools.App.APPS[outBoxData['target']].receive(outBoxData['data'])
+        urllib2.urlopen('http://%(ip)s:5000/_pickedUp' % locals())
+
+    FloatingTools.Dashboard.refreshPeers()
+
+    return redirect(request.args['source'])
+
+
+@SERVER.route('/_pickedUp')
+def _pickedUp():
+    # reset data
+    global OUT_GOING
+    OUT_GOING = None
+
+    return ''
 
 
 @SERVER.route('/_identify')
 def _respond():
+
+    outData = None
+
+    if OUT_GOING:
+        try:
+            outData = OUT_GOING[request.remote_addr]
+        except KeyError:
+            pass
+
     data = {
         'user': getuser(),
         'host': HOST,
-        'application': FloatingTools.wrapperName()
+        'application': FloatingTools.wrapperName(),
+        'address': 'http://%s:5000/' % HOST,
+        'hasData': True if outData else False,
+        'outBox': outData
     }
+
     return jsonify(data)
 
 
 def pingIP(ip):
     response = urllib2.urlopen('http://%(ip)s:5000/_identify' % locals())
     return loads(response.read())
+
+
+def peers():
+    return SITE_ENV['ft_peers']
 
 
 def _pullPeers():
@@ -117,7 +135,11 @@ Refresh the network for new peer list and updated snapshot of enabled Dashboard 
             )
         )
 
+    hitIps = []
     for ip in ips:
+        if ip in hitIps:
+            continue
+        hitIps.append(ip)
         try:
             urllib2.urlopen('http://%(ip)s:5000/_identify' % locals(), timeout=.1)
             SITE_ENV['ft_peers'][ip] = pingIP(ip)
@@ -126,11 +148,14 @@ Refresh the network for new peer list and updated snapshot of enabled Dashboard 
             continue
 
 
-def refreshPeers():
-    threading.Thread(target=_pullPeers).start()
+def refreshPeers(threaded=False):
+    if threaded:
+        threading.Thread(target=_pullPeers).start()
+    else:
+        _pullPeers()
 
-try:
-    refreshPeers()
-except:
-    FloatingTools.FT_LOOGER.warning('Networking capabilities failed to initialize.')
-    traceback.print_exc()
+
+@SERVER.route('/_refreshPeers')
+def _refresh():
+    _pullPeers()
+    return redirect(request.args['source'])

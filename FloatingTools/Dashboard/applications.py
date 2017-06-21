@@ -17,10 +17,19 @@ class ApplicationsPage(Page):
         super(ApplicationsPage, self).__init__('Applications')
 
         # build ui
-        appList = Table(headers=['App', 'File Types', 'Features'])
+        appList = Table(headers=['App', 'File Types', 'Features', 'Setting'])
+
+        # load time dict
+        loadTimes = {}
 
         # loop over apps
         for app in FloatingTools.APP_WRAPPERS:
+
+            # pull load time
+            loadTimes[app.name()] = 0.0
+            for toolBox in FloatingTools.sourceData():
+                if app.name() in toolBox['loadTimes']:
+                    loadTimes[app.name()] = loadTimes[app.name()] + eval(toolBox['loadTimes'][app.name()])
 
             # app info
             info = Center()
@@ -40,15 +49,22 @@ class ApplicationsPage(Page):
                     Link(value=type, link="https://www.google.com/search?q=%(name)s+%(type)s+file" % locals())
                 )
 
-            # features
-            featureList = Table(headers=[])
-            featureList.addRow(Center('Multi-Threaded Load Up'), Center('True' if app.MULTI_THREAD else 'False'))
-            featureList.addRow(Center('Python arguments'), Center(app.ARGS))
+            # features and settings
+            featureList = Div()
+            featureList.addValue('Multi-Threaded Load Up')
+            featureList.addBreak()
+            featureList.addValue('Python arguments')
 
-            appList.addRow(info, types, featureList)
+            settingList = Div()
+            settingList.addValue('True' if app.MULTI_THREAD else 'False')
+            settingList.addBreak()
+            settingList.addValue(app.ARGS)
+
+            appList.addRow(info, types, featureList, settingList)
 
         # add to page
-        self.add(appList)
+        self.add(Center(appList))
+        self.add(FloatingTools.Dashboard.BarGraph('FloatingTools Application Load', loadTimes, 100, 500))
 
 
 @SERVER.route('/applications', methods=['GET', 'POST'])

@@ -1,4 +1,5 @@
 from App import App
 
-# predefined
-import Blur
+
+# shipped apps
+import NukeConnect

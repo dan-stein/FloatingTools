@@ -5,7 +5,7 @@ Dashboard handles the web interface
 SITE_ENV = {}
 
 # dashboard imports
-from utilities import startServer, setDashboardVariable, dashboardEnv, SERVER, ErrorPage
+from utilities import startServer, setDashboardVariable, dashboardEnv, SERVER, ErrorPage, HOST, PORT
 from ui import *
 from network import *
 from settings import settings

@@ -153,6 +153,14 @@ def loadTools():
     """
     # set up dashboard in the application wrapper if there is one loaded.
     if FloatingTools.wrapper():
+        # add the apps to the launcher for
+        if FloatingTools.App.APPS:
+            for app in FloatingTools.App.APPS:
+                FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Apps/' + app,
+                                                     partial(FloatingTools.Dashboard.startServer, (app)))
+
+        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__ + '/Dashboard')
+
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Toolbox',
                                              partial(FloatingTools.Dashboard.toolbox))
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Tool Shed',
@@ -162,6 +170,7 @@ def loadTools():
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
                                              partial(FloatingTools.Dashboard.settings))
         FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__ + '/Dashboard')
+
         FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Support/HatfieldFX',
                                              partial(webbrowser.open, ("http://www.hatfieldfx.com/floating-tools")))

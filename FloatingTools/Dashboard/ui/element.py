@@ -10,6 +10,18 @@ Base element for all python->html elements. Each Element has a tag, attributes t
 <"tag" "attributes">"value"</"tag">
     """
 
+    def __add__(self, other):
+        div = Element('Div')
+        div.addValue(self)
+        div.addValue(other)
+        return div
+
+    def __radd__(self, other):
+        div = Element('font')
+        div.addValue(other)
+        div.addValue(self)
+        return div
+
     def __init__(self, tag, value=None, attributes=None, **kwargs):
         """
         :param tag: str
@@ -31,6 +43,11 @@ Base element for all python->html elements. Each Element has a tag, attributes t
             if key == 'Class':
                 self._attributes['class'] = kwargs[key]
                 continue
+
+            if key == 'Type':
+                self._attributes['type'] = kwargs[key]
+                continue
+
             self._attributes[key] = kwargs[key]
         if attributes:
             self.setAttributes(attributes)

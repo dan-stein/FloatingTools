@@ -6,7 +6,10 @@ FloatingTools.
 import FloatingTools
 
 # flask imports
-from flask import render_template_string, request, redirect
+from flask import render_template_string, request, redirect, url_for
+
+# python imports
+from random import randint
 
 
 FloatingTools.Dashboard.setDashboardVariable('app_plugins', [])
@@ -44,11 +47,13 @@ static.
 
     # class variables
     APPS = {}
+    ICON = None
 
     # templates
     HOME_PAGE_TEMPLATE = '''
 @FloatingTools.Dashboard.SERVER.route('/%(name)s')
 def %(name)s_home():
+    FloatingTools.App.APPS['%(name)s'].refresh()
     return render_template_string(FloatingTools.App.APPS['%(name)s'].page().render(), **FloatingTools.Dashboard.dashboardEnv())
     '''
 
@@ -57,75 +62,70 @@ def %(name)s_home():
 def %(name)s%(function)s():
     result = FloatingTools.App.APPS['%(name)s'].%(function)s()
     if not result:
-        return render_template_string(FloatingTools.App.APPS['%(name)s'].page().render(), **FloatingTools.Dashboard.dashboardEnv())
+        return redirect(request.args['sourcePage'])
     else:
-        return render_template_string(result, **FloatingTools.Dashboard.dashboardEnv())
+        try:
+            return render_template_string(result, **FloatingTools.Dashboard.dashboardEnv())
+        except TypeError:
+            return result
         '''
 
-    def __init__(self, name):
-        """
-:param name: str for the name of your application
-        """
-
-        # instance variables
-        self._page = FloatingTools.Dashboard.Page(name)
-        self._name = name
-
-        # build ui
-        self.buildUI()
-
-        # register the app
-        added = FloatingTools.Dashboard.dashboardEnv()['app_plugins']
-        added.append(self)
-        FloatingTools.Dashboard.setDashboardVariable('app_plugins', added)
-
-        # register page with the Dashboard server.
-        exec self.HOME_PAGE_TEMPLATE % locals()
-
-        # register app
-        self.APPS[name] = self
-
-    def refresh(self):
-        """
-Refreshing the page will remove the previous Page element and redraw the ui on a fresh page as to eliminate UI
-repeating.
-        """
-        self._page = FloatingTools.Dashboard.Page(self.name())
-        self.buildUI()
-
-    def redirect(self, path):
+    @staticmethod
+    def redirect(path, **kwargs):
         """
 redirect to a different page
 
 :param path:
+:param kwargs: You can pass kwargs to the next page if you'd like.
         """
+
+        if kwargs:
+            # grab the flask url map so we can pull the function
+            urlMap = FloatingTools.Dashboard.SERVER.url_map.bind(FloatingTools.Dashboard.SERVER.name)
+
+            return redirect(url_for(urlMap.match(path)[0], **kwargs))
         return redirect(path)
 
-    def passVariables(self, **kwargs):
+    @staticmethod
+    def passVariables(**kwargs):
         """
+.. warning::
+    NOT RECOMMENDED FOR DIRECT USE! Only use this if you know exactly what you are doing with it.
+
 In order to pass variables to a function that gets called through a URL, you must use this function.
+
+:param **kwargs: dict
+
+.. note::
+    Requires unpack.
 
 .. code-block:: python
     :linenos:
 
-    import FloatingTools
+    strings, elements = self.passVariables(var='foo')
 
-    class MyApp(FloatingTools.App):
-        def buildUI(self):
-            FloatingTools.Link('print the "var" variable', '/url/printFunction' + self.passVariables(var='foo'))
-
-        def printFunction(self):
-            print self.arguments()['var']
-
-:param **kwargs: dict
+:returns: strings = dict(variableName: variableValue)
+:returns: elements = dict(variableName: id of element to grab value from)
         """
-        args = ['%s=%s' % (var, kwargs[var]) for var in kwargs]
-        if not args:
+        if not kwargs:
             return ''
 
-        return '?' + '&'.join(args)
+        elements = {}
+        strings = {}
 
-    def arguments(self):
+        for var in kwargs:
+            val = kwargs[var]
+            if isinstance(val, FloatingTools.Dashboard.Element):
+                if 'id' not in val._attributes:
+                    val._attributes['id'] = randint(0, 99999)
+                elements[var] = val._attributes['id']
+                continue
+            strings[var] = str(kwargs[var])
+
+        return strings, elements
+
+    @staticmethod
+    def arguments():
         """
 Arguments passed from the website
         """
@@ -139,6 +139,62 @@ Arguments passed from the website
             return value
         except RuntimeError:
             return {}
+
+    def __init__(self, name=None):
+        """
+:param name: str for the name of your application
+        """
+        if not name:
+            name = self.__class__.__name__
+
+        # instance variables
+        self._page = FloatingTools.Dashboard.Page(name)
+        self._name = name
+
+        # register the app
+        added = FloatingTools.Dashboard.dashboardEnv()['app_plugins']
+        added.append(self)
+        FloatingTools.Dashboard.setDashboardVariable('app_plugins', added)
+        FloatingTools.Dashboard.setDashboardVariable('app_plugin_count', len(added))
+
+        # register page with the Dashboard server.
+        exec self.HOME_PAGE_TEMPLATE % locals()
+
+        # register app
+        self.APPS[name] = self
+
+    def send(self, data, ip):
+        """
+Send data across the network to another computer running the same app. This will send the data directly to the receive()
+function that you have defined for the App.
+
+:param data: any kind of data that can be sent as a string and rebuilt
+:param ip: the peers ip you want to send to
+        """
+        FloatingTools.Dashboard.send({'type': 'App', 'target': self.name(), 'data': data}, ip)
+
+    def receive(self, data):
+        """
+Networking handler for receiving data should be set up here. Must sub-class if networking is desired.
+
+:param data: object being sent
+        """
+        page = FloatingTools.Dashboard.Page('Networking')
+
+        page.add(FloatingTools.Dashboard.Center(FloatingTools.Dashboard.Header('Networking', 3)))
+        page.addDivider()
+        page.add(FloatingTools.Dashboard.Center('Networking for %s is not set up yet. You need to subclass the receive '
+                                                'function in your App. Check the documentation for further '
+                                                'information.' % self.name()))
+        return page.render()
+
+    def refresh(self):
+        """
+Refreshing the page will remove the previous Page element and redraw the ui on a fresh page as to eliminate UI
+repeating.
+        """
+        self._page = FloatingTools.Dashboard.Page(self.name())
+        self.buildUI()
 
     def name(self):
         """
@@ -165,6 +221,9 @@ Register a function as a url
 :param function:
         """
         try:
+            if hasattr(function, '__name__'):
+                function = function.__func__
+
             exec self.FUNCTION_PAGE_TEMPLATE % {'name': self._name, 'function': function.__name__}
         except AssertionError:
             pass
@@ -189,7 +248,8 @@ This will create a function with pre-baked arguments in the url. Very useful for
 :param kwargs:
         """
         self.registerFunction(function)
-        return '/%s/%s%s' % (self.name(), function.__name__, self.passVariables(**kwargs))
+        strings, elements = self.passVariables(**kwargs)
+        return 'appPassArgs(%s, [%s], [%s]);' % (function.__name__, strings, elements)
 
     def connectToElement(self, element, function, flag='onclick', **kwargs):
         """
@@ -202,9 +262,11 @@ Connect an element through a passed flag to a callable.
         if not isinstance(element, FloatingTools.Dashboard.Element):
             raise TypeError('Must be an instance of FloatingTools.Dashboard.Element!')
 
-        element.setAttributes({flag: "location.href='%s/%s%s'" % (
-            self._name, function.__name__, self.passVariables(**kwargs))}
-                              )
+        strings, elements = self.passVariables(**kwargs)
+
+        element.setAttributes(
+            {flag: "appPassArgs('%s', '%s', %s, %s);" % (self.name(), function.__name__, strings, elements)}
+        )
 
         self.registerFunction(function)
 

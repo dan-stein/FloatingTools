@@ -75,9 +75,9 @@ def pyImport():
         mod = imp.load_source(os.path.basename(request.args.get('module')).replace('.py', ''), request.args.get('module'))
         reload(mod)
         FloatingTools.FT_LOOGER.info('Module Imported/Reloaded: %s' % mod)
-    except Exception, e:
+    except:
         return render_template_string(
-            ErrorPage(errorType=e, traceback=traceback.format_exc()),
+            ErrorPage(),
             **FloatingTools.Dashboard.dashboardEnv()
         )
 

@@ -5,11 +5,6 @@ import imp
 # FloatingTools imports
 from AbstractApp import AbstractApplication
 
-# maya imports
-maya = None
-pm = None
-cmds = None
-
 
 class MayaWrapper(AbstractApplication):
     FILE_TYPES = ['.ma', '.mb', '.py']
@@ -19,21 +14,21 @@ class MayaWrapper(AbstractApplication):
 
     MENUS = {}
 
-    @staticmethod
-    def appTest():
-        global pm
-        global maya
-        global cmds
-
+    @classmethod
+    def appTest(cls):
         # maya imports
         import maya
         import pymel.core as pm
         import maya.cmds as cmds
 
-    @staticmethod
-    def addMenuEntry(menuPath, command=None, icon=None, enabled=None):
-        mainWindow = maya.mel.eval('$tmpVar=$gMainWindow')
-        cmds.setParent(mainWindow)
+        cls.loadAPI(maya)
+        cls.loadAPI(maya.cmds)
+        cls.loadAPI(pymel.core)
+
+    @classmethod
+    def addMenuEntry(cls, menuPath, command=None, icon=None, enabled=None):
+        mainWindow = cls.maya.mel.eval('$tmpVar=$gMainWindow')
+        cls.cmds.setParent(mainWindow)
 
         # set parent
         parent = None
@@ -60,13 +55,13 @@ class MayaWrapper(AbstractApplication):
 
                 MayaWrapper.MENUS[path] = parent
 
-    @staticmethod
-    def addMenuSeparator(menuPath):
+    @classmethod
+    def addMenuSeparator(cls, menuPath):
         pass
         # pm.separator(MayaWrapper.MENUS['/' + menuPath])
 
-    @staticmethod
-    def loadFile(filePath):
+    @classmethod
+    def loadFile(cls, filePath):
         basename, ext = os.path.splitext(filePath)
 
         # py handler

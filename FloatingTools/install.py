@@ -9,9 +9,11 @@ __all__ = [
 
 # python imports
 import os
+import re
 import sys
 import urllib
-import base64
+import shutil
+import zipfile
 import subprocess
 
 # FloatingTools imports
@@ -28,6 +30,8 @@ sys.path.insert(0, FloatingTools.PACKAGES)
 RELEASES = {}
 BRANCHES = {}
 CURRENT_RELEASE = None
+VERSION_EXPR = re.compile("/aldmbmtl/FloatingTools/tree/(v[0-9]+.[0-9]+.[0-9]+)")
+BRANCH_EXPR = re.compile("/aldmbmtl/FloatingTools/tree/([a-zA-Z]+)")
 
 # begin checking dependency list
 # pip
@@ -116,38 +120,63 @@ Install packages into FT from pip.
 for package in [('github', 'PyGithub'), ('flask', 'Flask')]:
     pipInstallPackage(*package)
 
-# post pip install imports
-import github
 
-
-def downloadBuild(repository, sha, path=None):
+def downloadBuild(version):
     """
-    Download the latest FloatingTools build from the passed sha.
-    :param path: 
-    :param repository: 
-    :param sha: 
+    Download the target FloatingTools build from the version passed.
+    :param version:
     :return: 
     """
-    if path is None:
-        path = '/FloatingTools/'
+    # download build
+    zipPath = os.path.join(FloatingTools.INSTALL_DIRECTORY, os.path.basename(version))
+    urllib.urlretrieve(version, zipPath)
+    zipDownload = zipfile.ZipFile(zipPath, 'r')
 
-    for fo in repository.get_dir_contents(path):
-        if fo.type == 'dir':
-            downloadBuild(repository, sha, path + fo.name + '/')
+    # begin unpack
+    root = zipDownload.filelist[0].filename.split('/')[0]
+    os.chdir(FloatingTools.INSTALL_DIRECTORY)
+
+    for i in zipDownload.filelist:
+        # create local paths
+        cleanPath = i.filename.replace(root + '/', '')
+        if cleanPath == '' or i.filename.startswith('__MACOSX') or os.path.basename(i.filename).startswith('.'):
             continue
 
-        # pull server data
-        serverPath = fo.path
-        localPath = os.path.join(FloatingTools.INSTALL_DIRECTORY, serverPath)
-        try:
-            fileContent = repository.get_contents(serverPath, ref=sha)
-            fileData = base64.b64decode(fileContent.content)
-            fileOut = open(localPath, "w")
-            fileOut.write(fileData)
-            fileOut.close()
-            FloatingTools.FT_LOOGER.info('Updated: ' + localPath)
-        except (github.GithubException, IOError):
-            FloatingTools.FT_LOOGER.error('Failed updating: ' + localPath)
+        # extract file contents
+        # initialInstall = zipDownload.extract(i)
+        reinstallPath = os.path.join(os.getcwd(), *i.filename.replace(root, '').split('/'))
+        print reinstallPath
+
+        # move
+        # shutil.move(initialInstall, reinstallPath)
+
+    # delete directory
+    print os.path.join(os.getcwd(), root)
+    # shutil.rmtree(os.path.join(os.getcwd(), root))
+
+    # close the zipfile
+    zipDownload.close()
+
+    # remove old zip
+    os.unlink(zipPath)
+
+    # for fo in repository.get_dir_contents(path):
+    #     if fo.type == 'dir':
+    #         downloadBuild(repository, sha, path + fo.name + '/')
+    #         continue
+    #
+    #     # pull server data
+    #     serverPath = fo.path
+    #     localPath = os.path.join(FloatingTools.INSTALL_DIRECTORY, serverPath)
+    #     try:
+    #         fileContent = repository.get_contents(serverPath, ref=sha)
+    #         fileData = base64.b64decode(fileContent.content)
+    #         fileOut = open(localPath, "w")
+    #         fileOut.write(fileData)
+    #         fileOut.close()
+    #         FloatingTools.FT_LOOGER.info('Updated: ' + localPath)
+    #     except (github.GithubException, IOError):
+    #         FloatingTools.FT_LOOGER.error('Failed updating: ' + localPath)
 
 
 def loadVersion():
@@ -167,37 +196,29 @@ def loadVersion():
         return
 
     # connect to github and pull the FloatingTools repository.
-    hub = FloatingTools.gitHubConnect()
-    repository = hub.get_repo('aldmbmtl/FloatingTools')
-
     version = None
     message = ""
 
     if branchData['dev']:
         # find the branch being requested
-        commit = repository.get_branch(branchData['devBranch']).commit
-        version = commit.sha
+        version = branches()[branchData['devBranch']]
 
         message = "Loading in DEV branch: " + branchData['devBranch']
 
     else:
 
         if branchData['release'] == 'latest' or branchData['release'] != branchData['installed']:
-            # load all releases
-            releases = {}
-            for release in repository.get_tags():
-                releases[release.name] = release.commit.sha
 
             # load in the release data from the repository
             if branchData['release'] == 'latest':
-                latestVersion = releases[max(releases)]
+                latestVersion = max(releases())
 
                 if branchData['installed'] != version:
-                    version = latestVersion
+                    version = releases()[latestVersion]
                     message = "Downloading FloatingTools " + latestVersion
 
             elif branchData['release'] != branchData['installed']:
-                version = releases[branchData['release']]
+                version = releases()[branchData['release']]
                 message = "Downloading FloatingTools " + branchData['release']
 
             else:
@@ -207,7 +228,7 @@ def loadVersion():
     if version:
         FloatingTools.FT_LOOGER.info(message)
 
-        downloadBuild(repository, version)
+        downloadBuild(version)
 
         FloatingTools.FT_LOOGER.info("Download complete.")
 
@@ -221,33 +242,30 @@ def loadVersion():
         FloatingTools.FT_LOOGER.info("Install is up-to-date.")
 
 
-def _update_gloabls():
+def _update_globals():
     global RELEASES
     global BRANCHES
     global CURRENT_RELEASE
 
     # update globals
-    if not RELEASES or not BRANCHES:
-        ftRepo = FloatingTools.gitHubConnect().get_repo('aldmbmtl/FloatingTools')
+    archive = urllib.urlopen('https://github.com/aldmbmtl/FloatingTools/').read()
 
-        # get branches
-        for branch in ftRepo.get_branches():
-            BRANCHES[branch.name] = branch
+    for release in VERSION_EXPR.findall(archive):
+        RELEASES[release] = 'https://github.com/aldmbmtl/FloatingTools/archive/' + release + '.zip'
+        if release == FloatingTools.buildData()['installed']:
+            CURRENT_RELEASE = release
 
-        # get releases
-        for release in ftRepo.get_tags():
-            RELEASES[release.name] = release
-            if release.name == FloatingTools.buildData()['installed']:
-                CURRENT_RELEASE = release.name
-
-        # default to latest release if there was none matched.
-        if CURRENT_RELEASE is None:
-            sortedReleases = sorted(RELEASES)
-            sortedReleases.reverse()
-            CURRENT_RELEASE = sortedReleases[0]
+    for branch in BRANCH_EXPR.findall(archive):
+        if branch == 'v' or branch in BRANCHES:
+            continue
+        BRANCHES[branch] = 'https://github.com/aldmbmtl/FloatingTools/archive/' + branch + '.zip'
 
     sortedReleases = sorted(RELEASES)
     sortedReleases.reverse()
+
+    if CURRENT_RELEASE is None:
+        CURRENT_RELEASE = sortedReleases[0]
+
     FloatingTools.Dashboard.setDashboardVariable('branches', BRANCHES)
     FloatingTools.Dashboard.setDashboardVariable('releases', sortedReleases)
     FloatingTools.Dashboard.setDashboardVariable('current_release', CURRENT_RELEASE)
@@ -258,7 +276,7 @@ def releases():
     Get all published released.
     :return: 
     """
-    _update_gloabls()
+    _update_globals()
 
     return RELEASES
 
@@ -268,6 +286,6 @@ def branches():
     Get all branches.
     :return: 
     """
-    _update_gloabls()
+    _update_globals()
 
     return BRANCHES

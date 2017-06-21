@@ -133,65 +133,48 @@
                                 <br>
                                 <a href="#load-times-{{ toolbox._id }}" data-toggle="collapse"> <span class="glyphicon glyphicon-time"></span> Load Times</a>
                                 <div id="load-times-{{ toolbox._id }}" class="collapse">
-                                    <table class="table">
-                                        <tr>
-                                            <th><center>App</center></th>
-                                            <th><center>Time</center></th>
-                                        </tr>
-                                        {% for app in settings["loadTimes"] %}
-                                            {% if app == "Generic" %}
-                                                {% if app == open_app %}
-                                                    <tr>
-                                                        <td><font color="green"><img src="https://www.python.org/static/opengraph-icon-200x200.png" width="30"><strong>{{ app }}</strong></font></td>
-                                                        <td>{{ settings["loadTimes"][app] }} seconds</td>
-                                                    </tr>
-                                                {% else %}
-                                                    <tr>
-                                                        <td><img src="https://www.python.org/static/opengraph-icon-200x200.png" width="30"><strong>{{ app }}</strong></td>
-                                                        <td>{{ settings["loadTimes"][app] }} seconds</td>
-                                                    </tr>
-                                                {% endif %}
-                                            {% else %}
-                                                {% for wrapper in wrappers %}
-                                                    {% if wrapper.NAME == app %}
-                                                        {% if wrapper.APP_ICON != None %}
-                                                            {% if app == open_app %}
-                                                                <tr>
-                                                                    <td><font color="green"><img src="{{ wrapper.APP_ICON }}" width="30"><strong> {{ app }}</strong></font></td>
-                                                                    <td>{{ settings["loadTimes"][app] }} seconds</td>
-                                                                </tr>
-                                                            {% else %}
-                                                                <tr>
-                                                                    <td><img src="{{ wrapper.APP_ICON }}" width="30"><strong> {{ app }}</strong></td>
-                                                                    <td>{{ settings["loadTimes"][app] }} seconds</td>
-                                                                </tr>
-                                                            {% endif %}
-                                                        {% else %}
-                                                            {% if app == open_app %}
-                                                                <tr>
-                                                                    <td><font color="green"><strong>{{ app }}</strong></font></td>
-                                                                    <td>{{ settings["loadTimes"][app] }} seconds</td>
-                                                                </tr>
-                                                            {% else %}
-                                                                <tr>
-                                                                    <td><strong>{{ app }}</strong></td>
-                                                                    <td>{{ settings["loadTimes"][app] }} seconds</td>
-                                                                </tr>
-                                                            {% endif %}
-                                                        {% endif %}
-                                                    {% endif %}
+                                    <canvas id="load-chart-{{ toolbox._id }}" width="400" height="100"></canvas>
+                                    <script>
+                                    var ctx = document.getElementById("load-chart-{{ toolbox._id }}").getContext('2d');
+                                    var myChart = new Chart(ctx, {
+                                        type: 'bar',
+                                        data: {
+                                            labels: [
+                                            {% for app in settings["loadTimes"] %}
+                                                "{{ app }}",
+                                            {% endfor %}
+                                            ],
+                                            datasets: [{
+                                                label: 'Time in ms',
+                                                data: [
+                                                {% for app in settings["loadTimes"] %}
+                                                    {{ settings["loadTimes"][app] }},
                                                 {% endfor %}
-                                            {% endif %}
-                                        {% endfor %}
-                                    </table>
+                                                ],
+                                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                                borderColor: 'rgba(54, 162, 235, 1)',
+                                                borderWidth: 1
+                                            }]
+                                        },
+                                        options: {
+                                            scales: {
+                                                yAxes: [{
+                                                    ticks: {
+                                                        beginAtZero:true
+                                                    }
+                                                }]
+                                            }
+                                        }
+                                    });
+                                    </script>
                                 </div>
                                 <br>
                                 <a href="#source-{{ toolbox._id }}" data-toggle="collapse"> <span class="glyphicon glyphicon-save"></span> Source</a>
                                 <div id="source-{{ toolbox._id }}" class="collapse">
-                                    <table class="table">
+                                    <table>
                                         <tr>
-                                            <th><center>Field</center></th>
-                                            <th><center>Value</center></th>
+                                            <th>Field</th>
+                                            <th>Value</th>
                                         </tr>
                                         {% for field, value in settings["source"].iteritems() %}
                                             <tr>
@@ -214,28 +197,24 @@
                                             </div>
                                             <div id="{{ python_cloud.keys().index(name) }}" class="panel-collapse collapse">
                                                 <div class="panel-body">
-                                                    <table class="table">
+                                                    <table>
                                                         <thead>
                                                             <tr>
-                                                                <th><center>Module/Package</center></th>
-                                                                <th><center>Import</center></th>
-                                                                <th><center>Start Up Settings</center></th>
+                                                                <th>Module/Package</th>
+                                                                <th>Import</th>
+                                                                <th>Start Up Settings</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                         {% for py in python_cloud[name] %}
                                                             <tr>
                                                                 <td>
-                                                                    <center>
-                                                                        <strong>
-                                                                            {{ python_module_key[py] }}
-                                                                        </strong>
-                                                                    </center>
+                                                                    <strong>
+                                                                        {{ python_module_key[py] }}
+                                                                    </strong>
                                                                 </td>
                                                                 <td>
-                                                                    <center>
-                                                                        <button id="{{ py }}" type="button" class="btn btn-primary" onclick="importCall(this)">Import/Reload</button>
-                                                                    </center>
+                                                                    <button id="{{ py }}" type="button" class="btn btn-primary" onclick="importCall(this)">Import/Reload</button>
                                                                 </td>
                                                                 <td>
                                                                     <select name="{{ name + '|%|' + py}}" class="form-control">

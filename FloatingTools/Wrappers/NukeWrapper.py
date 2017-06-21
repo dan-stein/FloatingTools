@@ -1,11 +1,10 @@
 # python imports
 import os
-from sys import platform
+from sys import executable
 
 # FloatingTools imports
 from AbstractApp import AbstractApplication
 
-nuke = None
 MENUS = ['Nuke', 'Node Graph', 'Nodes']
 
 class NukeWrapper(AbstractApplication):
@@ -15,35 +14,7 @@ class NukeWrapper(AbstractApplication):
     APP_ICON = 'https://s3.amazonaws.com/fxhome-static/images/product/ignite-pro-2017/foundry-nuke.png'
     ARGS = ['-t']
     MULTI_THREAD = True
-
-    _launchers = {}
-
-    applicationDirectory = None
-    ext = None
-
-    if platform == "linux" or platform == "linux2":
-        pass
-
-    elif platform == "darwin":
-        applicationDirectory = '/Applications'
-        ext = '.app'
-
-    elif platform == "win32":
-        applicationDirectory = 'C:/Program Files/'
-        ext = '.exe'
-
-    if applicationDirectory and os.path.exists(applicationDirectory):
-        for app in os.listdir(applicationDirectory):
-            if app.startswith('Nuke'):
-                for launcher in os.listdir(os.path.join(applicationDirectory, app)):
-                    if launcher.endswith(ext) \
-                            and 'nuke' in launcher.lower() \
-                            and 'commercial' not in launcher.lower() \
-                            and 'ple' not in launcher.lower():
-                        _launchers[os.path.splitext(launcher)[0]] = os.path.join(
-                            os.path.join(applicationDirectory, app, launcher))
-
-    EXECUTABLE = _launchers
+    EXECUTABLE = executable
 
     @staticmethod
     def addMenuSeparator(menuPath):
@@ -55,10 +26,15 @@ class NukeWrapper(AbstractApplication):
             except AttributeError:
                 pass
 
-    @staticmethod
-    def appTest():
-        global nuke
+    @classmethod
+    def appTest(cls):
         import nuke
+        import nukescripts
+        import PySide
+
+        NukeWrapper.loadAPI(nuke)
+        NukeWrapper.loadAPI(nukescripts)
+        NukeWrapper.loadAPI(PySide)
 
     @staticmethod
     def addMenuEntry(menuPath, command=None, icon=None, enabled=True):
