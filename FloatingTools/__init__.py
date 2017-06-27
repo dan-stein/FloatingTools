@@ -37,7 +37,7 @@ import sys
 import socket
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.ERROR)
 
 # Global variables
 FT_LOOGER = logging.getLogger('FloatingTools')
@@ -56,7 +56,7 @@ if not os.path.exists(FLOATING_TOOLS_CACHE):
 try:
     # validate the install
     import install
-    from install import releases, branches
+    from install import releases, branches, installPackage
 
     # dashboard import
     import Dashboard
@@ -72,13 +72,6 @@ try:
 
     # imports
     from settings import *
-
-    # post install imports
-    from connect import *
-
-    # verify the login data.
-    if verifyLogin() is False:
-        Dashboard.login()
 
     # validate installed version of FloatingTools.
     install.loadVersion()

@@ -36,7 +36,7 @@
             <div class="modal-content">
                 <form action="/tool_shed/_addToolbox">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal" style="color: red;">&times;</button>
                         <h4 class="modal-title">Add {{ service }} Toolbox</h4>
                     </div>
                     <div class="modal-body">
@@ -44,44 +44,18 @@
                         {% for field in handler.SOURCE_FIELDS_ORDER[handler.__name__] %}
                             <label for="{{ field }}">{{ field }}:</label>
                             <br>
-                            <input id="{{ field }}" name="{{ field }}">
+                            <input id="{{ field }}" name="{{ field }}" class="form-control">
                             <br>
                         {% endfor %}
                     </div>
                     <div class="modal-footer">
-                        <input type="submit" value="Add">
+                        <input type="submit" value="Add" class="form-control" size="10">
                     </div>
                 </form>
             </div>
         </div>
     </div>
 {% endfor %}
-
-<div id="removeToolbox" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form action="/tool_shed/_removeToolbox">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Remove Toolbox(s)</h4>
-                </div>
-                <div class="modal-body">
-                    Select the toolboxes you want to remove from your Tool Shed. Keep in mind, you can just disable the
-                    ones you don't want also. Disabling will not cause a slow down during load up. Removing the toolbox
-                    will require you to add them again later. We only recommend this for house-cleaning for your shed.
-                    <hr>
-                    {% for toolbox in toolboxes %}
-                        <input type="checkbox" name="{{ toolbox }}"> {{ toolbox }}
-                        <br>
-                    {% endfor %}
-                </div>
-                <div class="modal-footer">
-                    <input type="submit" value="Remove">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <form action="/tool_shed/_save">
     <div class="panel panel-default">
@@ -102,36 +76,84 @@
                 {% endif %}
                 <li class="list-group-item">
                     <div class="row">
-                        <div class="col-sm-2">
-                            <select name="{{ name }}" class="form-control">
-                            {% if settings["load"] == True %}
-                                <option value="true" selected>Enable</option>
-                                <option value="false">Disable</option>
-                            {% else %}
-                                <option value="true">Enable</option>
-                                <option value="false" selected>Disable</option>
-                            {% endif %}
-                            </select>
-                        </div>
-                        <div class="col-sm-4">
-                            <label>
-                                <span class="glyphicon glyphicon-briefcase"></span>
-                                <a data-toggle="collapse" href="#repo-{{ toolbox._id }}"> {{ name }}</a>
-                            </label> ({{ toolbox._TYPE_ }})
-                            <ul>
-                                {% for menu_item in toolbox._toolbox_menu_order %}
-                                    {% if menu_item in toolbox._toolbox_html_content %}
+                        <div class="col-sm-6">
+                            <div class="dropdown">
+                                {% if settings["load"] == True %}
+                                    <a class="label label-success" data-toggle="dropdown"><span class="glyphicon glyphicon-briefcase"></span><span class="caret"></span></a>
+                                {% else %}
+                                    <a class="label label-danger" data-toggle="dropdown"><span class="glyphicon glyphicon-briefcase"></span><span class="caret"></span></a>
+                                {% endif %}
+                                <ul class="dropdown-menu">
+                                    {% if settings["load"] == True %}
                                         <li>
-                                            <a href="{{ toolbox._toolbox_html_content[menu_item]['html'] }}">{{ toolbox._toolbox_html_content[menu_item]["tag"] }}</a>
+                                            <a disabled><span class="glyphicon glyphicon-ok"></span> Load</a>
+                                        </li>
+                                        <li>
+                                            <a href="/tool_shed/_saveSwitch?box={{ name }}&load=false">Don't Load</a>
+                                        </li>
+                                    {% else %}
+                                        <li>
+                                            <a href="/tool_shed/_saveSwitch?box={{ name }}&load=true">Load</a>
+                                        </li>
+                                        <li>
+                                            <a disabled><span class="glyphicon glyphicon-ok"></span> Don't Load</a>
                                         </li>
                                     {% endif %}
-                                {% endfor %}
-                            </ul>
-                            <div id="repo-{{ toolbox._id }}" class="collapse">
-                                <br>
-                                <span class="glyphicon glyphicon-cog"></span> Technical Information
-                                <br>
-                                <a href="#load-times-{{ toolbox._id }}" data-toggle="collapse"> <span class="glyphicon glyphicon-time"></span> Load Times</a>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href="#source-{{ toolbox._id }}" data-toggle="collapse"> <span class="glyphicon glyphicon-save"></span> Source</a>
+                                    </li>
+                                    <li>
+                                        <a href="#load-times-{{ toolbox._id }}" data-toggle="collapse"> <span class="glyphicon glyphicon-time"></span> Load Times</a>
+
+                                    </li>
+                                    {% if toolbox._toolbox_menu_order != [] %}
+                                        <li class="divider"></li>
+                                        {% for menu_item in toolbox._toolbox_menu_order %}
+                                            {% if menu_item in toolbox._toolbox_html_content %}
+                                                <li>
+                                                    <a href="{{ toolbox._toolbox_html_content[menu_item]['html'] }}">{{ toolbox._toolbox_html_content[menu_item]["tag"] }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href="/tool_shed/_reinstall?box={{ name }}"> <span class="glyphicon glyphicon-download-alt"></span> Reinstall</a>
+                                    </li>
+                                    <li>
+                                        <a href="/tool_shed/_removeToolbox?{{ name }}={{ name }}"> <span class="glyphicon glyphicon-remove"></span> <font color="red">Uninstall</font></a>
+                                    </li>
+                                </ul>
+                                <label style="font-size: 18px;">{{ name }}</label>
+                            </div>
+                            <center>
+                                <div id="source-{{ toolbox._id }}" class="collapse">
+                                    <div class="row">
+                                        <div class="col-sm-1">
+                                            <img src="{{ toolbox.ICON }}" width="90">
+                                            <br>
+                                            <label>{{ toolbox._TYPE_ }}</label>
+                                        </div>
+                                        <div class="col-sm-11">
+                                            <table>
+                                                <tr>
+                                                    <th>Field</th>
+                                                    <th>Value</th>
+                                                </tr>
+                                                {% for field, value in settings["source"].iteritems() %}
+                                                    <tr>
+                                                        <td><strong>{{ field }}</strong></td>
+                                                        <td>{{ value }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </center>
+                            <br>
+                            <center>
                                 <div id="load-times-{{ toolbox._id }}" class="collapse">
                                     <canvas id="load-chart-{{ toolbox._id }}" width="400" height="100"></canvas>
                                     <script>
@@ -168,23 +190,7 @@
                                     });
                                     </script>
                                 </div>
-                                <br>
-                                <a href="#source-{{ toolbox._id }}" data-toggle="collapse"> <span class="glyphicon glyphicon-save"></span> Source</a>
-                                <div id="source-{{ toolbox._id }}" class="collapse">
-                                    <table>
-                                        <tr>
-                                            <th>Field</th>
-                                            <th>Value</th>
-                                        </tr>
-                                        {% for field, value in settings["source"].iteritems() %}
-                                            <tr>
-                                                <td><strong>{{ field }}</strong></td>
-                                                <td>{{ value }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </table>
-                                </div>
-                            </div>
+                            </center>
                         </div>
                         <div class="col-sm-6">
                             {% if python_cloud[name] != [] %}
@@ -197,32 +203,37 @@
                                             </div>
                                             <div id="{{ python_cloud.keys().index(name) }}" class="panel-collapse collapse">
                                                 <div class="panel-body">
-                                                    <table>
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Module/Package</th>
-                                                                <th>Import</th>
-                                                                <th>Start Up Settings</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {% for py in python_cloud[name] %}
-                                                            <tr>
-                                                                <td>
-                                                                    <strong>
-                                                                        {{ python_module_key[py] }}
-                                                                    </strong>
-                                                                </td>
-                                                                <td>
-                                                                    <button id="{{ py }}" type="button" class="btn btn-primary" onclick="importCall(this)">Import/Reload</button>
-                                                                </td>
-                                                                <td>
-                                                                    <select name="{{ name + '|%|' + py}}" class="form-control">
-                                                                        {% if app_name in settings["apps"].keys() %}
-                                                                            {% if py in settings["apps"][app_name].keys() %}
-                                                                                {% if settings["apps"][app_name][py] == True %}
-                                                                                    <option value="true" selected>Auto-Load</option>
-                                                                                    <option value="false">Don't Auto-Load</option>
+                                                    <center>
+                                                        <table>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Module/Package</th>
+                                                                    <th>Import</th>
+                                                                    <th>Start Up Settings</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {% for py in python_cloud[name] %}
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>
+                                                                            {{ python_module_key[py] }}
+                                                                        </strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button id="{{ py }}" type="button" class="btn btn-primary" onclick="importCall(this)">Import/Reload</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <select name="{{ name + '|%|' + py}}" class="form-control">
+                                                                            {% if app_name in settings["apps"].keys() %}
+                                                                                {% if py in settings["apps"][app_name].keys() %}
+                                                                                    {% if settings["apps"][app_name][py] == True %}
+                                                                                        <option value="true" selected>Auto-Load</option>
+                                                                                        <option value="false">Don't Auto-Load</option>
+                                                                                    {% else %}
+                                                                                        <option value="true">Auto-Load</option>
+                                                                                        <option value="false" selected>Don't Auto-Load</option>
+                                                                                    {% endif %}
                                                                                 {% else %}
                                                                                     <option value="true">Auto-Load</option>
                                                                                     <option value="false" selected>Don't Auto-Load</option>
@@ -231,16 +242,13 @@
                                                                                 <option value="true">Auto-Load</option>
                                                                                 <option value="false" selected>Don't Auto-Load</option>
                                                                             {% endif %}
-                                                                        {% else %}
-                                                                            <option value="true">Auto-Load</option>
-                                                                            <option value="false" selected>Don't Auto-Load</option>
-                                                                        {% endif %}
-                                                                    </select>
-                                                                </td>
-                                                            </tr>
-                                                        {% endfor %}
-                                                        </tbody>
-                                                    </table>
+                                                                        </select>
+                                                                    </td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </center>
                                                 </div>
                                             </div>
                                         </div>
@@ -261,17 +269,14 @@
                         Add
                     </a>
                     <div id="toolboxList" class="collapse">
-                        <ul>
+                        <ul class="list-group">
                             {% for service in services %}
-                                <li>
+                                <li class="list-group-item">
                                     <a data-toggle="modal" data-target="#newToolbox-{{ service }}">{{ service }}</a>
                                 </li>
                             {% endfor %}
                         </ul>
                     </div>
-                    <br>
-                    <a data-toggle="modal" data-target="#removeToolbox"><span
-                            class="glyphicon glyphicon-minus"></span> Remove </a>
                 </div>
                 <div class="col-sm-7"></div>
                 <div class="col-sm-2">

@@ -148,24 +148,24 @@ Python equivalent to form in html.
         super(Form, self).__init__('form', action=action, **kwargs)
 
     @staticmethod
-    def password(name):
-        return Element('input', Type='password', name=name, attributes={'value': name}, Class='form-control')
+    def password(name, value):
+        return Element('input', Type='password', name=name, attributes={'value': value}, Class='form-control', placeholder=name)
 
     @staticmethod
     def checkbox(name, label):
         return Element('input', value=label, Type='checkbox', name=name, attributes={'value': name})
 
     @staticmethod
-    def email(name):
-        return Element('input', Type='email', name=name, attributes={'value': name}, Class='form-control')
+    def email(name, value):
+        return Element('input', Type='email', name=name, attributes={'value': value}, Class='form-control', placeholder=name)
 
     @staticmethod
     def submit(name):
         return Element('input', Type='submit', attributes={'value': name}, Class='btn btn-primary')
 
     @staticmethod
-    def text(name):
-        return Element('input', Type='text', name=name, attributes={'value': name}, Class='form-control')
+    def text(name, value):
+        return Element('input', Type='text', name=name, attributes={'value': value}, Class='form-control', placeholder=name)
 
 
 class Collapse(Div):

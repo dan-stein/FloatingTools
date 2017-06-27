@@ -3,5 +3,6 @@ from AbstractService import Handler, getHandler, getToolbox, toolboxes, createTo
 
 # predefined services
 import GitHubHandler
+import AWSHandler
 import URLHandler
 import LocalHandler

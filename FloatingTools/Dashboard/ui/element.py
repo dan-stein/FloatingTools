@@ -52,6 +52,9 @@ Base element for all python->html elements. Each Element has a tag, attributes t
         if attributes:
             self.setAttributes(attributes)
 
+    def name(self):
+        return self._attributes['name']
+
     def setAttributes(self, attributes):
         """
         Set attributes for this element.

@@ -14,6 +14,33 @@ from AbstractService import Handler
 
 
 class GitHubHandler(Handler):
+    LOGIN_FIELDS = [
+        FloatingTools.Dashboard.Form.email('username', ''),
+        FloatingTools.Dashboard.Form.password('password', '')
+    ]
+
+    ICON = 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png'
+    CONNECTION = None
+
+    @classmethod
+    def initialize(cls):
+        # install the git hub lib through pip
+        FloatingTools.installPackage('github', 'PyGithub')
+
+        import github
+
+        if not cls.userData():
+            return
+
+        cls.CONNECTION = github.Github(cls.userData()['username'], cls.userData()['password'])
+
+        try:
+            for repo in cls.CONNECTION.get_user().get_repos():
+                break
+            cls.WEBPAGE = 'https://github.com/' + cls.CONNECTION.get_user().login
+        except github.BadCredentialsException:
+            FloatingTools.FT_LOOGER.error('Github log in information is invalid! Correct them in the services page.')
+            cls.CONNECTION = github.Github()
 
     def install(self):
         """
@@ -38,22 +65,17 @@ class GitHubHandler(Handler):
         # install zip ball
         self.installZip(zipPath)
 
-
     def loadSource(self, source):
         """
-        Load GitHub source with the validated git connection.
-        
-        The source should be "{username}/{repository}". If there is no "/", the current user is assumed.
-        :param source: 
-        :return: 
+Load GitHub source with the validated git connection.
+The source should be "{username}/{repository}". If there is no "/", the current user is assumed.
+
+:param source:
         """
         source = source['Username'] + '/' + source['Repository']
 
         # pull repository
-        if '/' not in source:
-            repository = FloatingTools.gitHubConnect().get_user().get_repo(source)
-        else:
-            repository = FloatingTools.gitHubConnect().get_repo(source)
+        repository = self.CONNECTION.get_repo(source)
 
         # set required variables for this toolbox handler
         try:

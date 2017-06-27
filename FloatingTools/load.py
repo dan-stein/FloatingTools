@@ -161,14 +161,14 @@ def loadTools():
 
         FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__ + '/Dashboard')
 
-        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Toolbox',
-                                             partial(FloatingTools.Dashboard.toolbox))
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Tool Shed',
                                              partial(FloatingTools.Dashboard.toolShed))
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Applications',
                                              partial(FloatingTools.Dashboard.applications))
         FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
                                              partial(FloatingTools.Dashboard.settings))
+        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Services',
+                                             partial(FloatingTools.Dashboard.services))
         FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__ + '/Dashboard')
 
         FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
@@ -201,6 +201,9 @@ def loadTools():
         # get handler data
         toolbox = FloatingTools.createToolbox(source['type'], source['source'])
         _LOCK.release()
+
+        if not toolbox:
+            continue
 
         # connect to the repository
         FloatingTools.FT_LOOGER.info('Loading %s with the %s handler...' % (source['name'], source['type']))

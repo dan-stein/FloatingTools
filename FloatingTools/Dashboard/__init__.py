@@ -9,8 +9,7 @@ from utilities import startServer, setDashboardVariable, dashboardEnv, SERVER, E
 from ui import *
 from network import *
 from settings import settings
-from login import login
 from applications import applications
 from toolshed import toolShed
-from toolbox import toolbox
+from services import services
 import news

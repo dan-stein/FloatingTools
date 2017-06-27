@@ -7,6 +7,7 @@ import shutil
 import urllib
 import urllib2
 import zipfile
+import traceback
 
 # ft imports
 import FloatingTools
@@ -69,7 +70,10 @@ Creates a toolbox with the handler type passed using the source data.
 :param _type: 
 :param source: 
     """
-    return getHandler(_type)(install=install, **source)
+    try:
+        return getHandler(_type)(install=install, **source)
+    except:
+        traceback.print_exc()
 
 
 def services():
@@ -86,8 +90,12 @@ Represents a FloatingTools compatible toolbox service
     """
     # reserved
     _TYPE_ = None
+    _initialized_ = False
     SOURCE_FIELDS = dict()
     SOURCE_FIELDS_ORDER = dict()
+    LOGIN_FIELDS = list()
+    ICON = None
+    WEBPAGE = None
 
     # data model for Toolboxes
     DATA_MODEL = dict(
@@ -164,6 +172,21 @@ Represents a FloatingTools compatible toolbox service
         """
         return cls.__name__
 
+    @classmethod
+    def initialize(cls):
+        pass
+
+    @classmethod
+    def _setInitialized_(cls):
+        cls._initialized_ = True
+
+    @classmethod
+    def userData(cls):
+        try:
+            return FloatingTools.userData()[cls.handlerName()]
+        except KeyError:
+            return None
+
     def __str__(self):
         return "Toolbox Handler(Service: %s, Name: %s, Loaded: %s)" % (
             self._TYPE_,
@@ -186,6 +209,14 @@ Represents a FloatingTools compatible toolbox service
         self._install_path = None
         self._id = id(self)
         self._is_pointer = False
+
+        # initialize the Service. Pull log in data from the user data, ect.
+        if not self._initialized_:
+            try:
+                self.initialize()
+            except:
+                traceback.print_exc()
+            self._setInitialized_()
 
         # run init functions
         self.loadSource(self._source)
@@ -433,6 +464,7 @@ This is automatically done for you at load by the wildcard system, but it is goo
         """
         Set the location that the toolbox is to be installed in. This MUST be done if you intend on allowing for 
         Handler.uninstall() to work correctly.
+
         :parameter location: str
         """
         self._install_path = location
@@ -476,7 +508,10 @@ This is automatically done for you at load by the wildcard system, but it is goo
         Uninstalls this toolbox from the installation directory. This can not be undone and there is no safety question.
         """
         if not self._is_pointer:
-            shutil.rmtree(self.installDirectory())
+            try:
+                shutil.rmtree(self.installDirectory())
+            except OSError:
+                pass
 
         # purge all settings from the source data
         data = FloatingTools.sourceData()

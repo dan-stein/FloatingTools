@@ -9,6 +9,9 @@ from AbstractService import Handler
 
 
 class LocalHandler(Handler):
+
+    ICON = 'http://icons.iconarchive.com/icons/dtafalonso/yosemite-flat/512/Folder-icon.png'
+
     def loadSource(self, source):
         """
         Load a local location on disk.

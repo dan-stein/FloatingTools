@@ -6,9 +6,9 @@ setup(
     package_data={
         '': ['templates/*.html']
     },
-    install_requires=['Flask', 'PyGithub'],
+    install_requires=['Flask'],
     url='https://github.com/aldmbmtl/FloatingTools',
     license='MIT',
     author='Alex Hatfield',
-    author_email='alex.e.hatfield@gmail.com',
+    author_email='alex.hatfield@hatfieldfx.com',
 )

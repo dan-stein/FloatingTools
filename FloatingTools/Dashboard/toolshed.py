@@ -10,7 +10,6 @@ from utilities import SERVER, ErrorPage
 # python imports
 import os
 import imp
-import traceback
 
 
 @SERVER.route('/tool_shed', methods=['GET', 'POST'])
@@ -34,34 +33,32 @@ def renderToolShed():
     return render_template('ToolShed.html', **FloatingTools.Dashboard.dashboardEnv())
 
 
+@SERVER.route('/tool_shed/_saveSwitch')
+def toolboxSwitch():
+    box = FloatingTools.getToolbox(request.args['box'])
+    currentSettings = box.settings()
+    currentSettings['load'] = True if request.args['load'] == 'true' else False
+    box.updateSettings(currentSettings)
+
+    return redirect('/tool_shed')
+
 @SERVER.route('/tool_shed/_save')
 def saveToolShed():
     # grab toolbox
     for arg in request.args:
-        try:
-            toolbox, module = arg.split('|%|', 1)
+        toolbox, module = arg.split('|%|', 1)
 
-            handler = FloatingTools.getToolbox(toolbox)
+        handler = FloatingTools.getToolbox(toolbox)
 
-            # pull then set settings
-            currentSettings = handler.settings()
+        # pull then set settings
+        currentSettings = handler.settings()
 
-            # add application if its not in the app list
-            appName = FloatingTools.wrapperName()
-            if appName not in currentSettings['apps']:
-                currentSettings['apps'][appName] = dict()
+        # add application if its not in the app list
+        appName = FloatingTools.wrapperName()
+        if appName not in currentSettings['apps']:
+            currentSettings['apps'][appName] = dict()
 
-            currentSettings['apps'][appName][module] = True if request.args.get(arg) == 'true' else False
-            continue
-
-        except:
-            handler = FloatingTools.getToolbox(arg)
-
-            # pull then set settings
-            currentSettings = handler.settings()
-            currentSettings['load'] = True
-            if request.args.get(arg) == 'false':
-                currentSettings['load'] = False
+        currentSettings['apps'][appName][module] = True if request.args.get(arg) == 'true' else False
 
         # save
         handler.updateSettings(currentSettings)
@@ -110,6 +107,17 @@ def _removeToolbox():
         box = FloatingTools.getToolbox(toolbox)
         if box:
             box.uninstall()
+
+    return redirect('/tool_shed')
+
+
+@SERVER.route('/tool_shed/_reinstall')
+def _reinstallToolbox():
+    # get data
+    box = FloatingTools.getToolbox(request.args['box'])
+    if box:
+        box.uninstall()
+        box.install()
 
     return redirect('/tool_shed')
 

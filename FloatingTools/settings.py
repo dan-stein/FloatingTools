@@ -5,7 +5,7 @@ __all__ = [
     'sourceData',
     'userData',
     'buildData',
-    'updateLogin',
+    'updateUserData',
     'updateSources',
     'updateBuild',
 ]
@@ -19,7 +19,7 @@ import json
 import threading
 
 # globals
-USER = os.path.join(FloatingTools.DATA, 'User.json')
+USER = os.path.join(FloatingTools.DATA, '.User')
 SOURCES = os.path.join(FloatingTools.DATA, 'Sources.json')
 BUILD = os.path.join(FloatingTools.DATA, 'Build.json')
 
@@ -59,17 +59,21 @@ def sourceData():
     return json.load(open(SOURCES, 'r'))
 
 
+def updateUserData(data):
+    userFile = open(USER, 'w')
+    userFile.write(json.dumps(data, indent=4, sort_keys=True).encode('base64', 'strict'))
+    userFile.close()
+
+
 def userData():
     if not os.path.exists(USER):
-        defaultData = {'Login':
-            {
-                'username': None,
-                'password': None
-            }
-        }
-        json.dump(defaultData, open(USER, 'w'), indent=4, sort_keys=True)
+        updateUserData({})
 
-    return json.load(open(USER, 'r'))
+    userFile = open(USER, 'r')
+    data = json.loads(userFile.read().decode('base64', 'strict'))
+    userFile.close()
+
+    return data
 
 
 def updateSources(data):
@@ -81,18 +85,3 @@ def updateSources(data):
 def updateBuild(data):
     json.dump(data, open(BUILD, 'w'), indent=4, sort_keys=True)
 
-
-def updateLogin(username, password):
-    """
-    Update the login information.
-    
-    :param username: str
-    :param password: str
-    """
-    # load user data
-    data = userData()
-
-    data['Login']['username'] = username
-    data['Login']['password'] = password
-
-    json.dump(data, open(USER, 'w'), indent=4, sort_keys=True)

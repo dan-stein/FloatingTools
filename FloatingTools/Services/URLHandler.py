@@ -13,6 +13,8 @@ from AbstractService import Handler
 
 class URLHandler(Handler):
 
+    ICON = 'https://cdn2.iconfinder.com/data/icons/seo-web-optimization-ultimate-part1/512/address-512.png'
+
     def install(self):
         """
         Handle install

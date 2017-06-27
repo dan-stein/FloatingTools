@@ -4,7 +4,8 @@ Validate the dependencies are installed.
 
 __all__ = [
     'releases',
-    'branches'
+    'branches',
+    'installPackage'
 ]
 
 # python imports
@@ -45,51 +46,48 @@ ft_packages = os.listdir(FloatingTools.PACKAGES)
 try:
     import pip
 except ImportError:
-    for pack in ['github', 'flask']:
-        if pack not in ft_packages:
-            # determine executable from the application wrapper
-            executable = sys.executable
-            args = []
-            if FloatingTools.WRAPPER and FloatingTools.WRAPPER.ARGS:
-                args = FloatingTools.WRAPPER.ARGS
+    # determine executable from the application wrapper
+    executable = sys.executable
+    args = []
+    if FloatingTools.WRAPPER and FloatingTools.WRAPPER.ARGS:
+        args = FloatingTools.WRAPPER.ARGS
 
-            FloatingTools.FT_LOOGER.info("Python executable (+args) for pip install: " + executable)
+    FloatingTools.FT_LOOGER.info("Python executable (+args) for pip install: " + executable)
 
-            # install pip
-            downloadPath = os.path.join(FloatingTools.PACKAGES, 'get-pip.py')
-            urllib.urlretrieve("https://bootstrap.pypa.io/get-pip.py", downloadPath)
+    # install pip
+    downloadPath = os.path.join(FloatingTools.PACKAGES, 'get-pip.py')
+    urllib.urlretrieve("https://bootstrap.pypa.io/get-pip.py", downloadPath)
 
-            pipDL = open(downloadPath, 'r')
-            code = pipDL.read()
-            code = code.replace('sys.exit(pip.main(["install", "--upgrade"] + args))',
-                                'sys.exit(pip.main(["install", "pip", "-t", "%s"]))' % FloatingTools.PACKAGES)
-            pipDL.close()
-            open(downloadPath, 'w').write(code)
+    pipDL = open(downloadPath, 'r')
+    code = pipDL.read()
+    code = code.replace('sys.exit(pip.main(["install", "--upgrade"] + args))',
+                        'sys.exit(pip.main(["install", "pip", "-t", "%s"]))' % FloatingTools.PACKAGES)
+    pipDL.close()
+    open(downloadPath, 'w').write(code)
 
-            command = [os.path.abspath(executable)] + args + [downloadPath]
+    command = [os.path.abspath(executable)] + args + [downloadPath]
 
-            # execute the python pip install call
-            subprocess.call(command)
+    # execute the python pip install call
+    subprocess.call(command)
 
-            # delete get-pip.py
-            os.unlink(downloadPath)
+    # delete get-pip.py
+    os.unlink(downloadPath)
 
-            try:
-                import pip
-            except ImportError:
-                raise Exception('Pip is required for install. Launch FloatingTools on its own by opening the python '
-                                'interpreter and running:\n\nimport sys\nsys.path.append("%s")\nimport FloatingTools\n'
-                                '\nThis will allow the packages required to be installed into the FloatingTools package'
-                                '. Once complete, relaunch this application.' %
-                                os.path.abspath(FloatingTools.__file__ + '/../../'))
-            break
+    try:
+        import pip
+    except ImportError:
+        raise Exception('Pip is required for install. Launch FloatingTools on its own by opening the python '
+                        'interpreter and running:\n\nimport sys\nsys.path.append("%s")\nimport FloatingTools\n'
+                        '\nThis will allow the packages required to be installed into the FloatingTools package'
+                        '. Once complete, relaunch this application.' %
+                        os.path.abspath(FloatingTools.__file__ + '/../../'))
 
 # upgrade pip if needed
 pip.main(['install', '--upgrade', 'pip'])
 if 'setuptools' not in ft_packages:
     pip.main(['install', '-U', 'pip', 'setuptools', '-t', FloatingTools.PACKAGES])
 
-def pipInstallPackage(package, pipName=None):
+def installPackage(package, pipName=None):
     """
 Install packages into FT from pip.
 
@@ -113,13 +111,13 @@ Install packages into FT from pip.
         # verify install
         __import__(package)
 
+    FloatingTools.FT_LOOGER.info(package + ' pip installed and ready for use.')
+
     # flush env
     if PYTHONPATH:
         os.environ['PYTHONPATH'] = PYTHONPATH
 
-for package in [('github', 'PyGithub'), ('flask', 'Flask')]:
-    pipInstallPackage(*package)
-
+installPackage('flask', 'Flask')
 
 def downloadBuild(version):
     """
@@ -155,14 +153,14 @@ def downloadBuild(version):
 
     # push download to the install directory
     shutil.move(
-        os.path.join(FloatingTools.INSTALL_DIRECTORY, root, 'FloatingTools_bak'),
+        os.path.join(FloatingTools.INSTALL_DIRECTORY, root, 'FloatingTools'),
         os.path.join(FloatingTools.INSTALL_DIRECTORY, 'FloatingTools')
     )
 
     # copy the data from old build
-    shutil.copy(
-        os.path.join(FloatingTools.INSTALL_DIRECTORY, root, 'FloatingTools_bak', 'data'),
-        os.path.join(FloatingTools.INSTALL_DIRECTORY, root, 'FloatingTools', 'data')
+    shutil.copytree(
+        os.path.join(FloatingTools.INSTALL_DIRECTORY, 'FloatingTools_bak', 'data'),
+        os.path.join(FloatingTools.INSTALL_DIRECTORY, 'FloatingTools', 'data')
     )
 
     # remove download folder
@@ -224,13 +222,15 @@ def loadVersion():
     if version:
         FloatingTools.FT_LOOGER.info(message)
 
-        downloadBuild(version)
+        # downloadBuild(version)
 
         FloatingTools.FT_LOOGER.info("Download complete.")
 
         if not branchData['dev']:
+            versionID = version.rsplit('/', 1)[1].replace('.zip', '')
+
             # update the branch data
-            branchData['installed'] = version
+            branchData['installed'] = versionID
 
             # save out data
             FloatingTools.updateBuild(branchData)
