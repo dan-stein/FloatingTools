@@ -28,7 +28,6 @@ __all__ = [
     'PACKAGES',
     'PYTHON_EXECUTABLE',
     'DATA',
-    'Dashboard'
 ]
 
 # python imports
@@ -47,37 +46,26 @@ INSTALL_DIRECTORY = os.path.dirname(FLOATING_TOOLS_ROOT)
 PACKAGES = os.path.join(FLOATING_TOOLS_ROOT, 'packages')
 DATA = os.path.join(FLOATING_TOOLS_ROOT, 'data')
 WRAPPER = None
+WRAPPERS = []
 PYTHON_EXECUTABLE = sys.executable
 
 # create cache directory
 if not os.path.exists(FLOATING_TOOLS_CACHE):
     os.makedirs(FLOATING_TOOLS_CACHE)
 
-try:
-    # validate the install
-    import install
-    from install import releases, branches, installPackage
 
-    # dashboard import
-    import Dashboard
+# initial ft import
+from ftnet import *
 
-    # add globals to dashboard
-    Dashboard.setDashboardVariable('install_location', INSTALL_DIRECTORY)
-    Dashboard.setDashboardVariable('python_location', PYTHON_EXECUTABLE)
+# standard lib imports
+from AbstractService import Service, loadedServices, createToolbox, toolboxes, getToolbox, getService
 
-    # import wrappers and services
-    from Wrappers import *
-    from Services import *
-    from Apps import App
-
-    # imports
-    from settings import *
-
-    # validate installed version of FloatingTools.
-    install.loadVersion()
-
-    # load tool call
-    from load import *
-
-except socket.gaierror:
-    FT_LOOGER.error('No connection to Github could be established. Check your internet connection.')
+# try:
+#     # installer set up
+#     from install import installPackage
+#
+#     # import wrappers, services, and apps
+#     from AbstractWrapper import Wrapper, currentWrapper, wrapperName, setWrapper
+#
+# except socket.gaierror:
+#     FT_LOOGER.error('Check your internet connection.')

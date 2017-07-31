@@ -32,7 +32,7 @@ class InvalidToolbox(Exception):
 
 
 # functions
-def getHandler(handlerType):
+def getService(handlerType):
     """
 Get the class associated with the handler type passed.
 
@@ -71,12 +71,12 @@ Creates a toolbox with the handler type passed using the source data.
 :param source: 
     """
     try:
-        return getHandler(_type)(install=install, **source)
+        return getService(_type)(install=install, **source)
     except:
         traceback.print_exc()
 
 
-def services():
+def loadedServices():
     """
     Get all the currently loaded services
     """
@@ -84,13 +84,12 @@ def services():
 
 
 # main abstract class
-class Handler(object):
+class Service(object):
     """
 Represents a FloatingTools compatible toolbox service
     """
     # reserved
     _TYPE_ = None
-    _initialized_ = False
     SOURCE_FIELDS = dict()
     SOURCE_FIELDS_ORDER = dict()
     LOGIN_FIELDS = list()
@@ -115,12 +114,12 @@ Represents a FloatingTools compatible toolbox service
     @staticmethod
     def downloadSource(url, path, timeout=5):
         """
-        Download source from a passed url and install it where you defined using the path parameter. This includes a 
-        time out function.
-        
-        :parameter url: str
-        :parameter path: str
-        :parameter timeout: How long to wait before timing out.
+Download source from a passed url and install it where you defined using the path parameter. This includes a
+time out function.
+
+:parameter url: str
+:parameter path: str
+:parameter timeout: How long to wait before timing out.
         """
         try:
             urllib2.urlopen(url=url, timeout=timeout)
@@ -134,24 +133,7 @@ Represents a FloatingTools compatible toolbox service
             return False
 
     @classmethod
-    def addSourceField(cls, label, _type=str):
-        """
-        Adding a source field is required for setting up the source data. This can be a url field or fields. Usually 
-        string types are fine.
-
-        :parameter label: The label that will be presented on the field 
-        :parameter _type: This will determine the kind of field that will be presented when the field is rendered on the website front end
-        """
-        if cls.__name__ not in cls.SOURCE_FIELDS:
-            cls.SOURCE_FIELDS[cls.__name__] = {}
-        cls.SOURCE_FIELDS[cls.__name__][label] = _type
-
-        if cls.__name__ not in cls.SOURCE_FIELDS_ORDER:
-            cls.SOURCE_FIELDS_ORDER[cls.__name__] = []
-        cls.SOURCE_FIELDS_ORDER[cls.__name__].append(label)
-
-    @classmethod
-    def registerHandler(cls, _type):
+    def registerService(cls, _type):
         """
         This needs to be done so FT knows how to handle different source types.
         
@@ -162,36 +144,51 @@ Represents a FloatingTools compatible toolbox service
         # register with global
         cls._TYPE_ = _type
         SERVICES[_type] = cls
-
-        FloatingTools.Dashboard.setDashboardVariable('services', SERVICES)
+        try:
+            cls.initialize()
+        except:
+            traceback.print_exc()
 
     @classmethod
-    def handlerName(cls):
+    def serviceName(cls):
         """
-        This handlers name. This will be whatever you named the class.
+        This is the services name. This will be whatever you named the class.
         """
         return cls.__name__
 
     @classmethod
     def initialize(cls):
+        """
+This will be called the first time a toolbox of this type is created. This is meant for installing libraries if they are
+needed. For example, if you need boto3 for an Amazon Handler, you would call
+FloatingTools.installPackage('boto3', 'boto') here. This is also meant for any other set up such as getting login data.
+
+.. note::
+    This is only called once during the first call to create a toolbox if this type.
+
+.. code-block:: python
+    :linenos:
+
+    @classmethod
+    def initialize(cls):
+        # install the aws api lib through pip
+        FloatingTools.installPackage('boto3', 'boto')
+
+        import boto3
+        from botocore.client import Config
+
+        # set log in data for AWS
+        os.environ['AWS_ACCESS_KEY_ID'] = cls.userData()['access key']
+        os.environ['AWS_SECRET_ACCESS_KEY'] = cls.userData()['secret key']
+
+        cls.CONNECTION = boto3.resource('s3', config=Config(signature_version='s3v4'))
+        """
         pass
 
-    @classmethod
-    def _setInitialized_(cls):
-        cls._initialized_ = True
-
-    @classmethod
-    def userData(cls):
-        try:
-            return FloatingTools.userData()[cls.handlerName()]
-        except KeyError:
-            return None
-
     def __str__(self):
-        return "Toolbox Handler(Service: %s, Name: %s, Loaded: %s)" % (
+        return "Toolbox Handler(Service: %s, Name: %s)" % (
             self._TYPE_,
-            self.name(),
-            self.settings()['load']
+            self.name()
         )
 
     def __init__(self, install=True, **sourceFields):
@@ -209,14 +206,6 @@ Represents a FloatingTools compatible toolbox service
         self._install_path = None
         self._id = id(self)
         self._is_pointer = False
-
-        # initialize the Service. Pull log in data from the user data, ect.
-        if not self._initialized_:
-            try:
-                self.initialize()
-            except:
-                traceback.print_exc()
-            self._setInitialized_()
 
         # run init functions
         self.loadSource(self._source)
@@ -236,9 +225,6 @@ Represents a FloatingTools compatible toolbox service
 
         # register this instance as a toolbox
         TOOLBOXES[self._toolbox_name] = self
-
-        # settings file
-        self.settings()
 
     def installZip(self, zipPath):
         """
@@ -273,51 +259,6 @@ Represents a FloatingTools compatible toolbox service
 
         # remove old zip
         os.unlink(zipPath)
-
-    def updateSettings(self, update):
-        """
-        Update the settings that are associated with this toolbox.
-        
-        :parameter update: dictionary 
-        """
-        sourceData = FloatingTools.sourceData()
-        for source in sourceData:
-            if source['name'] == self._toolbox_name:
-                sourceData.pop(sourceData.index(source))
-                sourceData.append(update)
-                self._source_settings = update
-                break
-
-        FloatingTools.updateSources(sourceData)
-
-    def settings(self):
-        """
-        Settings associated with the toolbox.
-        """
-        if not self._source_settings:
-            # pull source data
-            sourceData = FloatingTools.sourceData()
-            for source in sourceData:
-                if source['name'] == self._toolbox_name:
-                    self._source_settings = source
-                    break
-
-            # create a default entry if it doesnt exist
-            if not self._source_settings:
-                # clone the model so the global is untouched.
-                settings = self.DATA_MODEL.copy()
-
-                # set default values
-                settings['name'] = self.name()
-                settings['type'] = self._TYPE_
-                settings['source'] = self._source
-
-                # update source data and set instance variable
-                sourceData.append(settings)
-                FloatingTools.updateSources(sourceData)
-                self._source_settings = settings
-
-        return self._source_settings
 
     def addMenuItem(self, menu, command, html=None):
         """
@@ -472,7 +413,8 @@ This is automatically done for you at load by the wildcard system, but it is goo
     def installDirectory(self):
         """
         Get the designated install directory for this toolbox. This is assigned to the cache directory inside 
-        FloatingTools by default. You can set this in your handler.loadSource() function by using handler.setInstallLocation(Your path).
+        FloatingTools by default. You can set this in your handler.loadSource() function by using
+        handler.setInstallLocation(Your path).
         
         This will respect '/' for declaring subdirectories. For example, 'aldmbmtl/toolbox' will create toolbox inside 
         aldmbmtl.
@@ -512,14 +454,6 @@ This is automatically done for you at load by the wildcard system, but it is goo
                 shutil.rmtree(self.installDirectory())
             except OSError:
                 pass
-
-        # purge all settings from the source data
-        data = FloatingTools.sourceData()
-        for toolbox in data:
-            if toolbox['name'] == self.name():
-                data.remove(toolbox)
-                break
-        FloatingTools.updateSources(data)
 
         # delete self from global dict
         global TOOLBOXES

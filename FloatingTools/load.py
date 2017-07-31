@@ -2,7 +2,6 @@
 Handles all loading operations
 """
 __all__ = [
-    'loadDependency',
     'addExtensionPath'
 ]
 
@@ -23,7 +22,7 @@ import FloatingTools
 # Globals
 WILDCARDS = dict(
     Applications=dict(
-        value=FloatingTools.APP_WRAPPER.name() if FloatingTools.APP_WRAPPER is not None else 'Generic',
+        value=FloatingTools.wrapperName() if FloatingTools.wrapperName() is not None else 'Generic',
         doc='Represents the current application.'),
     OS=dict(
         value=os.name,
@@ -32,40 +31,6 @@ WILDCARDS = dict(
 PYTHON_MODULES = {}
 _LOCK = threading.Lock()
 
-# add to dashboard
-FloatingTools.Dashboard.setDashboardVariable('wildcards', WILDCARDS)
-
-
-def loadDependency(handlerType, source, paths='/'):
-    """
-Load a dependency on a toolbox. This is meant for use in toolbox development. If you have toolbox A that is dependent on
-a tool in toolbox B, you can load toolbox B with this call from A.
-
-.. code-block:: python
-    :linenos:
-    
-    import FloatingTools
-    
-    # need hfx2 from the HatfieldFX repository on github
-    FloatingTools.loadDependency('GitHub', source={'Username': 'aldmbmtl', 'Repository': 'HatfieldFX'})
-    
-    # now hfx2 is loaded for your toolbox to use.
-    import hfx2
-
-:param handlerType: Must be a string in the handler types
-:param source: dict with the fields and values for the target toolbox
-:param paths: iterable of paths in the toolbox that you are looking to load
-    """
-    # pull the toolbox
-    box = FloatingTools.createToolbox(handlerType, source)
-
-    # loop over the paths passed
-    if isinstance(paths, basestring):
-        paths = list(paths)
-
-    for path in paths:
-        FloatingTools.FT_LOOGER.info('Loading dependency: %s' % box.name())
-        loadToolbox(box, path)
 
 def loadToolbox(handler, path, threaded=False):
     """
@@ -113,18 +78,18 @@ def loadToolbox(handler, path, threaded=False):
                 PYTHON_MODULES[handler.name()].append(os.path.join(root, fo))
                 continue
 
-            if FloatingTools.wrapper():
+            if FloatingTools.currentWrapper():
                 # filter out files that do not pertain to this application
                 basename, ext = os.path.splitext(fo)
-                if ext not in FloatingTools.wrapper().fileTypes():
+                if ext not in FloatingTools.currentWrapper().fileTypes():
                     continue
 
                 # register tool with the application
                 toolboxPath = FloatingTools.__name__ + '/' + handler.name().replace('/', '.')
                 menuPath = (toolboxPath + '/' + root.replace(searchPath, '') + '/' + fo)
-                FloatingTools.wrapper().addMenuEntry(
+                FloatingTools.currentWrapper().addMenuEntry(
                     menuPath.replace('\\', '/').replace('//', '/'),
-                    partial(FloatingTools.wrapper().loadFile, os.path.join(root, fo))
+                    partial(FloatingTools.currentWrapper().loadFile, os.path.join(root, fo))
                 )
 
     # end time and log execution time
@@ -151,38 +116,8 @@ def loadTools():
     Main tool loading function.
     :return: 
     """
-    # set up dashboard in the application wrapper if there is one loaded.
-    if FloatingTools.wrapper():
-        # add the apps to the launcher for
-        if FloatingTools.App.APPS:
-            for app in FloatingTools.App.APPS:
-                FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Apps/' + app,
-                                                     partial(FloatingTools.Dashboard.startServer, (app)))
-
-        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__ + '/Dashboard')
-
-        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Tool Shed',
-                                             partial(FloatingTools.Dashboard.toolShed))
-        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Applications',
-                                             partial(FloatingTools.Dashboard.applications))
-        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Settings',
-                                             partial(FloatingTools.Dashboard.settings))
-        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Services',
-                                             partial(FloatingTools.Dashboard.services))
-        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__ + '/Dashboard')
-
-        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
-        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Support/HatfieldFX',
-                                             partial(webbrowser.open, ("http://www.hatfieldfx.com/floating-tools")))
-        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Dashboard/Support/Repository',
-                                             partial(webbrowser.open, ("https://github.com/aldmbmtl/FloatingTools")))
-
-        FloatingTools.wrapper().addMenuSeparator(FloatingTools.__name__)
-        FloatingTools.wrapper().addMenuEntry(FloatingTools.__name__ + '/Toolboxes',
-                                             partial(FloatingTools.Dashboard.toolShed))
-
     # pull source data
-    sourceData = FloatingTools.sourceData()
+    sourceData = [] #FloatingTools.sourceData()
 
     # log threads
     threads = []
@@ -209,11 +144,11 @@ def loadTools():
         FloatingTools.FT_LOOGER.info('Loading %s with the %s handler...' % (source['name'], source['type']))
 
         # make tool box information menus
-        if FloatingTools.wrapper():
+        if FloatingTools.currentWrapper():
             toolboxPath = FloatingTools.__name__ + '/' + toolbox.name().replace('/', '.')
             for menuItem in toolbox._toolbox_menu_order:
-                FloatingTools.wrapper().addMenuEntry(toolboxPath + menuItem, toolbox._toolbox_menu_content[menuItem])
-            FloatingTools.wrapper().addMenuSeparator(toolboxPath)
+                FloatingTools.currentWrapper().addMenuEntry(toolboxPath + menuItem, toolbox._toolbox_menu_content[menuItem])
+            FloatingTools.currentWrapper().addMenuSeparator(toolboxPath)
 
         # loop over the toolbox path
         for path in toolbox.toolboxPaths():
@@ -223,7 +158,7 @@ def loadTools():
                 path = path.replace('{%s}' % card, WILDCARDS[card]['value'])
 
             # spawn thread if it is a thread supporting application
-            if FloatingTools.wrapper() and not FloatingTools.wrapper().MULTI_THREAD:
+            if FloatingTools.currentWrapper() and not FloatingTools.currentWrapper().MULTI_THREAD:
                 loadToolbox(toolbox, path)
             else:
                 t = threading.Thread(name=toolbox.name(), target=loadToolbox, args=(toolbox, path, True))
@@ -278,9 +213,6 @@ def loadExtensions():
             os.makedirs(path)
 
     addExtensionPath(path)
-
-# set virtual system variables
-FloatingTools.Dashboard.setDashboardVariable('python_cloud', PYTHON_MODULES)
 
 loadExtensions()
 loadTools()
