@@ -8,6 +8,7 @@ import os
 import urllib
 import zipfile
 import traceback
+import importlib
 
 # globals
 FT_NET_URL = 'http://127.0.0.1:5000/'
@@ -160,12 +161,12 @@ Get the install information that describes this client.
     return CLIENT
 
 
-def downloadClient():
+def updateClient():
     """
 Download the client designated from FT.NET for this token.
     """
-    # if toolShed()['install'] == clientInfo():
-    #     return
+    if toolShed()['install'] == clientInfo():
+        return
 
     # update the client file with the new target version
     with open(CLIENT_FILE, 'w') as cf:
@@ -212,5 +213,10 @@ Download the client designated from FT.NET for this token.
     # clean up
     os.unlink(updateZip)
 
+    try:
+        reload(FloatingTools)
+    except NameError:
+        importlib.reload(FloatingTools)
 
-downloadClient()
+
+updateClient()
