@@ -33,7 +33,6 @@ __all__ = [
 # python imports
 import os
 import sys
-import socket
 import logging
 
 logging.basicConfig(level=logging.ERROR)
@@ -45,27 +44,26 @@ FLOATING_TOOLS_CACHE = os.path.join(FLOATING_TOOLS_ROOT, 'cache')
 INSTALL_DIRECTORY = os.path.dirname(FLOATING_TOOLS_ROOT)
 PACKAGES = os.path.join(FLOATING_TOOLS_ROOT, 'packages')
 DATA = os.path.join(FLOATING_TOOLS_ROOT, 'data')
-WRAPPER = None
-WRAPPERS = []
 PYTHON_EXECUTABLE = sys.executable
 
 # create cache directory
 if not os.path.exists(FLOATING_TOOLS_CACHE):
     os.makedirs(FLOATING_TOOLS_CACHE)
 
+# create packages directory
+if not os.path.exists(PACKAGES):
+    os.makedirs(PACKAGES)
 
-# initial ft import
+# create data directory
+if not os.path.exists(DATA):
+    os.makedirs(DATA)
+
+
+DEV = True
+
+# initial ft imports
+from utilities import *
 from ftnet import *
 
 # standard lib imports
 from AbstractService import Service, loadedServices, createToolbox, toolboxes, getToolbox, getService
-
-# try:
-#     # installer set up
-#     from install import installPackage
-#
-#     # import wrappers, services, and apps
-#     from AbstractWrapper import Wrapper, currentWrapper, wrapperName, setWrapper
-#
-# except socket.gaierror:
-#     FT_LOOGER.error('Check your internet connection.')

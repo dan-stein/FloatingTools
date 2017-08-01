@@ -3,46 +3,24 @@ import FloatingTools
 
 # Python imports
 import os
+import urllib
 import urllib2
+import zipfile
 import traceback
-import webbrowser
 
 # globals
-FT_NET_URL = 'http://floatingtoolsnet.2naxcry8ia.us-west-2.elasticbeanstalk.com/'
+FT_NET_URL = 'http://127.0.0.1:5000/'
 
 # token
 TOKEN = None
 TOKEN_FILE = os.path.join(FloatingTools.DATA, 'token')
 
-# user
-USER = None
-USER_FILE = os.path.join(FloatingTools.DATA, 'user')
+# client
+CLIENT = None
+CLIENT_FILE = os.path.join(FloatingTools.DATA, 'client')
 
 # shed
 SHED = None
-
-
-def user():
-    """
-    Pull the username saved on disk.
-    """
-    global USER
-
-    # grab cache
-    if not USER:
-        # validate the user file on disk
-        if not os.path.exists(USER_FILE):
-            username = raw_input('FloatingTools.NET username: ')
-
-            # save data
-            with open(USER_FILE, 'w') as uf:
-                uf.write(username)
-
-        # pull username
-        with open(USER_FILE, 'r') as uf:
-            USER = uf.read()
-
-    return USER
 
 
 def installToken():
@@ -55,10 +33,21 @@ This token is then saved to the token file in the data folder. This token can ex
     if not TOKEN:
         # validate the token file on disk
         if not os.path.exists(TOKEN_FILE):
+            response = urllib2.urlopen(FT_NET_URL + 'profile/requestToken').read()
+
+            # handle broken response
+            if response == 'None':
+                # remove token information
+                try:
+                    os.unlink(TOKEN_FILE)
+                except:
+                    pass
+                raise Exception('Invalid Token. Log into FT.NET and click "Connect install" under the install '
+                                'section.')
 
             # save data
             with open(TOKEN_FILE, 'w') as tf:
-                tf.write(urllib2.urlopen(FT_NET_URL + 'profile/requestToken?user=' + user()).read())
+                tf.write(response)
 
         # pull token
         with open(TOKEN_FILE, 'r') as tf:
@@ -144,3 +133,59 @@ Pull the list of tools requested and download them.
             FloatingTools.createToolbox(tools[tool]['service'], tools[tool]['fields'])
         except:
             traceback.print_exc()
+
+
+def clientInfo():
+    """
+Get the install information that describes this client.
+    """
+    global CLIENT
+
+    if not CLIENT:
+        # validate the client file on disk
+        if not os.path.exists(CLIENT_FILE):
+
+            # save data
+            with open(CLIENT_FILE, 'w') as cf:
+                cf.write('')
+
+            return None
+
+        # pull client data
+        with open(CLIENT_FILE, 'r') as cf:
+            CLIENT = cf.read()
+
+    return CLIENT
+
+
+def downloadClient():
+    """
+Download the client designated from FT.NET for this token.
+    """
+    # if toolShed()['install'] == clientInfo():
+    #     return
+
+    # update the client file with the new target version
+    with open(CLIENT_FILE, 'w') as cf:
+        cf.write(toolShed()['install'])
+
+    # pull target url for the requested version
+    targetVersion = 'https://github.com/aldmbmtl/FloatingTools/archive/%s.zip' % toolShed()['install']
+
+    # download the zip
+    updateZip = os.path.join(os.path.dirname(FloatingTools.FLOATING_TOOLS_ROOT), 'update.zip')
+    urllib.urlretrieve(targetVersion, updateZip)
+    update = zipfile.ZipFile(updateZip, 'r')
+
+    # unpack zip
+    for i in update.filelist:
+        update.extract(i, os.path.join(os.path.dirname(FloatingTools.FLOATING_TOOLS_ROOT), 'test'))
+
+    # release the zip
+    update.close()
+
+    # clean up
+    os.unlink(updateZip)
+
+
+downloadClient()

@@ -3,14 +3,18 @@ Validate the dependencies are installed.
 """
 
 __all__ = [
-    'installPackage'
+    'installPackage',
+    'addExtensionPath'
 ]
 
 # python imports
 import os
 import sys
+import imp
 import urllib
+import traceback
 import subprocess
+
 
 # FloatingTools imports
 import FloatingTools
@@ -101,3 +105,33 @@ Install packages into FT from pip.
     # flush env
     if PYTHONPATH:
         os.environ['PYTHONPATH'] = PYTHONPATH
+
+def addExtensionPath(path):
+    """
+Add a custom extensions path for your scripts and modifications to FloatingTools.
+
+:param path: str to a place on disk.
+    """
+    if not os.path.exists(path):
+        FloatingTools.FT_LOOGER.warning('Extension path passed does not exist: ' + path)
+        return
+
+    for f in os.listdir(path):
+        if f == 'ft_init.py':
+            try:
+                imp.load_source('ft_init', os.path.join(path, f))
+            except ImportError:
+                traceback.print_exc()
+
+def loadExtensions():
+    if 'FT_PATH' in os.environ:
+        path = os.environ['FT_PATH']
+    else:
+        # generate home path
+        path = os.path.join(os.path.expanduser('~'), '.ft')
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+    addExtensionPath(path)
+
+loadExtensions()
