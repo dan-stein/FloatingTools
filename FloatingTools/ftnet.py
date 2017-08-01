@@ -1,10 +1,11 @@
+from __future__ import print_function
+
 # ft imports
 import FloatingTools
 
 # Python imports
 import os
 import urllib
-import urllib2
 import zipfile
 import traceback
 
@@ -33,7 +34,7 @@ This token is then saved to the token file in the data folder. This token can ex
     if not TOKEN:
         # validate the token file on disk
         if not os.path.exists(TOKEN_FILE):
-            response = urllib2.urlopen(FT_NET_URL + 'profile/requestToken').read()
+            response = urllib.urlopen(FT_NET_URL + 'profile/requestToken').read()
 
             # handle broken response
             if response == 'None':
@@ -76,8 +77,9 @@ Request the latest tool shed data.
     if not SHED:
         try:
             # request the tool shed tied to the token on disk
-            SHED = eval(urllib2.urlopen(FT_NET_URL + 'profile/requestShed?token=' + installToken()).read())
-        except urllib2.HTTPError:
+            SHED = eval(urllib.urlopen(FT_NET_URL + 'profile/requestShed?token=' + installToken()).read())
+        except Exception as e:
+            print(e)
             raise Exception('Invalid token. Token passed is either blocked, sent from an ip address not tethered to '
                             'this user, or you have never logged into the site from this computer on the FT.NET site.')
 
@@ -107,7 +109,7 @@ Download the required services into memory for use.
 
     # loop over only required services
     for service in services:
-        request = urllib2.urlopen(services[service])
+        request = urllib.urlopen(services[service])
 
         # pull the raw code before execution
         code = request.read()
@@ -177,9 +179,32 @@ Download the client designated from FT.NET for this token.
     urllib.urlretrieve(targetVersion, updateZip)
     update = zipfile.ZipFile(updateZip, 'r')
 
+    root = update.filelist[0].filename.split('/')[0]
+
+    # clean out old version
+    if not os.environ.get('FT_DEV'):
+        for i in os.listdir(FloatingTools.FLOATING_TOOLS_ROOT):
+
+            if i in ['cache', 'data', 'packages']:
+                continue
+
+            target = os.path.join(FloatingTools.FLOATING_TOOLS_ROOT, i)
+
+            if os.path.isfile(target):
+                os.unlink(target)
+            if os.path.isdir(target):
+                os.rmdir(target)
+
     # unpack zip
     for i in update.filelist:
-        update.extract(i, os.path.join(os.path.dirname(FloatingTools.FLOATING_TOOLS_ROOT), 'test'))
+        i.filename = i.filename.replace(root + '/', '')
+        if not i.filename.startswith("FloatingTools/"):
+            continue
+
+        if os.environ.get('FT_DEV'):
+            continue
+
+        update.extract(i, os.path.dirname(FloatingTools.FLOATING_TOOLS_ROOT))
 
     # release the zip
     update.close()
