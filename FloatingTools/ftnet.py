@@ -11,7 +11,9 @@ import traceback
 import importlib
 
 # globals
-FT_NET_URL = 'http://127.0.0.1:5000/'
+FT_NET_URL = 'http://floatingtoolsnet.2naxcry8ia.us-west-2.elasticbeanstalk.com/'
+if os.environ.get('FT_NET_URL'):
+    FT_NET_URL = os.environ.get('FT_NET_URL')
 
 # token
 TOKEN = None
@@ -44,8 +46,9 @@ This token is then saved to the token file in the data folder. This token can ex
                     os.unlink(TOKEN_FILE)
                 except:
                     pass
-                raise Exception('Invalid Token. Log into FT.NET and click "Connect install" under the install '
-                                'section.')
+                raise Exception('\nInvalid Token. Log into FT.NET and click "Connect client" under the Client dropdown '
+                                'section at the top of the profile page. Then relaunch this application.'
+                                '\n\tProfile page: http://floatingtoolsnet.2naxcry8ia.us-west-2.elasticbeanstalk.com/profile\n')
 
             # save data
             with open(TOKEN_FILE, 'w') as tf:
