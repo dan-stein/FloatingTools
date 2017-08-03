@@ -35,7 +35,10 @@ import os
 import sys
 import logging
 
-logging.basicConfig(level=logging.ERROR)
+if os.environ.get('FT_DEV'):
+    logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(level=logging.ERROR)
 
 # Global variables
 FT_LOOGER = logging.getLogger('FloatingTools')
@@ -59,11 +62,13 @@ if not os.path.exists(DATA):
     os.makedirs(DATA)
 
 
-DEV = True
-
 # initial ft imports
 from utilities import *
 from ftnet import *
 
 # standard lib imports
-from AbstractService import Service, loadedServices, createToolbox, toolboxes, getToolbox, getService
+from AbstractWrapper import Wrapper, activeWrapper
+from AbstractService import Service
+
+# initialize FT
+initialize()

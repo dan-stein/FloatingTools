@@ -5,10 +5,12 @@ import FloatingTools
 
 # Python imports
 import os
+import imp
+import sys
 import urllib
 import zipfile
 import traceback
-import importlib
+import threading
 
 # globals
 FT_NET_URL = 'http://floatingtoolsnet.2naxcry8ia.us-west-2.elasticbeanstalk.com/'
@@ -25,6 +27,10 @@ CLIENT_FILE = os.path.join(FloatingTools.DATA, 'client')
 
 # shed
 SHED = None
+
+# create wrappers ghost module
+Wrappers = imp.new_module('Wrappers')
+sys.modules['Wrappers'] = Wrappers
 
 
 def installToken():
@@ -81,7 +87,8 @@ Request the latest tool shed data.
     if not SHED:
         try:
             # request the tool shed tied to the token on disk
-            SHED = eval(urllib.urlopen(FT_NET_URL + 'profile/requestShed?token=' + installToken()).read())
+            response = urllib.urlopen(FT_NET_URL + 'profile/requestShed?token=' + installToken()).read()
+            SHED = eval(response)
         except Exception as e:
             print(e)
             raise Exception('Invalid token. Token passed is either blocked, sent from an ip address not tethered to '
@@ -95,6 +102,13 @@ def requiredServices():
 Get all required services for the tool shed.
     """
     return toolShed()['services']
+
+
+def suggestedWrappers():
+    """
+Get all suggested wrappers from the tool shed.
+    """
+    return toolShed()['wrappers']
 
 
 def requestedTools():
@@ -125,6 +139,28 @@ Download the required services into memory for use.
             traceback.print_exc()
 
 
+def downloadWrappers():
+    """
+Download the wrappers into memory for use.
+    """
+    # if the wrapper has already been determined don't waste the time pulling new ones.
+    if FloatingTools.activeWrapper():
+        return
+
+    # pull the suggested wrappers
+    wrappers = suggestedWrappers()
+
+    # loop over suggested wrappers
+    for wrapper in wrappers:
+        request = urllib.urlopen(wrapper)
+
+        # pull the raw code before execution
+        code = request.read()
+
+        # execute the code but if it fails print the error and continue
+        exec code in Wrappers.__dict__
+
+
 def downloadTools():
     """
 Pull the list of tools requested and download them.
@@ -132,13 +168,30 @@ Pull the list of tools requested and download them.
     # first download the latest services that are required for all tools.
     downloadServices()
 
+    # set up for multi threaded downloading
+    threads = []
+
     # pull down the requested tools and begin loop over each tool.
     tools = requestedTools()
     for tool in tools:
         try:
-            FloatingTools.createToolbox(tools[tool]['service'], tools[tool]['fields'])
+            # pull service
+            service = FloatingTools.Service.get(tools[tool]['service'])
+
+            # launch thread
+            t = threading.Thread(target=service(**tools[tool]['fields'])._callInstall)
+            t.start()
+            threads.append(t)
         except:
             traceback.print_exc()
+
+    # join threads and wait for completion
+    for thread in threads:
+        thread.join()
+
+    # loop over all tool boxes and execute load tools
+    for toolbox in FloatingTools.Service.toolboxes():
+        toolbox.loadTools()
 
 
 def clientInfo():
@@ -171,6 +224,11 @@ Download the client designated from FT.NET for this token.
     if toolShed()['install'] == clientInfo():
         return
 
+    # notify update is happening
+    FloatingTools.FT_LOOGER.info('Client being updated and will require a restart to use the new version.')
+    if os.environ.get('FT_DEV'):
+        FloatingTools.FT_LOOGER.info('Client in dev mode so no file will be changed on disk. Running dry update.')
+
     # update the client file with the new target version
     with open(CLIENT_FILE, 'w') as cf:
         cf.write(toolShed()['install'])
@@ -199,6 +257,7 @@ Download the client designated from FT.NET for this token.
             if os.path.isdir(target):
                 os.rmdir(target)
 
+
     # unpack zip
     for i in update.filelist:
         i.filename = i.filename.replace(root + '/', '')
@@ -219,7 +278,19 @@ Download the client designated from FT.NET for this token.
     try:
         reload(FloatingTools)
     except NameError:
-        importlib.reload(FloatingTools)
+        imp.reload(FloatingTools)
 
 
-updateClient()
+def initialize():
+    """
+Starts up FT Client
+    """
+    # update the client install if it has changed on FT.NET
+    updateClient()
+
+    # first load all custom extensions
+    FloatingTools.loadExtensions()
+
+    # load tools
+    downloadWrappers()
+    downloadTools()

@@ -3,11 +3,12 @@ Forward preparation for supporting more services.
 """
 # python imports
 import os
+import time
 import shutil
 import urllib
-import urllib2
 import zipfile
 import traceback
+from functools import partial
 
 # ft imports
 import FloatingTools
@@ -29,58 +30,6 @@ class InvalidHandlerType(Exception):
 
 class InvalidToolbox(Exception):
     pass
-
-
-# functions
-def getService(handlerType):
-    """
-Get the class associated with the handler type passed.
-
-:param handlerType: str key in the FloatingTools.Services.SERVICES
-    """
-    try:
-        return SERVICES[handlerType]
-    except KeyError:
-        raise InvalidHandlerType('Handler Type passed does not exists.\n')
-
-
-def getToolbox(name):
-    """
-Get a toolbox by its name.
-
-:param name: 
-    """
-    try:
-        return TOOLBOXES[name]
-    except KeyError:
-        raise InvalidToolbox(name + ' is not a valid toolbox.')
-
-
-def toolboxes():
-    """
-Get all the currently loaded toolboxes
-    """
-    return TOOLBOXES
-
-
-def createToolbox(_type, source, install=True):
-    """
-Creates a toolbox with the handler type passed using the source data.
-
-:param _type: 
-:param source: 
-    """
-    try:
-        return getService(_type)(install=install, **source)
-    except:
-        traceback.print_exc()
-
-
-def loadedServices():
-    """
-    Get all the currently loaded services
-    """
-    return SERVICES
 
 
 # main abstract class
@@ -111,6 +60,38 @@ Represents a FloatingTools compatible toolbox service
         loadTimes={},   # toolbox load times organized by application
     )
 
+    # globals
+    SERVICES = {}
+    TOOLBOXES = {}
+
+    @staticmethod
+    def get(service):
+        """
+Get a service by name.
+
+:param service:
+        """
+        try:
+            return Service.SERVICES[service]
+        except KeyError:
+            raise InvalidHandlerType('Handler Type passed does not exists.\n')
+
+    @staticmethod
+    def getToolbox(name):
+        """
+    Get a toolbox by its name.
+
+    :param name:
+        """
+        try:
+            return Service.TOOLBOXES[name]
+        except KeyError:
+            raise InvalidToolbox(name + ' is not a valid toolbox.')
+
+    @staticmethod
+    def toolboxes():
+        return Service.TOOLBOXES.values()
+
     @staticmethod
     def downloadSource(url, path, timeout=5):
         """
@@ -122,7 +103,6 @@ time out function.
 :parameter timeout: How long to wait before timing out.
         """
         try:
-            urllib2.urlopen(url=url, timeout=timeout)
             urllib.urlretrieve(url, path)
             return True
         except:
@@ -139,11 +119,10 @@ time out function.
         
         :parameter _type:  
         """
-        global SERVICES
 
         # register with global
         cls._TYPE_ = _type
-        SERVICES[_type] = cls
+        Service.SERVICES[_type] = cls
         try:
             cls.initialize()
         except:
@@ -185,13 +164,7 @@ FloatingTools.installPackage('boto3', 'boto') here. This is also meant for any o
         """
         pass
 
-    def __str__(self):
-        return "Toolbox Handler(Service: %s, Name: %s)" % (
-            self._TYPE_,
-            self.name()
-        )
-
-    def __init__(self, install=True, **sourceFields):
+    def __init__(self, **sourceFields):
         global TOOLBOXES
 
         # instance variables
@@ -215,16 +188,29 @@ FloatingTools.installPackage('boto3', 'boto') here. This is also meant for any o
             raise NameError('There is no name assigned to this Toolbox Handler. You must check your handler to make '
                             'sure it sets the toolbox name in the Handler.loadSource function.')
 
-        # only run install process if it doesnt appear to be installed already.
-        if install:
-            if not os.path.exists(self.installDirectory()):
-                os.makedirs(self.installDirectory())
-
-                # execute install command
-                self.install()
-
         # register this instance as a toolbox
-        TOOLBOXES[self._toolbox_name] = self
+        Service.TOOLBOXES[self._toolbox_name] = self
+
+    def _callInstall(self):
+        if os.path.exists(self.installDirectory()):
+            return
+
+        if not os.path.exists(self.installDirectory()):
+            os.makedirs(self.installDirectory())
+
+        FloatingTools.FT_LOOGER.info('Initial install process for %s. This will add a one time load up lag. '
+                                     'Please wait.' % self.name())
+
+        self.install()
+
+    def newToolbox(self, source):
+        """
+Add a new toolbox for this service.
+
+:param source:
+:param install:
+        """
+        return self.get(self.name())(**source)
 
     def installZip(self, zipPath):
         """
@@ -275,50 +261,6 @@ FloatingTools.installPackage('boto3', 'boto') here. This is also meant for any o
         # add html information
         if html and menu not in self._toolbox_html_content:
             self._toolbox_html_content[menu] = dict(tag=os.path.basename(menu), html=html)
-
-    def toolboxPaths(self):
-        """
-        The current set of toolbox paths.
-        """
-        # default is the whole toolbox
-        paths = ['/']
-
-        # pull from the set source paths for the toolbox
-        if self._toolbox_paths:
-            paths = self._toolbox_paths
-
-        return paths
-
-    def setToolboxPaths(self, listOfPaths):
-        """
-        Toolbox paths are set to allow for tool separation within the context of a single toolbox and to increase load 
-        speed.
-        
-.. code-block:: none
-    
-    toolbox/
-        nuke/
-            toolA
-        maya/
-            toolB
-
-In the context of the above example, a path can be passed to load a tools from nuke and not maya by passing the path 
-directly.
-
-.. code-block:: python
-    
-    Handler.setToolboxPaths(['/toolbox/nuke'])
-    
-This is automatically done for you at load by the wildcard system, but it is good to understand where this is and how it
- works.
- 
-:parameter listOfPaths: list
-
-        """
-        if not isinstance(listOfPaths, list):
-            raise TypeError('Must be a <list> of paths')
-
-        self._toolbox_paths = listOfPaths
 
     def sourcePath(self):
         """
@@ -458,3 +400,48 @@ This is automatically done for you at load by the wildcard system, but it is goo
         # delete self from global dict
         global TOOLBOXES
         del TOOLBOXES[self.name()]
+
+    def loadTools(self):
+        """
+Load the tools on disk for this toolbox.
+        """
+        if not FloatingTools.activeWrapper():
+            return
+
+        # set the menus root
+        menuRoot = 'FloatingTools/' + self.name().replace('/', '-')
+
+        # create the toolbox fields predefined by the service.
+        for menuField in self._toolbox_menu_order:
+            FloatingTools.activeWrapper().addMenuEntry(
+                menuRoot + '/' + menuField,
+                command=self._toolbox_menu_content[menuField]
+            )
+
+        # add separator for tools section
+        FloatingTools.activeWrapper().addMenuSeparator(menuRoot)
+
+        # start timing tool loading
+        start = time.time()
+
+        # loop over install path and check for tools that match the wrappers file extensions
+        for (path, dirs, files) in os.walk(self.installDirectory()):
+            arcName = menuRoot + path.replace(self.installDirectory(), '')
+
+            for file in files:
+                base, ext = os.path.splitext(file)
+
+                if ext not in FloatingTools.activeWrapper().fileTypes():
+                    continue
+
+                filePath = os.path.join(path, file)
+                FloatingTools.activeWrapper().addMenuEntry(
+                    menuPath=os.path.join(arcName, file),
+                    command=partial(FloatingTools.activeWrapper().loadFile, filePath)
+                )
+
+        # end timing tool loading and report it to FT.NET and the console
+        end = time.time()
+
+        # report load times
+        FloatingTools.FT_LOOGER.info('%s took: %s ms' % (self.name(), end - start))

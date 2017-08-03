@@ -4,7 +4,8 @@ Validate the dependencies are installed.
 
 __all__ = [
     'installPackage',
-    'addExtensionPath'
+    'addExtensionPath',
+    'loadExtensions'
 ]
 
 # python imports
@@ -39,8 +40,8 @@ except ImportError:
     # determine executable from the application wrapper
     executable = sys.executable
     args = []
-    if FloatingTools.WRAPPER and FloatingTools.WRAPPER.ARGS:
-        args = FloatingTools.WRAPPER.ARGS
+    if FloatingTools.activeWrapper() and FloatingTools.activeWrapper().ARGS:
+        args = FloatingTools.activeWrapper().ARGS
 
     FloatingTools.FT_LOOGER.info("Python executable (+args) for pip install: " + executable)
 
@@ -133,5 +134,3 @@ def loadExtensions():
             os.makedirs(path)
 
     addExtensionPath(path)
-
-loadExtensions()
