@@ -5,12 +5,13 @@ import FloatingTools
 
 # Python imports
 import os
+import re
 import imp
 import sys
+import base64
 import urllib
 import zipfile
 import traceback
-import threading
 
 # globals
 FT_NET_URL = 'http://floatingtoolsnet.2naxcry8ia.us-west-2.elasticbeanstalk.com/'
@@ -33,6 +34,9 @@ Wrappers = imp.new_module('Wrappers')
 sys.modules['Wrappers'] = Wrappers
 
 
+external_ip_ex = re.compile('600;\">(.+)</span>')
+
+
 def installToken():
     """
 Each install is tied to a unique token tethered to this installs specific ip address tied to the routers public address.
@@ -43,7 +47,9 @@ This token is then saved to the token file in the data folder. This token can ex
     if not TOKEN:
         # validate the token file on disk
         if not os.path.exists(TOKEN_FILE):
-            response = urllib.urlopen(FT_NET_URL + 'profile/requestToken').read()
+            response = urllib.urlopen(FT_NET_URL + 'profile/requestToken?geoLocation=' + base64.b64encode(
+                str(FloatingTools.pullLocation()))
+                                      ).read()
 
             # handle broken response
             if response == 'None':
@@ -168,26 +174,35 @@ Pull the list of tools requested and download them.
     # first download the latest services that are required for all tools.
     downloadServices()
 
-    # set up for multi threaded downloading
-    threads = []
-
     # pull down the requested tools and begin loop over each tool.
     tools = requestedTools()
+
+    count = 0
+
     for tool in tools:
         try:
             # pull service
             service = FloatingTools.Service.get(tools[tool]['service'])
+            box = service(source_tag=tool, **tools[tool]['fields'])
 
-            # launch thread
-            t = threading.Thread(target=service(**tools[tool]['fields'])._callInstall)
-            t.start()
-            threads.append(t)
+            # bail if they already exist
+            if os.path.exists(box.installDirectory()):
+                count += 1
+                continue
+
+            # build directories if they don't exist
+            if not os.path.exists(box.installDirectory()):
+                os.makedirs(box.installDirectory())
+
+            FloatingTools.progress(count, len(tools), 'Installing Cache. Please wait.')
+            box.install()
+
+            count += 1
+            FloatingTools.progress(count, len(tools), 'Installing Cache. Please wait.')
         except:
             traceback.print_exc()
 
-    # join threads and wait for completion
-    for thread in threads:
-        thread.join()
+        count += 1
 
     # loop over all tool boxes and execute load tools
     for toolbox in FloatingTools.Service.toolboxes():

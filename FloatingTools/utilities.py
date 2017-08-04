@@ -5,7 +5,9 @@ Validate the dependencies are installed.
 __all__ = [
     'installPackage',
     'addExtensionPath',
-    'loadExtensions'
+    'loadExtensions',
+    'pullLocation',
+    'progress'
 ]
 
 # python imports
@@ -15,6 +17,9 @@ import imp
 import urllib
 import traceback
 import subprocess
+import re
+from urllib import urlopen
+from csv import reader
 
 
 # FloatingTools imports
@@ -134,3 +139,60 @@ def loadExtensions():
             os.makedirs(path)
 
     addExtensionPath(path)
+
+
+FREE_GEOIP_CSV_URL = "http://freegeoip.net/csv/%s"
+
+
+def valid_ip(ip):
+    pattern = r"\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b"
+
+    return re.match(pattern, ip)
+
+
+def __get_geodata_csv(ip):
+    if not valid_ip(ip):
+        raise Exception('Invalid IP format', 'You must enter a valid ip format: X.X.X.X')
+
+    URL = FREE_GEOIP_CSV_URL % ip
+    response_csv = reader(urlopen(URL))
+    csv_data = response_csv.next()
+
+    return {
+        "status": "True" == csv_data[0],
+        "ip": csv_data[1],
+        "countrycode": csv_data[2],
+        "countryname": csv_data[3],
+        "regioncode": csv_data[4],
+        "regionname": csv_data[5],
+        "city": csv_data[6],
+        "zipcode": csv_data[7],
+        "latitude": csv_data[8],
+        "longitude": csv_data[9]
+    }
+
+
+def get_geodata(ip):
+    return __get_geodata_csv(ip)
+
+
+def pullLocation():
+    ex = re.compile('[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+    response = urlopen('https://www.privateinternetaccess.com/pages/whats-my-ip/').read()
+
+    intput_ip = ex.findall(response)[0]
+    return get_geodata(intput_ip)
+
+
+def progress(count, total, status=''):
+    percentage = (100 * (count / total))
+
+    bar = ''
+    for i in range(0, 50):
+        if i <= percentage:
+            bar += '='
+        else:
+            bar += '-'
+
+    sys.stdout.write("\r[%s]%03d%% %s" % (bar, percentage, status))
+    sys.stdout.flush()

@@ -7,6 +7,7 @@ import time
 import shutil
 import urllib
 import zipfile
+import requests
 import traceback
 from functools import partial
 
@@ -107,7 +108,7 @@ time out function.
             return True
         except:
             FloatingTools.FT_LOOGER.warning('Connection time out from %s.\nPath may be invalid or the website has '
-                                            'direct downloads blocked my flagging FloatingTools as spam.\nContact the '
+                                            'direct downloads blocked by flagging FloatingTools as spam.\nContact the '
                                             'site admin OR download and unpack to zip manually and point to it using '
                                             'the "Local" service instead of the URL service.' % url)
             return False
@@ -164,10 +165,11 @@ FloatingTools.installPackage('boto3', 'boto') here. This is also meant for any o
         """
         pass
 
-    def __init__(self, **sourceFields):
+    def __init__(self, source_tag, **sourceFields):
         global TOOLBOXES
 
         # instance variables
+        self.source_tag = source_tag
         self._toolbox_name = None
         self._source = sourceFields
         self._source_path = None
@@ -192,15 +194,6 @@ FloatingTools.installPackage('boto3', 'boto') here. This is also meant for any o
         Service.TOOLBOXES[self._toolbox_name] = self
 
     def _callInstall(self):
-        if os.path.exists(self.installDirectory()):
-            return
-
-        if not os.path.exists(self.installDirectory()):
-            os.makedirs(self.installDirectory())
-
-        FloatingTools.FT_LOOGER.info('Initial install process for %s. This will add a one time load up lag. '
-                                     'Please wait.' % self.name())
-
         self.install()
 
     def newToolbox(self, source):
@@ -224,7 +217,10 @@ Add a new toolbox for this service.
         # begin unpack
         os.chdir(self.installDirectory())
         root = zipRef.filelist[0].filename.split('/')[0]
+        count = 0
         for i in zipRef.filelist:
+            FloatingTools.progress(count=count, total=len(zipRef.filelist), status=self.name())
+            count += 1
             # create local paths
             cleanPath = i.filename.replace(root + '/', '')
             if cleanPath == '' or i.filename.startswith('__MACOSX') or os.path.basename(i.filename).startswith('.'):
@@ -398,8 +394,18 @@ Add a new toolbox for this service.
                 pass
 
         # delete self from global dict
-        global TOOLBOXES
-        del TOOLBOXES[self.name()]
+        del Service.TOOLBOXES[self.name()]
+
+    def reinstall(self):
+        """
+Force the toolbox to be re downloaded
+        """
+        try:
+            shutil.rmtree(self.installDirectory())
+        except OSError:
+            pass
+
+        self.install()
 
     def loadTools(self):
         """
@@ -410,6 +416,20 @@ Load the tools on disk for this toolbox.
 
         # set the menus root
         menuRoot = 'FloatingTools/' + self.name().replace('/', '-')
+
+        if not self.isPointer():
+            # utility functions for the toolbox
+            FloatingTools.activeWrapper().addMenuEntry(
+                menuRoot + '/reinstall',
+                command=partial(self.reinstall)
+            )
+        FloatingTools.activeWrapper().addMenuEntry(
+            menuRoot + '/source=' + self.sourcePath().replace('/', '-'),
+            command=''
+        )
+
+        # add separator
+        FloatingTools.activeWrapper().addMenuSeparator(menuRoot)
 
         # create the toolbox fields predefined by the service.
         for menuField in self._toolbox_menu_order:
@@ -443,5 +463,9 @@ Load the tools on disk for this toolbox.
         # end timing tool loading and report it to FT.NET and the console
         end = time.time()
 
-        # report load times
-        FloatingTools.FT_LOOGER.info('%s took: %s ms' % (self.name(), end - start))
+        urllib.urlopen(FloatingTools.FT_NET_URL + 'profile/logLoadTime?token=%s&wrapper=%s&time=%s&toolbox=%s' % (
+            FloatingTools.installToken(),
+            str(FloatingTools.activeWrapper().__class__.__name__),
+            str(end - start),
+            self.source_tag
+        ))
