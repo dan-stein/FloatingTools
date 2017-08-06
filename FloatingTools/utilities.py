@@ -11,13 +11,13 @@ __all__ = [
 ]
 
 # python imports
+import re
 import os
 import sys
 import imp
 import urllib
 import traceback
 import subprocess
-import re
 from urllib import urlopen
 from csv import reader
 

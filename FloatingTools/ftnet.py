@@ -164,7 +164,10 @@ Download the wrappers into memory for use.
         code = request.read()
 
         # execute the code but if it fails print the error and continue
-        exec code in Wrappers.__dict__
+        try:
+            exec code in Wrappers.__dict__
+        except:
+            traceback.print_exc()
 
 
 def downloadTools():
