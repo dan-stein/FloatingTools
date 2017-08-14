@@ -8,10 +8,14 @@ import os
 import re
 import imp
 import sys
+import json
 import base64
 import urllib
+import urllib2
 import zipfile
 import traceback
+import webbrowser
+from functools import partial
 
 # globals
 FT_NET_URL = 'http://floatingtoolsnet.2naxcry8ia.us-west-2.elasticbeanstalk.com/'
@@ -28,6 +32,7 @@ CLIENT_FILE = os.path.join(FloatingTools.DATA, 'client')
 
 # shed
 SHED = None
+SHED_FILE = os.path.join(FloatingTools.DATA, 'shed')
 
 # create wrappers ghost module
 Wrappers = imp.new_module('Wrappers')
@@ -54,10 +59,7 @@ This token is then saved to the token file in the data folder. This token can ex
             # handle broken response
             if response == 'None':
                 # remove token information
-                try:
-                    os.unlink(TOKEN_FILE)
-                except:
-                    pass
+                os.unlink(TOKEN_FILE)
                 raise Exception('\nInvalid Token. Log into FT.NET and click "Connect client" under the Client dropdown '
                                 'section at the top of the profile page. Then relaunch this application.'
                                 '\n\tProfile page: http://floatingtoolsnet.2naxcry8ia.us-west-2.elasticbeanstalk.com/profile\n')
@@ -91,16 +93,65 @@ Request the latest tool shed data.
     global SHED
 
     if not SHED:
-        try:
-            # request the tool shed tied to the token on disk
-            response = urllib.urlopen(FT_NET_URL + 'profile/requestShed?token=' + installToken()).read()
-            SHED = eval(response)
-        except Exception as e:
-            print(e)
-            raise Exception('Invalid token. Token passed is either blocked, sent from an ip address not tethered to '
-                            'this user, or you have never logged into the site from this computer on the FT.NET site.')
+        SHED = dict(tools={}, wrappers={}, services={})
+
+        if isNetworkClient():
+            try:
+                # request the tool shed tied to the token on disk
+                response = urllib.urlopen(FT_NET_URL + 'profile/requestShed?token=' + installToken()).read()
+                if response == 'None':
+                    raise Exception('Rejected Token')
+
+                SHED = eval(response)
+
+                if not os.path.exists(SHED_FILE):
+                    # create file
+                    fo = open(SHED_FILE, 'w')
+                    fo.close()
+
+                with open(SHED_FILE, 'w') as sf:
+                    sf.write(json.dumps(SHED, indent=4, sort_keys=True))
+
+            except Exception as e:
+                raise Exception('Invalid token. Token passed is either blocked, sent from an ip address not tethered to '
+                                'this user, or you have never logged into the site from this computer on the FT.NET site.')
+        else:
+            # pulls the local inventory of tools and services located in the client
+            pullInventory()
 
     return SHED
+
+
+def pullInventory():
+    """
+Walk the cache to pull the tools that exist. This is used when the client is not connected to the server and has no shed
+file.
+    :return:
+    """
+    global SHED
+
+    if os.path.exists(SHED_FILE):
+        with open(SHED_FILE, 'r') as sf:
+            try:
+                SHED = eval(sf.read())
+                return SHED
+            except Exception:
+                pass
+
+    # pull inventory
+    id = 0
+    for tool in os.listdir(FloatingTools.FLOATING_TOOLS_CACHE):
+        SHED['tools'][id] = dict(
+            desc='Local pull',
+            fields={'Path': os.path.join(FloatingTools.FLOATING_TOOLS_CACHE, tool)},
+            id=id,
+            license='Unknown',
+            name=tool,
+            owner='Unknown',
+            service='Local_Path',
+
+        )
+        id += 1
 
 
 def requiredServices():
@@ -124,7 +175,7 @@ Get all tools in the requested tool shed.
     return toolShed()['tools']
 
 
-def downloadServices():
+def loadServices():
     """
 Download the required services into memory for use.
     """
@@ -133,19 +184,26 @@ Download the required services into memory for use.
 
     # loop over only required services
     for service in services:
-        request = urllib.urlopen(services[service])
+        if isNetworkClient():
+            request = urllib.urlopen(services[service])
 
-        # pull the raw code before execution
-        code = request.read()
+            # pull the raw code before execution
+            code = request.read()
 
-        # execute the code but if it fails print the error and continue
+            # execute the code but if it fails print the error and continue
+            try:
+                exec code
+            except Exception:
+                traceback.print_exc()
+
         try:
-            exec code
-        except Exception:
+            if os.path.exists(services[service]):
+                imp.load_source(service, services[service])
+        except ImportError:
             traceback.print_exc()
 
 
-def downloadWrappers():
+def loadWrappers():
     """
 Download the wrappers into memory for use.
     """
@@ -156,26 +214,36 @@ Download the wrappers into memory for use.
     # pull the suggested wrappers
     wrappers = suggestedWrappers()
 
-    # loop over suggested wrappers
-    for wrapper in wrappers:
-        request = urllib.urlopen(wrapper)
+    # if this is a network client
+    if isNetworkClient():
+        # loop over suggested wrappers
+        for wrapper in wrappers:
+            request = urllib.urlopen(wrapper)
 
-        # pull the raw code before execution
-        code = request.read()
+            # pull the raw code before execution
+            code = request.read()
 
-        # execute the code but if it fails print the error and continue
-        try:
-            exec code in Wrappers.__dict__
-        except:
-            traceback.print_exc()
+            # execute the code but if it fails print the error and continue
+            try:
+                exec code in Wrappers.__dict__
+            except:
+                traceback.print_exc()
+
+    # loop over and load the local wrappers
+    for fo in os.listdir(FloatingTools.WRAPPERS):
+        if fo.endswith('.py'):
+            try:
+                imp.load_source(fo.replace('.py', ''), os.path.join(FloatingTools.WRAPPERS, fo))
+            except ImportError:
+                FloatingTools.FT_LOOGER.info(traceback.format_exc())
 
 
-def downloadTools():
+def loadTools():
     """
 Pull the list of tools requested and download them.
     """
     # first download the latest services that are required for all tools.
-    downloadServices()
+    loadServices()
 
     # pull down the requested tools and begin loop over each tool.
     tools = requestedTools()
@@ -299,16 +367,64 @@ Download the client designated from FT.NET for this token.
         imp.reload(FloatingTools)
 
 
+def _buildFTMenu_():
+    """
+    --private--
+    :return:
+    """
+    FloatingTools.activeWrapper().addMenuEntry('FloatingTools/Client Version: ' + clientInfo()
+                                               if isNetworkClient()
+                                               else 'FloatingTools/Client Version: %s (Running in Local Mode)' %
+                                                    clientInfo()
+                                               )
+    FloatingTools.activeWrapper().addMenuSeparator('FloatingTools')
+
+    if isNetworkClient():
+        FloatingTools.activeWrapper().addMenuEntry('FloatingTools/FT.NET',
+                                                   command=partial(webbrowser.open, os.environ['FT_NET_URL'])
+                                                   )
+
+        FloatingTools.activeWrapper().addMenuEntry('FloatingTools/Profile',
+                                                   command=partial(webbrowser.open, os.environ['FT_NET_URL'] + '/profile')
+                                                   )
+        FloatingTools.activeWrapper().addMenuEntry('FloatingTools/Toolboxes',
+                                                   command=partial(webbrowser.open, os.environ['FT_NET_URL'] + '/toolboxes')
+                                                   )
+        FloatingTools.activeWrapper().addMenuSeparator('FloatingTools')
+
+
+def isNetworkClient():
+    """
+    This checks if the connection to the FT server is available. If not, it will return false and signal that this is a
+    local client install.
+    :return:
+    """
+    try:
+        urllib2.urlopen(FT_NET_URL, timeout=1)
+        return True
+    except urllib2.URLError as err:
+        return False
+
+
 def initialize():
     """
 Starts up FT Client
     """
-    # update the client install if it has changed on FT.NET
-    updateClient()
+    if isNetworkClient():
+        print('Network Client. Loading sources from network and local.\n\n\tWrappers: %s\n\tServices: %s\n' %
+              (FloatingTools.WRAPPERS, FloatingTools.SERVICES))
+
+        # update the client install if it has changed on FT.NET
+        updateClient()
+    else:
+        print('Not a Network Client. Loading sources from local only.\n\n\tWrappers: %s\n\tServices: %s\n' %
+              (FloatingTools.WRAPPERS, FloatingTools.SERVICES))
 
     # first load all custom extensions
     FloatingTools.loadExtensions()
 
     # load tools
-    downloadWrappers()
-    downloadTools()
+    loadWrappers()
+    if FloatingTools.activeWrapper():
+        _buildFTMenu_()
+    loadTools()

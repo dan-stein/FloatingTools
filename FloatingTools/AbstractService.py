@@ -75,7 +75,7 @@ Get a service by name.
         try:
             return Service.SERVICES[service]
         except KeyError:
-            raise InvalidHandlerType('Handler Type passed does not exists.\n')
+            raise InvalidHandlerType('Handler Type passed does not exists.\nService requested: %s' % service)
 
     @staticmethod
     def getToolbox(name):
@@ -419,24 +419,17 @@ Load the tools on disk for this toolbox.
 
         if not self.isPointer():
             # utility functions for the toolbox
-            FloatingTools.activeWrapper().addMenuEntry(
-                menuRoot + '/reinstall',
-                command=partial(self.reinstall)
-            )
-        FloatingTools.activeWrapper().addMenuEntry(
-            menuRoot + '/source=' + self.sourcePath().replace('/', '-'),
-            command=''
-        )
+            FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/reinstall', command=partial(self.reinstall))
+            # utility functions for the toolbox
+            FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/uninstall', command=partial(self.uninstall))
+        FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/source/' + self.sourcePath().replace('/', '-'))
 
         # add separator
         FloatingTools.activeWrapper().addMenuSeparator(menuRoot)
 
         # create the toolbox fields predefined by the service.
         for menuField in self._toolbox_menu_order:
-            FloatingTools.activeWrapper().addMenuEntry(
-                menuRoot + '/' + menuField,
-                command=self._toolbox_menu_content[menuField]
-            )
+            FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/' + menuField, command=self._toolbox_menu_content[menuField])
 
         # add separator for tools section
         FloatingTools.activeWrapper().addMenuSeparator(menuRoot)
@@ -463,9 +456,31 @@ Load the tools on disk for this toolbox.
         # end timing tool loading and report it to FT.NET and the console
         end = time.time()
 
-        urllib.urlopen(FloatingTools.FT_NET_URL + 'profile/logLoadTime?token=%s&wrapper=%s&time=%s&toolbox=%s' % (
-            FloatingTools.installToken(),
-            str(FloatingTools.activeWrapper().__class__.__name__),
-            str(end - start),
-            self.source_tag
-        ))
+        if FloatingTools.isNetworkClient():
+            urllib.urlopen(FloatingTools.FT_NET_URL + 'profile/logLoadTime?token=%s&wrapper=%s&time=%s&toolbox=%s' % (
+                FloatingTools.installToken(),
+                str(FloatingTools.activeWrapper().__class__.__name__),
+                str(end - start),
+                self.source_tag
+            ))
+
+
+
+# add the default handler for pointing at locations on disk.
+class LocalHandler(Service):
+    def loadSource(self, source):
+        """
+        Load a local location on disk.
+        :param source:
+        :return:
+        """
+        # define as pointer
+        self.setIsPointer(True)
+
+        # set vars
+        self.setName(os.path.basename(source['Path']))
+        self.setSourcePath(source['Path'])
+        self.setInstallLocation(source['Path'])
+
+# register handler
+LocalHandler.registerService('Local_Path')
