@@ -9,6 +9,7 @@ import re
 import imp
 import sys
 import json
+import time
 import base64
 import urllib
 import urllib2
@@ -21,6 +22,8 @@ from functools import partial
 FT_NET_URL = 'http://floatingtoolsnet.2naxcry8ia.us-west-2.elasticbeanstalk.com/'
 if os.environ.get('FT_NET_URL'):
     FT_NET_URL = os.environ.get('FT_NET_URL')
+else:
+    os.environ['FT_NET_URL'] = FT_NET_URL
 
 # token
 TOKEN = None
@@ -59,7 +62,10 @@ This token is then saved to the token file in the data folder. This token can ex
             # handle broken response
             if response == 'None':
                 # remove token information
-                os.unlink(TOKEN_FILE)
+                try:
+                    os.unlink(TOKEN_FILE)
+                except OSError:
+                    pass
                 raise Exception('\nInvalid Token. Log into FT.NET and click "Connect client" under the Client dropdown '
                                 'section at the top of the profile page. Then relaunch this application.'
                                 '\n\tProfile page: http://floatingtoolsnet.2naxcry8ia.us-west-2.elasticbeanstalk.com/profile\n')
@@ -104,15 +110,11 @@ Request the latest tool shed data.
 
                 SHED = eval(response)
 
-                if not os.path.exists(SHED_FILE):
-                    # create file
-                    fo = open(SHED_FILE, 'w')
-                    fo.close()
-
                 with open(SHED_FILE, 'w') as sf:
                     sf.write(json.dumps(SHED, indent=4, sort_keys=True))
 
-            except Exception as e:
+            except Exception:
+                traceback.print_exc()
                 raise Exception('Invalid token. Token passed is either blocked, sent from an ip address not tethered to '
                                 'this user, or you have never logged into the site from this computer on the FT.NET site.')
         else:
@@ -182,6 +184,8 @@ Download the required services into memory for use.
     # pull the required services
     services = requiredServices()
 
+
+    start = time.time()
     # loop over only required services
     for service in services:
         if isNetworkClient():
@@ -202,6 +206,15 @@ Download the required services into memory for use.
         except ImportError:
             traceback.print_exc()
 
+    end = time.time()
+    # log to FT.NET statistics
+    if FloatingTools.isNetworkClient():
+        urllib.urlopen(FloatingTools.FT_NET_URL + 'profile/logLoadTime?token=%s&stage=%s&time=%s' % (
+            FloatingTools.installToken(),
+            'Services',
+            str(end - start),
+        ))
+
 
 def loadWrappers():
     """
@@ -216,6 +229,8 @@ Download the wrappers into memory for use.
 
     # if this is a network client
     if isNetworkClient():
+
+        start = time.time()
         # loop over suggested wrappers
         for wrapper in wrappers:
             request = urllib.urlopen(wrapper)
@@ -228,6 +243,15 @@ Download the wrappers into memory for use.
                 exec code in Wrappers.__dict__
             except:
                 traceback.print_exc()
+        end = time.time()
+
+        # log to FT.NET statistics
+        if FloatingTools.isNetworkClient():
+            urllib.urlopen(FloatingTools.FT_NET_URL + 'profile/logLoadTime?token=%s&stage=%s&time=%s' % (
+                FloatingTools.installToken(),
+                'Wrappers',
+                str(end - start),
+            ))
 
     # loop over and load the local wrappers
     for fo in os.listdir(FloatingTools.WRAPPERS):
@@ -249,6 +273,8 @@ Pull the list of tools requested and download them.
     tools = requestedTools()
 
     count = 0
+
+    start = time.time()
 
     for tool in tools:
         try:
@@ -279,6 +305,15 @@ Pull the list of tools requested and download them.
     for toolbox in FloatingTools.Service.toolboxes():
         toolbox.loadTools()
 
+    end = time.time()
+
+    # log to FT.NET statistics
+    if FloatingTools.isNetworkClient():
+        urllib.urlopen(FloatingTools.FT_NET_URL + 'profile/logLoadTime?token=%s&stage=%s&time=%s' % (
+            FloatingTools.installToken(),
+            'Tools',
+            str(end - start),
+        ))
 
 def clientInfo():
     """

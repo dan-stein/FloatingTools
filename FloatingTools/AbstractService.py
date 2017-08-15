@@ -7,8 +7,8 @@ import time
 import shutil
 import urllib
 import zipfile
-import requests
 import traceback
+from threading import Lock
 from functools import partial
 
 # ft imports
@@ -422,7 +422,12 @@ Load the tools on disk for this toolbox.
             FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/reinstall', command=partial(self.reinstall))
             # utility functions for the toolbox
             FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/uninstall', command=partial(self.uninstall))
-        FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/source/' + self.sourcePath().replace('/', '-'))
+
+        for field in self._source:
+            FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/source/%s: %s' % (field, self._source[field].replace('/', '-')))
+
+        FloatingTools.activeWrapper().addMenuSeparator(menuRoot + '/source')
+        FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/source/Content: ' + self.sourcePath().replace('/', '-'))
 
         # add separator
         FloatingTools.activeWrapper().addMenuSeparator(menuRoot)
@@ -463,7 +468,6 @@ Load the tools on disk for this toolbox.
                 str(end - start),
                 self.source_tag
             ))
-
 
 
 # add the default handler for pointing at locations on disk.
