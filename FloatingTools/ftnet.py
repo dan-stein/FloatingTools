@@ -15,6 +15,7 @@ import urllib
 import urllib2
 import zipfile
 import traceback
+import threading
 import webbrowser
 from functools import partial
 
@@ -266,9 +267,6 @@ def loadTools():
     """
 Pull the list of tools requested and download them.
     """
-    # first download the latest services that are required for all tools.
-    loadServices()
-
     # pull down the requested tools and begin loop over each tool.
     tools = requestedTools()
 
@@ -303,7 +301,9 @@ Pull the list of tools requested and download them.
 
     # loop over all tool boxes and execute load tools
     for toolbox in FloatingTools.Service.toolboxes():
-        toolbox.loadTools()
+        thread = threading.Thread(target=toolbox.loadTools)
+        thread.setDaemon(True)
+        thread.start()
 
     end = time.time()
 
@@ -314,6 +314,7 @@ Pull the list of tools requested and download them.
             'Tools',
             str(end - start),
         ))
+
 
 def clientInfo():
     """
@@ -446,20 +447,21 @@ def initialize():
 Starts up FT Client
     """
     if isNetworkClient():
-        print('Network Client. Loading sources from network and local.\n\n\tWrappers: %s\n\tServices: %s\n' %
-              (FloatingTools.WRAPPERS, FloatingTools.SERVICES))
+        FloatingTools.FT_LOOGER.info('Network Client. Loading sources from network and local.\n\n\tWrappers: %s\n\t'
+                                     'Services: %s\n' % (FloatingTools.WRAPPERS, FloatingTools.SERVICES))
 
         # update the client install if it has changed on FT.NET
         updateClient()
     else:
-        print('Not a Network Client. Loading sources from local only.\n\n\tWrappers: %s\n\tServices: %s\n' %
-              (FloatingTools.WRAPPERS, FloatingTools.SERVICES))
+        FloatingTools.FT_LOOGER.info('Local Client. Loading sources from local only.\n\n\tWrappers: %s\n\tServices: '
+                                     '%s\n' % (FloatingTools.WRAPPERS, FloatingTools.SERVICES))
 
     # first load all custom extensions
     FloatingTools.loadExtensions()
 
     # load tools
     loadWrappers()
+    loadServices()
     if FloatingTools.activeWrapper():
         _buildFTMenu_()
     loadTools()

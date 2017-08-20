@@ -73,14 +73,13 @@ sys.path.append(SERVICES)
 if not os.path.exists(SERVICES):
     os.makedirs(SERVICES)
 
+# import wrappers
+from AbstractWrapper import Wrapper, activeWrapper
+from AbstractService import Service
 
 # initial ft imports
 from utilities import *
 from ftnet import *
-
-# standard lib imports
-from AbstractWrapper import Wrapper, activeWrapper
-from AbstractService import Service
 
 # initialize FT
 initialize()

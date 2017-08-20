@@ -3,12 +3,13 @@ Forward preparation for supporting more services.
 """
 # python imports
 import os
+import imp
+import sys
 import time
 import shutil
 import urllib
 import zipfile
 import traceback
-from threading import Lock
 from functools import partial
 
 # ft imports
@@ -411,63 +412,119 @@ Force the toolbox to be re downloaded
         """
 Load the tools on disk for this toolbox.
         """
-        if not FloatingTools.activeWrapper():
-            return
-
         # set the menus root
-        menuRoot = 'FloatingTools/' + self.name().replace('/', '-')
-
-        if not self.isPointer():
-            # utility functions for the toolbox
-            FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/reinstall', command=partial(self.reinstall))
-            # utility functions for the toolbox
-            FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/uninstall', command=partial(self.uninstall))
-
-        for field in self._source:
-            FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/source/%s: %s' % (field, self._source[field].replace('/', '-')))
-
-        FloatingTools.activeWrapper().addMenuSeparator(menuRoot + '/source')
-        FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/source/Content: ' + self.sourcePath().replace('/', '-'))
-
-        # add separator
-        FloatingTools.activeWrapper().addMenuSeparator(menuRoot)
-
-        # create the toolbox fields predefined by the service.
-        for menuField in self._toolbox_menu_order:
-            FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/' + menuField, command=self._toolbox_menu_content[menuField])
-
-        # add separator for tools section
-        FloatingTools.activeWrapper().addMenuSeparator(menuRoot)
+        menuRoot = 'FloatingTools/' + self.name().replace('/', '.')
 
         # start timing tool loading
         start = time.time()
 
+        toolCount = 0
+        fileCount = 0
+
         # loop over install path and check for tools that match the wrappers file extensions
+        packages = []
+
         for (path, dirs, files) in os.walk(self.installDirectory()):
-            arcName = menuRoot + path.replace(self.installDirectory(), '')
+            arcName = menuRoot + '/Tools/' + path.replace(self.installDirectory(), '')
+
+            # handle the addition of python packages and modules
+            isPackage = False
+            for package in packages:
+                if path.startswith(package):
+                    isPackage = True
+                    break
+
+            # handle the addition of python packages and modules
+            if isPackage:
+                continue
 
             for file in files:
+                fileCount += 1
                 base, ext = os.path.splitext(file)
 
-                if ext not in FloatingTools.activeWrapper().fileTypes():
-                    continue
+                if file == '__init__.py':
+                    packages.append(path)
 
-                filePath = os.path.join(path, file)
-                FloatingTools.activeWrapper().addMenuEntry(
-                    menuPath=os.path.join(arcName, file),
-                    command=partial(FloatingTools.activeWrapper().loadFile, filePath)
-                )
+                    filePath = os.path.join(path, file)
+
+                    if FloatingTools.activeWrapper():
+                        FloatingTools.activeWrapper().addMenuEntry(
+                            menuPath=arcName + ' (Click to import)',
+                            command=partial(imp.load_source, *(os.path.basename(path), filePath))
+                        )
+                    else:
+                        packPath = os.path.dirname(path)
+                        if packPath not in sys.path:
+                            FloatingTools.FT_LOOGER.info('%s python package found. Adding path to sys.path.\n\t%s' % (
+                                self.name(),
+                                packPath
+                            ))
+                            sys.path.append(packPath)
+
+                    toolCount += 1
+                    break
+
+                if FloatingTools.activeWrapper():
+                    if ext not in FloatingTools.activeWrapper().fileTypes():
+                        continue
+
+                    filePath = os.path.join(path, file)
+                    FloatingTools.activeWrapper().addMenuEntry(
+                        menuPath=os.path.join(arcName, file),
+                        command=partial(FloatingTools.activeWrapper().loadFile, filePath)
+                    )
+                    toolCount += 1
+                else:
+                    if ext == '.py':
+                        if path not in sys.path:
+                            FloatingTools.FT_LOOGER.info('%s python module found. Adding path to sys.path.\n\t%s' % (
+                                self.name(),
+                                path
+                            ))
+                            sys.path.append(path)
 
         # end timing tool loading and report it to FT.NET and the console
         end = time.time()
 
         if FloatingTools.isNetworkClient():
+            wrapper = 'Python'
+            if FloatingTools.activeWrapper():
+                wrapper = str(FloatingTools.activeWrapper().__class__.__name__)
+
             urllib.urlopen(FloatingTools.FT_NET_URL + 'profile/logLoadTime?token=%s&wrapper=%s&time=%s&toolbox=%s' % (
                 FloatingTools.installToken(),
-                str(FloatingTools.activeWrapper().__class__.__name__),
+                wrapper,
                 str(end - start),
                 self.source_tag
             ))
+
+        if FloatingTools.activeWrapper():
+            # add performance section
+            FloatingTools.activeWrapper().addMenuSeparator(menuRoot)
+
+            # create the toolbox fields predefined by the service.
+            for menuField in self._toolbox_menu_order:
+                FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/Service/' + menuField, command=self._toolbox_menu_content[menuField])
+
+            # add performance section
+            FloatingTools.activeWrapper().addMenuSeparator(menuRoot)
+
+            if not self.isPointer():
+                # utility functions for the toolbox
+                FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/Utilities/reinstall', command=partial(self.reinstall))
+                # utility functions for the toolbox
+                FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/Utilities/uninstall', command=partial(self.uninstall))
+
+            for field in self._source:
+                FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/Utilities/Source/%s: %s' % (field, self._source[field].replace('/', '-')))
+
+            FloatingTools.activeWrapper().addMenuSeparator(menuRoot + '/Utilities/Source')
+            FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/Utilities/Source/Content: ' + self.sourcePath().replace('/', '-'))
+
+            # add load and inventory statistics
+            FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/Utilities/Performance/Load Time: %s ms' % str(end - start))
+            FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/Utilities/Performance/Files Scanned: %s' % str(fileCount))
+            FloatingTools.activeWrapper().addMenuEntry(menuRoot + '/Utilities/Performance/Loaded Tools: %s' % str(toolCount))
 
 
 # add the default handler for pointing at locations on disk.
@@ -485,6 +542,7 @@ class LocalHandler(Service):
         self.setName(os.path.basename(source['Path']))
         self.setSourcePath(source['Path'])
         self.setInstallLocation(source['Path'])
+
 
 # register handler
 LocalHandler.registerService('Local_Path')
