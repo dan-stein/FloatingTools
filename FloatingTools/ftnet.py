@@ -301,9 +301,7 @@ Pull the list of tools requested and download them.
 
     # loop over all tool boxes and execute load tools
     for toolbox in FloatingTools.Service.toolboxes():
-        thread = threading.Thread(target=toolbox.loadTools)
-        thread.setDaemon(True)
-        thread.start()
+        toolbox.loadTools()
 
     end = time.time()
 
@@ -465,3 +463,5 @@ Starts up FT Client
     if FloatingTools.activeWrapper():
         _buildFTMenu_()
     loadTools()
+
+    sys.path += FloatingTools.Service._PY_PATHS_

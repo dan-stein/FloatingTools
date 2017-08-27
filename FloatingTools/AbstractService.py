@@ -4,12 +4,12 @@ Forward preparation for supporting more services.
 # python imports
 import os
 import imp
-import sys
 import time
 import shutil
 import urllib
 import zipfile
 import traceback
+from threading import Lock
 from functools import partial
 
 # ft imports
@@ -19,6 +19,10 @@ import FloatingTools
 # currently supported services
 SERVICES = dict()
 TOOLBOXES = dict()
+
+# thread lock
+
+LOCK = Lock()
 
 
 # Errors
@@ -65,6 +69,8 @@ Represents a FloatingTools compatible toolbox service
     # globals
     SERVICES = {}
     TOOLBOXES = {}
+
+    _PY_PATHS_ = []
 
     @staticmethod
     def get(service):
@@ -452,14 +458,13 @@ Load the tools on disk for this toolbox.
                             menuPath=arcName + ' (Click to import)',
                             command=partial(imp.load_source, *(os.path.basename(path), filePath))
                         )
-                    else:
-                        packPath = os.path.dirname(path)
-                        if packPath not in sys.path:
-                            FloatingTools.FT_LOOGER.info('%s python package found. Adding path to sys.path.\n\t%s' % (
-                                self.name(),
-                                packPath
-                            ))
-                            sys.path.append(packPath)
+                    packPath = os.path.dirname(path)
+                    if packPath not in self._PY_PATHS_:
+                        FloatingTools.FT_LOOGER.info('%s python package found. Adding path to sys.path.\n\t%s' % (
+                            self.name(),
+                            packPath
+                        ))
+                        Service._PY_PATHS_.insert(0, packPath)
 
                     toolCount += 1
                     break
@@ -474,14 +479,13 @@ Load the tools on disk for this toolbox.
                         command=partial(FloatingTools.activeWrapper().loadFile, filePath)
                     )
                     toolCount += 1
-                else:
-                    if ext == '.py':
-                        if path not in sys.path:
-                            FloatingTools.FT_LOOGER.info('%s python module found. Adding path to sys.path.\n\t%s' % (
-                                self.name(),
-                                path
-                            ))
-                            sys.path.append(path)
+                if ext == '.py':
+                    if path not in self._PY_PATHS_:
+                        FloatingTools.FT_LOOGER.info('%s python module found. Adding path to sys.path.\n\t%s' % (
+                            self.name(),
+                            path
+                        ))
+                        Service._PY_PATHS_.insert(0, path)
 
         # end timing tool loading and report it to FT.NET and the console
         end = time.time()

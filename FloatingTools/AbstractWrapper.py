@@ -72,6 +72,7 @@ Nuke, Maya, ect. Only use this if you are sure of what you are doing.
                 except AttributeError:
                     pass
         except:
+            FloatingTools.FT_LOOGER.debug("Wrapper test for: %s" % self.__class__.__name__)
             FloatingTools.FT_LOOGER.debug(traceback.format_exc())
 
     def loadAPI(self, mod):

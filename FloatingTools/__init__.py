@@ -35,6 +35,8 @@ import os
 import sys
 import logging
 
+_PATHS_ = sys.path
+
 if os.environ.get('FT_DEV'):
     logging.basicConfig(level=logging.DEBUG)
 else:
